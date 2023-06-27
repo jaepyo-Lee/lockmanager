@@ -13,16 +13,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Entity
+@Entity(name = "LOCKER_TABLE")
 public class Locker extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOCKER_ID")
     private Long id;
 
-    @Column(name = "LOCKER_NUM")
-    private String number;
-
     @OneToOne(mappedBy = "locker")
     private User user;
+
+    private boolean usable;
+
 }

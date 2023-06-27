@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Getter
 @Builder
-@Entity
+@Entity(name = "USER_TABLE")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseTimeEntity {
@@ -23,11 +23,15 @@ public class User extends BaseTimeEntity {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "STUDENT_ID")
-    private String studentId;
+    @Column(name = "STUDENT_NUM")
+    private String studentNum;
 
     @Column(name = "MEMBERSHIP")
     private boolean membership;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToOne
     @JoinColumn(name = "LOCKER_ID")
