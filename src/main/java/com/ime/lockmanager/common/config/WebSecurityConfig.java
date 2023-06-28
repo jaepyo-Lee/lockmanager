@@ -30,7 +30,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtHeaderUtil,jwtProvider);
 
-        http.authorizeRequests()
+        http
+                .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()

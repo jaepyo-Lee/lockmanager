@@ -4,7 +4,7 @@ import com.ime.lockmanager.auth.domain.AuthUser;
 import com.ime.lockmanager.common.exception.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,12 +13,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
-    private static String SECRET_KEY;
+    private static Key SECRET_KEY;
     private static Long ACCESS_TOKEN_EXPIRATION_MILLISECONDS;
     private static Long REFRESH_TOKEN_EXPIRATION_MILLISECONDS;
     private final String BEARER = "Bearer";
@@ -31,7 +32,7 @@ public class JwtProvider {
             @Value("${jwt.access-token-expiration}") Long ACCESS_TOKEN_EXPIRATION_MILLISECONDS,
             @Value("${jwt.refresh-token-expiration}") Long REFRESH_TOKEN_EXPIRATION_MILLISECONDS
     ) {
-        this.SECRET_KEY = SECRET_KEY;
+        this.SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
         this.ACCESS_TOKEN_EXPIRATION_MILLISECONDS = ACCESS_TOKEN_EXPIRATION_MILLISECONDS;
         this.REFRESH_TOKEN_EXPIRATION_MILLISECONDS = REFRESH_TOKEN_EXPIRATION_MILLISECONDS;
         System.out.println(this.ACCESS_TOKEN_EXPIRATION_MILLISECONDS);
@@ -53,7 +54,7 @@ public class JwtProvider {
                 .setClaims(createClaimByAuthUser(user))
                 .setIssuedAt(now)
                 .setExpiration(expiration)
-                .signWith(SignatureAlgorithm.HS512,SECRET_KEY)
+                .signWith(SECRET_KEY)
                 .compact();
     }
 
@@ -65,16 +66,16 @@ public class JwtProvider {
     }
 
     public AuthToken convertAuthToken(String bearerToken) {
-        return AuthToken.of(bearerToken);
+        return AuthToken.of(bearerToken,SECRET_KEY);
     }
 
     public Authentication getAuthentication(AuthToken authToken) {
         if (authToken.validate()) {
             Claims tokenClaims = authToken.getTokenClaims();
-            Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get(STUDENT_NUM).toString()})
+            Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get("studentNum").toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
-            User principal = new User(tokenClaims.getSubject(), "", authorities);
+            User principal = new User((String) tokenClaims.get("studentNum"), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {
             throw new TokenValidFailedException();

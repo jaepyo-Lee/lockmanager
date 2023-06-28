@@ -3,19 +3,26 @@ package com.ime.lockmanager.common.security;
 import com.ime.lockmanager.auth.domain.AuthUser;
 import io.jsonwebtoken.*;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.validation.Valid;
 import java.security.Key;
 
 @Slf4j
 @Builder
+@RequiredArgsConstructor
 public class AuthToken {
-    private String accessToken;
-    private Key key;
+    private final String accessToken;
 
-    public static AuthToken of(String bearerToken){
+    private final Key key;
+
+
+    public static AuthToken of(String bearerToken,Key key){
         return AuthToken.builder()
                 .accessToken(bearerToken)
+                .key(key)
                 .build();
     }
 
