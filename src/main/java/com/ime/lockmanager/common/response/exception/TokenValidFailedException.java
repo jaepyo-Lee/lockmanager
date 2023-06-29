@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception;
+package com.ime.lockmanager.common.response.exception;
 
 public class TokenValidFailedException extends RuntimeException{
     public TokenValidFailedException(){

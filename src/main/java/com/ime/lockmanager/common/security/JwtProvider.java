@@ -1,7 +1,7 @@
 package com.ime.lockmanager.common.security;
 
 import com.ime.lockmanager.auth.domain.AuthUser;
-import com.ime.lockmanager.common.exception.TokenValidFailedException;
+import com.ime.lockmanager.common.response.exception.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
