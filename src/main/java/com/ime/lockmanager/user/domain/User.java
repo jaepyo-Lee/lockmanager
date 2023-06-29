@@ -2,10 +2,7 @@ package com.ime.lockmanager.user.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.Locker;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -36,4 +33,9 @@ public class User extends BaseTimeEntity {
     @OneToOne
     @JoinColumn(name = "LOCKER_ID")
     private Locker locker;
+
+    public void registerLocker(Locker locker){
+        this.locker = locker;
+        locker.changeUser(this);
+    }
 }
