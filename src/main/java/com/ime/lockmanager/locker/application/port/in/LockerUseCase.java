@@ -5,5 +5,5 @@ import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestD
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 
 public interface LockerUseCase {
-    LockerRegisterResponseDto register(LockerRegisterRequestDto lockerRegisterRequestDto) throws IllegalAccessException;
+    LockerRegisterResponseDto register(LockerRegisterRequestDto lockerRegisterRequestDto) throws IllegalAccessException, Exception;
 }

@@ -19,7 +19,7 @@ public class LockerController {
     private final LockerUseCase lockerUseCase;
 
     @PostMapping("/register")
-    public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws IllegalAccessException {
+    public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
         return LockerRegisterResponse.fromResponse(lockerUseCase.register(lockerRegisterRequest.toRequestDto(principal.getName())));
     }
 }

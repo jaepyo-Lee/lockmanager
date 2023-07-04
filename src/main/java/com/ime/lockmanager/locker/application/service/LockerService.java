@@ -1,6 +1,9 @@
 package com.ime.lockmanager.locker.application.service;
 
-import com.ime.lockmanager.locker.adapter.in.req.LockerRegisterRequest;
+import com.ime.lockmanager.common.exception.locker.AlreadyReservedLockerException;
+import com.ime.lockmanager.common.exception.locker.NotFoundLockerException;
+import com.ime.lockmanager.common.exception.user.AlreadyReservedUserException;
+import com.ime.lockmanager.common.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
@@ -10,26 +13,31 @@ import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+
+import java.awt.font.TextHitInfo;
+import java.rmi.AlreadyBoundException;
+
+import static com.ime.lockmanager.locker.exception.LockerExceptionStatus.ALREADY_RESERVED_LOCKER;
+import static com.ime.lockmanager.locker.exception.LockerExceptionStatus.NOT_EXIST_LOCKER;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class LockerService implements LockerUseCase {
+public class LockerService implements LockerUseCase  {
     private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
 
     @Transactional
     @Override
-    public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws IllegalAccessException {
-        User byStudentNum = userQueryPort.findByStudentNum(dto.getStudentNum()).orElseThrow(
-                () -> new NullPointerException("사용자 유효하지 않습니다.")
-        );
-        Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum()).orElseThrow(
-                () -> new NullPointerException("사물함이 유효하지 않습니다.")
-        );
+    public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
+        User byStudentNum = userQueryPort.findByStudentNum(dto.getStudentNum())
+                .orElseThrow(NotFoundUserException::new);
+        Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum())
+                .orElseThrow(NotFoundLockerException::new);
         if(byStudentNum.getLocker()==null){
             if(byLockerId.isUsable()){
                 byStudentNum.registerLocker(byLockerId);
@@ -38,9 +46,8 @@ public class LockerService implements LockerUseCase {
                         .studentName(byStudentNum.getName())
                         .build();
             }
-            throw new IllegalAccessException("이미 예약된 사물함입니다");
+            throw new AlreadyReservedLockerException();
         }
-        throw new IllegalAccessException("이미 사물함을 예약한 사용자입니다.");
-
+        throw new AlreadyReservedUserException();
     }
 }
