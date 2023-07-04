@@ -36,6 +36,7 @@ public class User extends BaseTimeEntity {
 
     public void registerLocker(Locker locker){
         this.locker = locker;
-        locker.changeUser(this);
+        locker.setUsable(false);
+        locker.setUser(this);
     }
 }

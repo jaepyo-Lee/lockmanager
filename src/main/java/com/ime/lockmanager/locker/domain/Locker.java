@@ -19,9 +19,6 @@ public class Locker extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "locker")
     private User user;
-    public void changeUser(User user){
-        this.user = user;
-    }
     private boolean usable;
 
 }
