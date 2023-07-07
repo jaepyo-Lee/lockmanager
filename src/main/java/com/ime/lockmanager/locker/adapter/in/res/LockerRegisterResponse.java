@@ -13,7 +13,7 @@ public class LockerRegisterResponse {
     public static LockerRegisterResponse fromResponse(LockerRegisterResponseDto lockerRegisterResponseDto) {
         return LockerRegisterResponse.builder()
                 .lockerNum(lockerRegisterResponseDto.getLockerNum())
-                .studentNum(lockerRegisterResponseDto.getStudentName())
+                .studentNum(lockerRegisterResponseDto.getStudentNum())
                 .build();
     }
 }

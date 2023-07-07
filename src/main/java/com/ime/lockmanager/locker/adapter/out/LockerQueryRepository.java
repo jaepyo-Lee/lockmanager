@@ -5,6 +5,7 @@ import com.ime.lockmanager.locker.domain.Locker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,5 +16,10 @@ public class LockerQueryRepository implements LockerQueryPort {
     @Override
     public Optional<Locker> findByLockerId(Long lockerId) {
         return lockerJpaRepository.findById(lockerId);
+    }
+
+    @Override
+    public List<Long> findReservedLocker() {
+        return lockerJpaRepository.findReservedLocker();
     }
 }

@@ -4,25 +4,21 @@ import com.ime.lockmanager.common.exception.locker.AlreadyReservedLockerExceptio
 import com.ime.lockmanager.common.exception.locker.NotFoundLockerException;
 import com.ime.lockmanager.common.exception.user.AlreadyReservedUserException;
 import com.ime.lockmanager.common.exception.user.NotFoundUserException;
+import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
+import com.ime.lockmanager.locker.application.port.in.res.LockerReserveResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
-import java.awt.font.TextHitInfo;
-import java.rmi.AlreadyBoundException;
-
-import static com.ime.lockmanager.locker.exception.LockerExceptionStatus.ALREADY_RESERVED_LOCKER;
-import static com.ime.lockmanager.locker.exception.LockerExceptionStatus.NOT_EXIST_LOCKER;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +30,7 @@ public class LockerService implements LockerUseCase  {
     @Transactional
     @Override
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
+        log.info("예약 시작 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
         User byStudentNum = userQueryPort.findByStudentNum(dto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
         Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum())
@@ -41,13 +38,22 @@ public class LockerService implements LockerUseCase  {
         if(byStudentNum.getLocker()==null){
             if(byLockerId.isUsable()){
                 byStudentNum.registerLocker(byLockerId);
+                log.info("예약 완료 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
                 return LockerRegisterResponseDto.builder()
                         .lockerNum(byLockerId.getId())
-                        .studentName(byStudentNum.getName())
+                        .studentNum(byStudentNum.getStudentNum())
                         .build();
             }
             throw new AlreadyReservedLockerException();
         }
         throw new AlreadyReservedUserException();
+    }
+
+    @Override
+    public LockerReserveResponseDto findReserveLocker() {
+        List<Long> reservedLockerId = lockerQueryPort.findReservedLocker();
+        return LockerReserveResponseDto.builder()
+                .lockerId(reservedLockerId)
+                .build();
     }
 }
