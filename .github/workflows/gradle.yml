@@ -31,8 +31,8 @@ jobs:
     - name: make application.properties
       run: |
         touch ./application.properties
-        echo "${{LOCKER_MANAGER_DATABASE}}" >> ./application.properties
-        echo "${{LOCKER_MANAGER_AUTHKEY}}" >> ./application.properties
+        echo "${{secret.LOCKER_MANAGER_DATABASE}}" >> ./application.properties
+        echo "${{secret.LOCKER_MANAGER_AUTHKEY}}" >> ./application.properties
       shell: bash
 
     - name: Grant execute permission for gradlew
@@ -41,20 +41,20 @@ jobs:
       run: ./gradlew build
     - name: Docker build
       run: |
-        docker login -u ${{DOCKER_ID}} -p ${{DOCKER_PASSWORD}}
-        docker build -t ${{LOCKER_MANAGER_DOCKER_REPO}} .
-        docker push ${{LOCKER_MANAGER_DOCKER_REPO}}
+        docker login -u ${{secret.DOCKER_ID}} -p ${{secret.DOCKER_PASSWORD}}
+        docker build -t ${{secret.LOCKER_MANAGER_DOCKER_REPO}} .
+        docker push ${{secret.LOCKER_MANAGER_DOCKER_REPO}}
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@v0.1.6
       with:
-        host: ${{LOCKER_MANAGER_HOST}}
-        username: ${{LOCKER_MANAGER_USERNAME}}
-        key: ${{LOCKER_MANAGER_PEMKEY}}
+        host: ${{secret.LOCKER_MANAGER_HOST}}
+        username: ${{secret.LOCKER_MANAGER_USERNAME}}
+        key: ${{secret.LOCKER_MANAGER_PEMKEY}}
         port: 22
         script: |
           sudo docker stop prod-server
           sudo docker rm prod-server
-          sudo docker image rm ${{LOCKER_MANAGER_DOCKER_REPO}}
-          sudo docker pull ${{LOCKER_MANAGER_DOCKER_REPO}}
-          sudo docker run -d -p 80:8080 ${{LOCKER_MANAGER_DOCKER_REPO}}
+          sudo docker image rm ${{secret.LOCKER_MANAGER_DOCKER_REPO}}
+          sudo docker pull ${{secret.LOCKER_MANAGER_DOCKER_REPO}}
+          sudo docker run -d -p 80:8080 ${{secret.LOCKER_MANAGER_DOCKER_REPO}}
