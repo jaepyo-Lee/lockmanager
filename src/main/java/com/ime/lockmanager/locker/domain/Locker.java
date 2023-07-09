@@ -5,6 +5,7 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -20,5 +21,8 @@ public class Locker extends BaseTimeEntity {
     @OneToOne(mappedBy = "locker")
     private User user;
     private boolean usable;
+
+    @Column(name = "reserved_time")
+    private LocalDateTime reservedTime=null;
 
 }
