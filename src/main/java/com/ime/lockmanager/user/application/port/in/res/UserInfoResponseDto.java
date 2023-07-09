@@ -10,5 +10,6 @@ public class UserInfoResponseDto {
     private String userName;
     private String userNum;
     private boolean membership;
+    @Builder.Default
     private Long lockerNum=null;
 }
