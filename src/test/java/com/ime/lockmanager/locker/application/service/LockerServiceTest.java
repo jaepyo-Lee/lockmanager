@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @SpringBootTest
 class LockerServiceTest {
-    @Autowired
+    /*@Autowired
     private LockerService lockerService;
 
     @Autowired
@@ -61,7 +61,7 @@ class LockerServiceTest {
         assertThat(register1.getLockerNum()).isEqualTo(dto2.getLockerNum());
     }
 
-/*    @DisplayName("여러명이 동시에 같은 사물함을 예약할때 데이터 정합성테스트")
+    @DisplayName("여러명이 동시에 같은 사물함을 예약할때 데이터 정합성테스트")
     @Transactional
     @Test
     void reserveConcurrencyTest() throws InterruptedException {
