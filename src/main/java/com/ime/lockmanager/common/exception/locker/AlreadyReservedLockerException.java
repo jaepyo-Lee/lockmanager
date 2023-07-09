@@ -1,11 +1,11 @@
 package com.ime.lockmanager.common.exception.locker;
 
-import com.ime.lockmanager.common.exception.ApplicationException;
+import com.ime.lockmanager.common.exception.ApplicationRunException;
 import com.ime.lockmanager.common.exception.ErrorEnumCode;
 
 import static com.ime.lockmanager.common.exception.locker.LockerErrorCode.ALREADY_RESERVERD_LOCKER;
 
-public class AlreadyReservedLockerException extends ApplicationException {
+public class AlreadyReservedLockerException extends ApplicationRunException {
     private static final ErrorEnumCode CODE = ALREADY_RESERVERD_LOCKER;
     private AlreadyReservedLockerException(ErrorEnumCode errorEnumCode){
         super(errorEnumCode);

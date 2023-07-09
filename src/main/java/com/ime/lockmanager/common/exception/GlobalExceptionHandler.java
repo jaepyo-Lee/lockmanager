@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ErrorResponse>applicationException(ApplicationException e){
+    @ExceptionHandler(ApplicationRunException.class)
+    public ResponseEntity<ErrorResponse>applicationRunException(ApplicationRunException e){
         log.error(e.getMessage());
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }

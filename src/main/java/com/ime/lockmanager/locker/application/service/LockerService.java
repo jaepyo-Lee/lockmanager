@@ -1,7 +1,9 @@
 package com.ime.lockmanager.locker.application.service;
 
 import com.ime.lockmanager.common.exception.locker.AlreadyReservedLockerException;
+import com.ime.lockmanager.common.exception.locker.IsNotReserveTimeException;
 import com.ime.lockmanager.common.exception.locker.NotFoundLockerException;
+import com.ime.lockmanager.common.exception.locker.ReserveTimeNullException;
 import com.ime.lockmanager.common.exception.user.AlreadyReservedUserException;
 import com.ime.lockmanager.common.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -35,18 +38,24 @@ public class LockerService implements LockerUseCase  {
                 .orElseThrow(NotFoundUserException::new);
         Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum())
                 .orElseThrow(NotFoundLockerException::new);
-        if(byStudentNum.getLocker()==null){
-            if(byLockerId.isUsable()){
-                byStudentNum.registerLocker(byLockerId);
-                log.info("예약 완료 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
-                return LockerRegisterResponseDto.builder()
-                        .lockerNum(byLockerId.getId())
-                        .studentNum(byStudentNum.getStudentNum())
-                        .build();
+        if(byLockerId.getReservedTime()!=null){
+            if(byLockerId.getReservedTime().isBefore(LocalDateTime.now())){
+                if(byStudentNum.getLocker()==null){
+                    if(byLockerId.isUsable()){
+                        byStudentNum.registerLocker(byLockerId);
+                        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
+                        return LockerRegisterResponseDto.builder()
+                                .lockerNum(byLockerId.getId())
+                                .studentNum(byStudentNum.getStudentNum())
+                                .build();
+                    }
+                    throw new AlreadyReservedLockerException();
+                }
+                throw new AlreadyReservedUserException();
             }
-            throw new AlreadyReservedLockerException();
+            throw new IsNotReserveTimeException();
         }
-        throw new AlreadyReservedUserException();
+        throw new ReserveTimeNullException();
     }
 
     @Override

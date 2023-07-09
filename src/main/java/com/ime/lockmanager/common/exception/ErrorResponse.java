@@ -20,14 +20,14 @@ public class ErrorResponse {
     private List<FieldError> errors;
 
 
-    private ErrorResponse(ApplicationException e){
+    private ErrorResponse(ApplicationRunException e){
         this.time = now();
         this.status = HttpStatus.BAD_REQUEST.value();
         this.code = e.getErrorEnumCode().getCode();
         this.message = e.getMessage();
     }
 
-    public static ErrorResponse of(ApplicationException e) {
+    public static ErrorResponse of(ApplicationRunException e) {
         return new ErrorResponse(e);
     }
 }
