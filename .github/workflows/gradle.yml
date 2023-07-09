@@ -10,8 +10,8 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
+#  pull_request:
+#    branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -28,7 +28,33 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: make application.properties
+      run: |
+        touch ./application.properties
+        echo "${{LOCKER_MANAGER_DATABASE}}" >> ./application.properties
+        echo "${{LOCKER_MANAGER_AUTHKEY}}" >> ./application.properties
+      shell: bash
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      run: ./gradlew build
+    - name: Docker build
+      run: |
+        docker login -u ${{DOCKER_ID}} -p ${{DOCKER_PASSWORD}}
+        docker build -t ${{LOCKER_MANAGER_DOCKER_REPO}} .
+        docker push ${{LOCKER_MANAGER_DOCKER_REPO}}
+
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.6
       with:
-        arguments: build
+        host: ${{LOCKER_MANAGER_HOST}}
+        username: ${{LOCKER_MANAGER_USERNAME}}
+        key: ${{LOCKER_MANAGER_PEMKEY}}
+        port: 22
+        script: |
+          sudo docker stop prod-server
+          sudo docker rm prod-server
+          sudo docker image rm ${{LOCKER_MANAGER_DOCKER_REPO}}
+          sudo docker pull ${{LOCKER_MANAGER_DOCKER_REPO}}
+          sudo docker run -d -p 80:8080 ${{LOCKER_MANAGER_DOCKER_REPO}}
