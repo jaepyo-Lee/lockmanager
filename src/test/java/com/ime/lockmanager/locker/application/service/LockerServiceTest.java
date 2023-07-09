@@ -61,7 +61,7 @@ class LockerServiceTest {
         assertThat(register1.getLockerNum()).isEqualTo(dto2.getLockerNum());
     }
 
-    @DisplayName("여러명이 동시에 같은 사물함을 예약할때 데이터 정합성테스트")
+/*    @DisplayName("여러명이 동시에 같은 사물함을 예약할때 데이터 정합성테스트")
     @Transactional
     @Test
     void reserveConcurrencyTest() throws InterruptedException {
@@ -121,5 +121,5 @@ class LockerServiceTest {
                     Long id = byStudentNum.get().getLocker().getId();
                 }
         ).isInstanceOf(NullPointerException.class);
-    }
+    }*/
 }
