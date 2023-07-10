@@ -35,13 +35,13 @@ jobs:
         echo "${{secrets.LOCKER_MANAGER_AUTHKEY}}" >> ./application.properties
       shell: bash
 
-    - name: Setup MySQL
-      uses: samin/mysql-action@v1
-      with:
-        character set server: 'utf8'
-        mysql database: '데이터 베이스 이름'
-        mysql user: '사용자 이름'
-        mysql password: '데이터 베이스 비밀번호!'
+#    - name: Setup MySQL
+#      uses: samin/mysql-action@v1
+#      with:
+#        character set server: 'utf8'
+#        mysql database: '데이터 베이스 이름'
+#        mysql user: '사용자 이름'
+#        mysql password: '데이터 베이스 비밀번호!'
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
