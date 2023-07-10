@@ -31,8 +31,7 @@ jobs:
 
     - name: make application.properties
       run: |
-        cd ./src/main/resources
-        touch ./application.properties
+        touch ./src/main/resources/application.properties
         echo "${{secrets.LOCKER_MANAGER_APPLICATION}}" > ./application.properties
 
 #    - name: Setup MySQL
