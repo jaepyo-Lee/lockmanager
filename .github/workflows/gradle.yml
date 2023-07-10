@@ -31,10 +31,8 @@ jobs:
 
     - name: make application.properties
       run: |
-        cd ./src/main/resources
-        touch ./application.properties
-        echo "${{secrets.LOCKER_MANAGER_APPLICATION}}" > ./application.properties
-      shell: bash
+        touch ./src/main/resources/application.properties
+        echo "${{secrets.LOCKER_MANAGER_APPLICATION}}" > ./src/main/resources/application.properties
 
 #    - name: Setup MySQL
 #      uses: samin/mysql-action@v1
@@ -55,7 +53,7 @@ jobs:
       with:
         username: ${{secrets.DOCKER_ID}}
         password: ${{secrets.DOCKER_PASSWORD}}
-        
+
     - name: Docker build
       run: |
         docker build -t ${{secrets.LOCKER_MANAGER_DOCKER_REPO}} .
