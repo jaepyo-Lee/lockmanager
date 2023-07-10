@@ -50,11 +50,13 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
 
-    - name: Docker build
+    - name: Docker login
       uses: docker/login-action@v2
       with:
         username: ${{secrets.DOCKER_ID}}
         password: ${{secrets.DOCKER_PASSWORD}}
+        
+    - name: Docker build
       run: |
         docker build -t ${{secrets.LOCKER_MANAGER_DOCKER_REPO}} .
         docker push ${{secrets.LOCKER_MANAGER_DOCKER_REPO}}
