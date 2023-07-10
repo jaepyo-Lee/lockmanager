@@ -17,18 +17,6 @@ permissions:
   contents: read
 
 jobs:
-  echo:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo 'Hello, GitHub Actions!'
-    pwd-ls:
-      name: PWD & LS
-      runs-on: ubuntu-latest
-      steps:
-        - name: Print working directory
-          run: pwd
-        - name: List files
-          run: ls -al
   build:
     runs-on: ubuntu-latest
     env:
@@ -45,6 +33,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: make application.properties
       run: |
+        cd .
         cd ./src/main/resources
         touch ./application.properties
         echo "${{secrets.LOCKER_MANAGER_APPLICATION}}" > ./application.properties
