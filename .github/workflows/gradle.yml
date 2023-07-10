@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: make application.properties
       run: |
-        cd src/main/resources
+        cd ./src/main/resources
         touch ./application.properties
         echo "${{secrets.LOCKER_MANAGER_APPLICATION}}" > ./application.properties
       shell: bash
