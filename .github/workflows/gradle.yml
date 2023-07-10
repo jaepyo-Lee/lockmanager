@@ -63,7 +63,7 @@ jobs:
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{secrets.LOCKER_MANAGER_HOST}}
-        username: ${{secrets.LOCKER_MANAGER_USERNAME}}
+        username: ubuntu
         key: ${{secrets.LOCKER_MANAGER_PEMKEY}}
         port: 22
         script: |
