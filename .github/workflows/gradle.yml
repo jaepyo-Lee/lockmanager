@@ -34,6 +34,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: make application.properties
       run: |
+        cd ..
+        cd ..
         touch ./src/main/resources/application.properties
         echo "${{env.APPLICATION}}" > ./src/main/resources/application.properties
       shell: bash
