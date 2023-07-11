@@ -78,8 +78,7 @@ jobs:
         key: ${{secrets.LOCKER_MANAGER_PEMKEY}}
         port: 22
         script: |
-          sudo docker stop prod-server
-          sudo docker rm prod-server
+          sudo docker ps
           sudo docker image rm ${{secrets.LOCKER_MANAGER_DOCKER_REPO}}
           sudo docker pull ${{secrets.LOCKER_MANAGER_DOCKER_REPO}}
           sudo docker run -d -p 80:8080 ${{secrets.LOCKER_MANAGER_DOCKER_REPO}}
