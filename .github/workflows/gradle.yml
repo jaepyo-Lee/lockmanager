@@ -28,7 +28,40 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+
+
+    - name: make application.properties
+      run: |
+        mkdir ./src/main/resources # resources 폴더 생성
+        cd ./src/main/resources # resources 폴더로 이동
+        touch ./application.properties # application.yml 생성
+        echo "${{ secrets.APPLICATION }}" > ./application.properties # github actions에서 설정한 값을 application.yml 파일에 쓰기
+      shell: bash
+
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      run: ./gradlew clean build -x test
+
+    - name: docker login
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
       with:
-        arguments: build
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Docker build & push
+      run: |
+        docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lockermanager .
+        docker push ${{ secrets.DOCKER_USERNAME }}/lockermanager
+
+    ## deploy to production
+    - name: Deploy to dev
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AWS_HOST }} # EC2 퍼블릭 IPv4 DNS
+        username: ${{ secrets.AWS_USERNAME }} # ubuntu
+        port: 22
+        key: ${{ secrets.AWS_PRIVATE_KEY }}
+        script: |
+          sudo docker ps
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lockermanager
+          sudo docker run -d -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/lockermanager
+          sudo docker image prune -f
