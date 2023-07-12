@@ -66,6 +66,8 @@ jobs:
         script: |
           sudo docker rm -f ${{secrets.DOCKER_USERNAME}}/${{secrets.PROJECT_NAME}}
           sudo docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.PROJECT_NAME}}
+          sudo docker pull lockermanager_redis
+          
           sudo docker exec -it lockermanager_redis redis-cli
           
           sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{secrets.PROJECT_NAME}} \
