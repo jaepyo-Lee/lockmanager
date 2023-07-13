@@ -53,7 +53,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 
 	//redisson
-	implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.22.1'
 }
 
 tasks.named('test') {
