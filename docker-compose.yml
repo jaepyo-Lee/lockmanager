@@ -6,7 +6,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - calendar-net
+      - locker_manager
 
   concert_calendar:
     image: jaepyo99/lockermanager

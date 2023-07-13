@@ -23,7 +23,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/swagger*/**", "/h2-console/**", "/index.html", "/api/auth/**");
+        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/h2-console/**", "/index.html", "/api/auth/**");
     }
 
     @Bean
@@ -33,7 +33,7 @@ public class WebSecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/auth/**","/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers()
