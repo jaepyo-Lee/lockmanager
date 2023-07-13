@@ -16,12 +16,12 @@ import java.security.Principal;
 @RequestMapping("/api/locker")
 public class LockerController {
 
-    private final RedissonLockLockerFacade redissonLockLockerFacade;
+//    private final RedissonLockLockerFacade redissonLockLockerFacade;
     private final LockerService lockerService;
 
     @PostMapping("/register")
     public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
-        return LockerRegisterResponse.fromResponse(redissonLockLockerFacade.register(lockerRegisterRequest.toRequestDto(principal.getName())));
+        return LockerRegisterResponse.fromResponse(/*redissonLockLockerFacade*/lockerService.register(lockerRegisterRequest.toRequestDto(principal.getName())));
     }
 
     @GetMapping()
