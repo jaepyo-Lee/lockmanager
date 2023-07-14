@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception.locker;
+package com.ime.lockmanager.common.exception.locker.errorCode;
 
 import com.ime.lockmanager.common.exception.ErrorEnumCode;
 import lombok.AllArgsConstructor;

@@ -1,13 +1,10 @@
-package com.ime.lockmanager.common.security;
+package com.ime.lockmanager.common.jwt;
 
-import com.ime.lockmanager.auth.domain.AuthUser;
 import io.jsonwebtoken.*;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.validation.Valid;
 import java.security.Key;
 
 @Slf4j

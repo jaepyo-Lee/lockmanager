@@ -1,10 +1,12 @@
-package com.ime.lockmanager.common.security;
+package com.ime.lockmanager.common.jwt;
 
 import com.ime.lockmanager.auth.domain.AuthUser;
 import com.ime.lockmanager.common.exception.auth.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,7 @@ import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtProvider {
     private static Key SECRET_KEY;
@@ -41,12 +44,12 @@ public class JwtProvider {
     }
 
     public String createAccessToken(AuthUser user){
-        return createToken(user,ACCESS_TOKEN_EXPIRATION_MILLISECONDS);
+        return createAccessToken(user,ACCESS_TOKEN_EXPIRATION_MILLISECONDS);
     }
     public String createRefreshToken(AuthUser user){
-        return createToken(user,REFRESH_TOKEN_EXPIRATION_MILLISECONDS);
+        return createRefreshToken(user,REFRESH_TOKEN_EXPIRATION_MILLISECONDS);
     }
-    public String createToken(AuthUser user,Long time){
+    public String createAccessToken(AuthUser user, Long time){
         Date now = new Date();
         Date expiration = new Date(now.getTime() + time);
         return Jwts.builder()
@@ -56,6 +59,26 @@ public class JwtProvider {
                 .setExpiration(expiration)
                 .signWith(SECRET_KEY)
                 .compact();
+    }
+    public String createRefreshToken(AuthUser user, Long time){
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + time);
+        return Jwts.builder()
+                .setSubject(user.getUser().getName())
+                .setClaims(createClaimByAuthUser(user))
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(SECRET_KEY)
+                .compact();
+    }
+
+    public Long getTokenExpiration(String token){
+        Claims body = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return body.getExpiration().getTime();
     }
 
     private Map<String, Object> createClaimByAuthUser(AuthUser user){
@@ -72,6 +95,10 @@ public class JwtProvider {
     public Authentication getAuthentication(AuthToken authToken) {
         if (authToken.validate()) {
             Claims tokenClaims = authToken.getTokenClaims();
+            log.debug("{}",tokenClaims.get("userName"));
+
+            log.debug("{}",tokenClaims.get("studentNum"));
+
             Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get("studentNum").toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());

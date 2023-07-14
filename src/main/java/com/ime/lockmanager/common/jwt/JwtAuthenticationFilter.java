@@ -1,11 +1,9 @@
-package com.ime.lockmanager.common.security;
+package com.ime.lockmanager.common.jwt;
 
 
+import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,12 +16,15 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtHeaderUtil jwtHeaderUtil;
     private final JwtProvider jwtProvider;
+    private final AuthToRedisQueryPort authToRedisQueryPort;
+    private static String HEADER_AUTHORIZATION = "AccessToken";
+
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-        String bearerToken = jwtHeaderUtil.getBearerToken(req);
+        String bearerToken = jwtHeaderUtil.getBearerToken(req.getHeader(HEADER_AUTHORIZATION));
         if(bearerToken!=null){
             AuthToken authToken = jwtProvider.convertAuthToken(bearerToken);
-            if(authToken.validate()){
+            if(authToken.validate() && authToRedisQueryPort.validateToken(bearerToken)){
                 SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(authToken));
             }
         }

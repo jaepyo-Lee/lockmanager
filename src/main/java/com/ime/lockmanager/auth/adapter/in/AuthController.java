@@ -1,9 +1,11 @@
 package com.ime.lockmanager.auth.adapter.in;
 
+import antlr.Token;
 import com.ime.lockmanager.auth.adapter.in.request.LoginRequest;
 import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,6 +18,16 @@ public class AuthController {
     @PostMapping ("/login")
     public TokenResponseDto login(@RequestBody LoginRequest loginRequest){
         return authUseCase.login(loginRequest.toRequestDto());
+    }
+
+    @PostMapping("/reissue")
+    public TokenResponseDto reissue(@RequestHeader(value = "RefreshToken") String refreshToken){
+        return authUseCase.reissue(refreshToken);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String>logout(@RequestHeader(value = "AccessToken") String accessToken){
+        return authUseCase.logout(accessToken);
     }
 
 }
