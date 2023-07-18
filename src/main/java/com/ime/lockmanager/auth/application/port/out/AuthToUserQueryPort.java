@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface AuthToUserQueryPort {
     Optional<User> findByStudentNameAndStudentNum(String studentName,String studentNum);
+    Optional<User> findByStudentNumAndPassword(String studentNum,String password);
 
     Optional<User>findByStudentNum(String studentNum);
 }

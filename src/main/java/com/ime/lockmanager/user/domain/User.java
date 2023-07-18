@@ -20,7 +20,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "STUDENT_NUM")
+    @Column(name = "PASSWORD")//비밀번호
+    private String password;
+
+    @Column(name = "STUDENT_NUM")//아이디
     private String studentNum;
 
     @Column(name = "MEMBERSHIP")
@@ -38,5 +41,9 @@ public class User extends BaseTimeEntity {
         this.locker = locker;
         locker.setUsable(false);
         locker.setUser(this);
+    }
+
+    public void changePassword(String newPassword){
+        this.password = newPassword;
     }
 }

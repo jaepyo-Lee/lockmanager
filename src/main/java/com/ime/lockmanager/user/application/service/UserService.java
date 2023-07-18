@@ -3,6 +3,7 @@ package com.ime.lockmanager.user.application.service;
 import com.ime.lockmanager.common.exception.user.NotFoundUserException;
 import com.ime.lockmanager.user.adapter.out.UserQueryRepository;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto.UserInfoResponseDtoBuilder;
@@ -10,6 +11,7 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,5 +35,13 @@ public class UserService implements UserUseCase {
         }
         UserInfoResponseDto userInfoResponseDto = build.build();
         return userInfoResponseDto;
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
+        User byStudentNum = userQueryRepository.findByStudentNum(changePasswordRequestDto.getStudentNum())
+                .orElseThrow(NotFoundUserException::new);
+        byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());
     }
 }

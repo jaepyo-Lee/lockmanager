@@ -24,7 +24,7 @@ public class WebSecurityConfig {
     private final AuthToRedisQueryPort authToRedisQueryPort;
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/h2-console/**", "/index.html");
+        return (web) -> web.ignoring().antMatchers( "/h2-console/**", "/index.html");
     }
 
     @Bean

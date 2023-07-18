@@ -1,14 +1,15 @@
 package com.ime.lockmanager.user.adapter.in;
 
+import com.ime.lockmanager.user.adapter.in.req.ChangePasswordRequest;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -30,5 +31,15 @@ public class UserController {
         return UserInfoResponse.fromResponse(
                 userInfo
         );
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<String>changePassword(Principal principal, @RequestBody ChangePasswordRequest request){
+        userUseCase.changePassword(
+                ChangePasswordRequestDto.builder()
+                        .studentNum(principal.getName())
+                        .newPassword(request.getNewPassword())
+                        .build());
+        return ResponseEntity.ok("비밀번호가 변경되었습니다");
     }
 }

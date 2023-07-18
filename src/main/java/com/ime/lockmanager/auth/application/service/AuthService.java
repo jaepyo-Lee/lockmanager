@@ -40,7 +40,7 @@ public class AuthService implements AuthUseCase {
     @Override
     @Transactional
     public TokenResponseDto login(LoginRequestDto loginRequestDto) {
-        User user = authToUserQueryPort.findByStudentNameAndStudentNum(loginRequestDto.getName(),loginRequestDto.getStudentNum())
+        User user = authToUserQueryPort.findByStudentNumAndPassword(loginRequestDto.getStudentNum(),loginRequestDto.getPassword())
                 .orElseThrow(InvalidLoginParamException::new);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getStudentNum(),jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));

@@ -16,15 +16,17 @@ import java.security.Principal;
 @RequestMapping("/api/locker")
 public class LockerController {
 
-//    private final RedissonLockLockerFacade redissonLockLockerFacade;
+    private final RedissonLockLockerFacade redissonLockLockerFacade;
     private final LockerService lockerService;
 
+    //사물함 예약하는 api
     @PostMapping("/register")
     public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
-        return LockerRegisterResponse.fromResponse(/*redissonLockLockerFacade*/lockerService.register(lockerRegisterRequest.toRequestDto(principal.getName())));
+        return LockerRegisterResponse.fromResponse(redissonLockLockerFacade.register(lockerRegisterRequest.toRequestDto(principal.getName())));
     }
 
-    @GetMapping()
+    //예약된 사물함 가져오기
+    @GetMapping("/reserved")
     public LockerReserveResponse findReservedLocker(){
         return LockerReserveResponse.fromResponse(lockerService.findReserveLocker());
     }

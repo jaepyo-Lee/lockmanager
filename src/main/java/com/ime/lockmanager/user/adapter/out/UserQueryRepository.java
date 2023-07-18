@@ -14,6 +14,11 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
     @Override
+    public Optional<User> findByStudentNumAndPassword(String studentNum,String password) {
+        return userJpaRepository.findByStudentNumAndPassword(studentNum,password);
+    }
+
+    @Override
     public Optional<User> findByStudentNameAndStudentNum(String studentName, String studentNum) {
         return userJpaRepository.findByNameAndStudentNum(studentName, studentNum);
     }

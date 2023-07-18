@@ -11,15 +11,15 @@ import lombok.*;
 @ToString
 public class LoginRequest {
     @NotNull
-    private String name;
+    private String studentNum;
 
     @NotNull
-    private String studentNum;
+    private String password;
 
     public LoginRequestDto toRequestDto(){
         return LoginRequestDto.builder()
-                .name(name)
                 .studentNum(studentNum)
+                .password(password)
                 .build();
     }
 
