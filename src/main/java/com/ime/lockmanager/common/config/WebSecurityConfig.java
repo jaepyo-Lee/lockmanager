@@ -22,9 +22,14 @@ public class WebSecurityConfig {
     private final JwtHeaderUtil jwtHeaderUtil;
     private final JwtProvider jwtProvider;
     private final AuthToRedisQueryPort authToRedisQueryPort;
+
+    private static final String[] DOC_URLS = {
+            "/v3/api-docs", "/swagger-resources/**", "/swagger-ui.html","/swagger-ui/**","/h2-console/**","/index.html"
+    };
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers( "/h2-console/**", "/index.html");
+        return (web) -> web.ignoring().antMatchers(DOC_URLS);
     }
 
     @Bean
