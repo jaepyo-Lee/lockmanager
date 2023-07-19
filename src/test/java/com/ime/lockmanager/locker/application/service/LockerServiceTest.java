@@ -33,8 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class LockerServiceTest {
-    /*@Autowired
+    @Autowired
     private LockerService lockerService;
 
     @Autowired
@@ -44,7 +45,6 @@ class LockerServiceTest {
     private RedissonLockLockerFacade redissonLockLockerFacade;
 
     @DisplayName("각각 다른 사물함을 예약할때")
-    @Transactional
     @Test
     void reserveTest() throws Exception {
         LockerRegisterRequestDto dto1 = LockerRegisterRequestDto.builder()
@@ -62,7 +62,6 @@ class LockerServiceTest {
     }
 
     @DisplayName("여러명이 동시에 같은 사물함을 예약할때 데이터 정합성테스트")
-    @Transactional
     @Test
     void reserveConcurrencyTest() throws InterruptedException {
         log.info("동시성 테스트 시작");
@@ -121,5 +120,5 @@ class LockerServiceTest {
                     Long id = byStudentNum.get().getLocker().getId();
                 }
         ).isInstanceOf(NullPointerException.class);
-    }*/
+    }
 }

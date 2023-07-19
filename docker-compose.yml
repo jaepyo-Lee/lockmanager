@@ -1,22 +1,16 @@
-#version: "3"
-#services:
-#  redis:
-#    image: redis
-#    container_name: my_redis
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      - locker_manager
-#
-#  concert_calendar:
-#    image: jaepyo99/lockermanager
-#    container_name: lockermanager
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - redis
-#    networks:
-#      - locker_manager
-#networks:
-#  locker_manager:
-#    external: true
+version: '3.4'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  lockmanager:
+    image: jaepyo99/lockmanager
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis

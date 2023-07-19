@@ -18,21 +18,28 @@ import java.util.concurrent.TimeUnit;
 public class RedissonLockLockerFacade{
     private final RedissonClient redissonClient;
     private final LockerUseCase lockerUseCase;
+    private static LockerRegisterResponseDto register;
 
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
-        RLock lock = redissonClient.getLock(dto.getStudentNum().toString());
-        LockerRegisterResponseDto registerResponseDto = null;
 
-        boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
-        if (!available) {
-            log.error("lock 획득실패");
-            return null;
-        }
-        log.info("redisson : lock 획득 후 로직 진행");
-        registerResponseDto = lockerUseCase.register(dto);
+        RLock lock = redissonClient.getLock(dto.getStudentNum());
+try {
+    boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+    if (!available) {
+        log.error("lock 획득실패");
+        return null;
+    }
+    log.info("redisson : lock 획득 후 로직 진행");
+    register = lockerUseCase.register(dto);
+}catch (InterruptedException e){
+    e.printStackTrace();
+}finally {
+    lock.unlock();
+    return register;
+}
 
-        lock.unlock();
-        return registerResponseDto;
+
+
 
     }
 }
