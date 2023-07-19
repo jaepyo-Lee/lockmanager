@@ -20,10 +20,11 @@ public class Locker extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "locker")
     private User user;
+
     private boolean usable;
 
     @Builder.Default
-    @Column(name = "reserved_time")
+    @Column(name = "RESERVED_TIME")
     private LocalDateTime reservedTime=null;
 
 }
