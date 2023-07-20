@@ -11,7 +11,7 @@ services:
       - lockmanager-network
 
   lockmanager:
-    image: jaepyo99/lockmanager
+    image: jaepyo99/lockermanager
     container_name: ime_lockmanager
     build:
       context: .
