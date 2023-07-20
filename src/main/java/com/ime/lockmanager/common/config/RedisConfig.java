@@ -13,10 +13,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
-    @Value("${spring.redis.host}")
+    @Value("${redis.host}")
     private String host;
 
-    @Value("${spring.redis.port}")
+    @Value("${redis.port}")
     private int port;
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
@@ -28,9 +28,9 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() {
-        RedissonClient redisson = null;
+        RedissonClient redisson;
         Config config = new Config();
-        config.useSingleServer().setAddress(host + ":" + port);
+        config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
         redisson = Redisson.create(config);
         return redisson;
     }
