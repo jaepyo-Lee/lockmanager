@@ -28,11 +28,10 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() {
-        RedissonClient redisson;
         Config config = new Config();
         config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
-        redisson = Redisson.create(config);
-        return redisson;
+        RedissonClient redissonClient = Redisson.create(config);
+        return redissonClient;
     }
 
     @Bean
