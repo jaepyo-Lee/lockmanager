@@ -65,6 +65,7 @@ jobs:
         script: |
           docker stop $(docker ps -a -q) 
           sudo docker rm $(docker ps -a -q)
+          sudo docker pull redis
           sudo docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.PROJECT_NAME}}
           docker-compose up -d
 #          sudo docker pull redis
