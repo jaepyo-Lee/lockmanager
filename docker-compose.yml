@@ -3,10 +3,12 @@ version: '3.4'
 services:
   redis:
     image: redis
-    container_name: my_redis
-    hostname: my_redis
+    container_name: redis
+    hostname: redis
     ports:
       - 6379:6379
+    extra_hosts:
+      - host.docker.internal:host-geteway
     networks:
       - lockmanager-network
 
@@ -18,7 +20,10 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 8080:8080
-    depends_on:
-      - redis
     networks:
       - lockmanager-network
+    external_links:
+      - redis
+networks:
+  lockmanager-network:
+    driver: bridge
