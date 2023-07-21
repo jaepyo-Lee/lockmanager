@@ -4,7 +4,6 @@ services:
   redis:
     image: redis
     container_name: redis
-    hostname: redis
     ports:
       - 6379:6379
     extra_hosts:
