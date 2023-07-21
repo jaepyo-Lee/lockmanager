@@ -19,8 +19,9 @@ services:
       - 8080:8080
     networks:
       - lockmanager-network
-    external_links:
+    depends_on:
       - redis
+
 networks:
   lockmanager-network:
     driver: bridge
