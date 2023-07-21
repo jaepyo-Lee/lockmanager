@@ -22,7 +22,7 @@ public class AuthController {
             notes = "아이디와 비밀번호를 받아 로그인 하는 api"
     )
     @PostMapping ("/login")
-    public TokenResponseDto login(@RequestBody LoginRequest loginRequest){
+    public TokenResponseDto login(@ModelAttribute LoginRequest loginRequest){
         return authUseCase.login(loginRequest.toRequestDto());
     }
 
