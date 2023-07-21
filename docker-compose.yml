@@ -4,11 +4,8 @@ services:
   redis:
     image: redis
     container_name: redis
-    hostname: host.docker.internal
     ports:
       - 6379:6379
-    extra_hosts:
-      - host.docker.internal:host-geteway
     networks:
       - lockmanager-network
 
