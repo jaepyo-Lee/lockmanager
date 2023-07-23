@@ -1,6 +1,6 @@
 package com.ime.lockmanager.user.application.service;
 
-import com.ime.lockmanager.common.exception.user.NotFoundUserException;
+import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.user.adapter.out.UserQueryRepository;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

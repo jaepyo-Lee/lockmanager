@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception;
+package com.ime.lockmanager.common.format.exception;
 
 import lombok.Getter;
 

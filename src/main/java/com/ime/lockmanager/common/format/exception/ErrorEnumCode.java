@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception;
+package com.ime.lockmanager.common.format.exception;
 
 public interface ErrorEnumCode {
     String getCode();

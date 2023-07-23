@@ -1,6 +1,5 @@
 package com.ime.lockmanager.locker.application.service;
 
-import com.ime.lockmanager.common.exception.ApplicationRunException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
@@ -19,11 +18,11 @@ public class RedissonLockLockerFacade{
     private final RedissonClient redissonClient;
     private final LockerUseCase lockerUseCase;
     private static LockerRegisterResponseDto register;
-
+    private static final String LOCK_PREFIX = "lockerId : ";
 
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
 
-        RLock lock = redissonClient.getLock(dto.getStudentNum());
+        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
             if (!available) {

@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception;
+package com.ime.lockmanager.common.format.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

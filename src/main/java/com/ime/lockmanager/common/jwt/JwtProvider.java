@@ -1,9 +1,8 @@
 package com.ime.lockmanager.common.jwt;
 
 import com.ime.lockmanager.auth.domain.AuthUser;
-import com.ime.lockmanager.common.exception.auth.TokenValidFailedException;
+import com.ime.lockmanager.common.format.exception.auth.TokenValidFailedException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;

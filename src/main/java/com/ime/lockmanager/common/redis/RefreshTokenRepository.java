@@ -1,13 +1,10 @@
 package com.ime.lockmanager.common.redis;
 
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
-import com.ime.lockmanager.common.exception.auth.InvalidRefreshTokenException;
+import com.ime.lockmanager.common.format.exception.auth.InvalidRefreshTokenException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;

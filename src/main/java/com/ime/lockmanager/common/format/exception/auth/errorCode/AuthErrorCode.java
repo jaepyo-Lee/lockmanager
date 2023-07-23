@@ -1,9 +1,8 @@
-package com.ime.lockmanager.common.exception.auth.errorCode;
+package com.ime.lockmanager.common.format.exception.auth.errorCode;
 
-import com.ime.lockmanager.common.exception.ErrorEnumCode;
+import com.ime.lockmanager.common.format.exception.ErrorEnumCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor

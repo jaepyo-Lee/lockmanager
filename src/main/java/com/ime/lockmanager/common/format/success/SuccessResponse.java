@@ -1,4 +1,4 @@
-package com.ime.lockmanager.common.exception;
+package com.ime.lockmanager.common.format.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-import static com.ime.lockmanager.common.exception.SuccessResponseStatus.SUCCESS;
 import static java.time.LocalDateTime.now;
 
 @JsonPropertyOrder({"isSuccess","code","message","result"})
@@ -24,8 +23,8 @@ public class SuccessResponse<T> {
     public SuccessResponse(T result){
         this.status= HttpStatus.OK.value();
         this.time = now();
-        this.code = SUCCESS.getCode();
-        this.message = SUCCESS.getMessage();
+        this.code = SuccessResponseStatus.SUCCESS.getCode();
+        this.message = SuccessResponseStatus.SUCCESS.getMessage();
         this.result = result;
     }
 }

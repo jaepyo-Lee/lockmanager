@@ -1,12 +1,11 @@
 package com.ime.lockmanager.locker.application.service;
 
-import com.ime.lockmanager.common.exception.locker.AlreadyReservedLockerException;
-import com.ime.lockmanager.common.exception.locker.IsNotReserveTimeException;
-import com.ime.lockmanager.common.exception.locker.NotFoundLockerException;
-import com.ime.lockmanager.common.exception.locker.ReserveTimeNullException;
-import com.ime.lockmanager.common.exception.user.AlreadyReservedUserException;
-import com.ime.lockmanager.common.exception.user.NotFoundUserException;
-import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
+import com.ime.lockmanager.common.format.exception.locker.AlreadyReservedLockerException;
+import com.ime.lockmanager.common.format.exception.locker.IsNotReserveTimeException;
+import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerException;
+import com.ime.lockmanager.common.format.exception.locker.ReserveTimeNullException;
+import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserException;
+import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
