@@ -1,14 +1,15 @@
 package com.ime.lockmanager.auth.adapter.in;
 
-import antlr.Token;
 import com.ime.lockmanager.auth.adapter.in.request.LoginRequest;
 import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
-import io.swagger.annotations.Api;
+import com.ime.lockmanager.common.format.success.SuccessResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 @RequiredArgsConstructor
@@ -21,9 +22,11 @@ public class AuthController {
             value = "로그인 api",
             notes = "아이디와 비밀번호를 받아 로그인 하는 api"
     )
+    @CrossOrigin(origins = "file:///C:/Users/jaepy/OneDrive/%EB%B0%94%ED%83%95%20%ED%99%94%EB%A9%B4/lockmanager_front/src/html/login.html")
     @PostMapping ("/login")
-    public TokenResponseDto login(@ModelAttribute LoginRequest loginRequest){
-        return authUseCase.login(loginRequest.toRequestDto());
+    public SuccessResponse login(@ModelAttribute LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+        httpServletResponse.setHeader("Access-Control-Allow-Origin","*");
+        return new SuccessResponse(authUseCase.login(loginRequest.toRequestDto()));
     }
 
     @PostMapping("/reissue")

@@ -1,5 +1,6 @@
 package com.ime.lockmanager.locker.adapter.in;
 
+import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.locker.adapter.in.req.LockerRegisterRequest;
 import com.ime.lockmanager.locker.adapter.in.res.LockerRegisterResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
@@ -22,12 +23,13 @@ public class LockerController {
     //사물함 예약하는 api
     @PostMapping("/register")
     public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
+        System.out.println(principal.getName());
         return LockerRegisterResponse.fromResponse(redissonLockLockerFacade.register(lockerRegisterRequest.toRequestDto(principal.getName())));
     }
 
     //예약된 사물함 가져오기
     @GetMapping("/reserved")
-    public LockerReserveResponse findReservedLocker(){
-        return LockerReserveResponse.fromResponse(lockerService.findReserveLocker());
+    public SuccessResponse findReservedLocker(){
+        return new SuccessResponse(LockerReserveResponse.fromResponse(lockerService.findReserveLocker()));
     }
 }
