@@ -23,19 +23,14 @@ public class RedissonLockLockerFacade{
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
 
         RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
-        try {
-            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
-            if (!available) {
-                log.error("lock 획득실패");
-                return null;
-            }
-            log.info("redisson : lock 획득 후 로직 진행");
-            register = lockerUseCase.register(dto);
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }finally {
-            lock.unlock();
-            return register;
+        boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+        if (!available) {
+            log.error("lock 획득실패");
+            return null;
         }
+        log.info("redisson : lock 획득 후 로직 진행");
+        register = lockerUseCase.register(dto);
+        lock.unlock();
+        return register;
     }
 }
