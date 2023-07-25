@@ -22,9 +22,9 @@ public class LockerController {
 
     //사물함 예약하는 api
     @PostMapping("/register")
-    public LockerRegisterResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
+    public SuccessResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
         System.out.println(principal.getName());
-        return LockerRegisterResponse.fromResponse(redissonLockLockerFacade.register(lockerRegisterRequest.toRequestDto(principal.getName())));
+        return new SuccessResponse(LockerRegisterResponse.fromResponse(redissonLockLockerFacade.register(lockerRegisterRequest.toRequestDto(principal.getName()))));
     }
 
     //예약된 사물함 가져오기

@@ -1,5 +1,6 @@
 package com.ime.lockmanager.user.adapter.in;
 
+import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.user.adapter.in.req.ChangePasswordRequest;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -22,24 +23,24 @@ public class UserController {
     private final UserUseCase userUseCase;
 
     @GetMapping("/info")
-    public UserInfoResponse findUserInfo(Principal principal) throws Exception {
+    public SuccessResponse findUserInfo(Principal principal) throws Exception {
         log.info("{}정보조회",principal.getName());
         UserInfoResponseDto userInfo = userUseCase.findUserInfo(
                 UserInfoRequestDto.builder()
                         .studentNum(principal.getName())
                         .build());
-        return UserInfoResponse.fromResponse(
+        return new SuccessResponse(UserInfoResponse.fromResponse(
                 userInfo
-        );
+        ));
     }
 
     @PutMapping("/password")
-    public ResponseEntity<String>changePassword(Principal principal, @RequestBody ChangePasswordRequest request){
+    public SuccessResponse changePassword(Principal principal, @RequestBody ChangePasswordRequest request){
         userUseCase.changePassword(
                 ChangePasswordRequestDto.builder()
                         .studentNum(principal.getName())
                         .newPassword(request.getNewPassword())
                         .build());
-        return ResponseEntity.ok("비밀번호가 변경되었습니다");
+        return new SuccessResponse("비밀번호가 수정되었습니다.");
     }
 }

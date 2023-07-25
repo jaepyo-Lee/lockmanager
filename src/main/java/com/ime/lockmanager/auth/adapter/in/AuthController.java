@@ -30,12 +30,12 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public TokenResponseDto reissue(@RequestHeader(value = "RefreshToken") String refreshToken){
-        return authUseCase.reissue(refreshToken);
+    public SuccessResponse reissue(@RequestHeader(value = "RefreshToken") String refreshToken){
+        return new SuccessResponse(authUseCase.reissue(refreshToken));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String>logout(@RequestHeader(value = "AccessToken") String accessToken){
+    public ResponseEntity<String> logout(@RequestHeader(value = "AccessToken") String accessToken){
         return authUseCase.logout(accessToken);
     }
 

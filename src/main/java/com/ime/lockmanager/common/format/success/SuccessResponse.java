@@ -15,23 +15,30 @@ import static java.time.LocalDateTime.now;
 
 @ToString
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder({"time","status","code","message","result"})
 public class SuccessResponse<T> {
     @JsonProperty("status")
-    private String status;
+    private int status;
     private LocalDateTime time;
-    private int code;
+    private String code;
     private String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
     //성공의 경우
     public SuccessResponse(T result){
-        this.status=SuccessResponseStatus.SUCCESS.getCode();
+        this.status= HttpStatus.OK.value();
         this.time = now();
-        this.code = HttpStatus.OK.value();
+        this.code = SuccessResponseStatus.SUCCESS.getCode();
         this.message = SuccessResponseStatus.SUCCESS.getMessage();
         this.result = result;
+    }
+
+    public SuccessResponse(String message){
+        this.status= HttpStatus.OK.value();
+        this.time = now();
+        this.code = SuccessResponseStatus.SUCCESS.getCode();
+        this.message = message;
     }
 }
