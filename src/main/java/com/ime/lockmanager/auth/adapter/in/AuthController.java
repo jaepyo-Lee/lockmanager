@@ -1,7 +1,6 @@
 package com.ime.lockmanager.auth.adapter.in;
 
-import com.ime.lockmanager.auth.adapter.in.request.LoginRequest;
-import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
+import com.ime.lockmanager.auth.adapter.in.req.LoginRequest;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import io.swagger.annotations.ApiOperation;

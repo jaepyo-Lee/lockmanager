@@ -1,6 +1,5 @@
 package com.ime.lockmanager.auth.application.port.in.response;
 
-import com.ime.lockmanager.auth.adapter.in.request.LoginRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

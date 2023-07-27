@@ -1,5 +1,6 @@
 package com.ime.lockmanager.user.application.service;
 
+import com.ime.lockmanager.common.format.exception.user.IncorrectPasswordException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.user.adapter.out.UserQueryRepository;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -41,6 +42,9 @@ public class UserService implements UserUseCase {
     public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
         User byStudentNum = userQueryRepository.findByStudentNum(changePasswordRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
+        if(!byStudentNum.getPassword().equals(changePasswordRequestDto.getCurrentPassword())){
+            throw new IncorrectPasswordException();
+        }
         byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());
     }
 }

@@ -40,6 +40,7 @@ public class UserController {
                 ChangePasswordRequestDto.builder()
                         .studentNum(principal.getName())
                         .newPassword(request.getNewPassword())
+                        .currentPassword(request.getCurrentPassword())
                         .build());
         return new SuccessResponse("비밀번호가 수정되었습니다.");
     }
