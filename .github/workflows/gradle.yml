@@ -62,6 +62,8 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }} # ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
-            docker stop $(docker ps -a -q)
+            sudo docker rm - f $(docker ps -qa)
+            sudo docker pull redis
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker-compose up -d
             docker image prune -f
