@@ -8,4 +8,6 @@ public interface UserUseCase {
     UserInfoResponseDto findUserInfo(UserInfoRequestDto userRequestDto);
 
     void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
+
+    boolean checkAdmin(String studentNum);
 }

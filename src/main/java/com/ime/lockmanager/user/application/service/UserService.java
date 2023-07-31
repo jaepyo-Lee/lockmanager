@@ -8,11 +8,13 @@ import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto.UserInfoResponseDtoBuilder;
+import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,5 +48,16 @@ public class UserService implements UserUseCase {
             throw new IncorrectPasswordException();
         }
         byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());
+    }
+
+    @Override
+    public boolean checkAdmin(String studentNum) {
+        User byStudentNum = userQueryRepository.findByStudentNum(studentNum)
+                .orElseThrow(NotFoundUserException::new);
+        if(byStudentNum.getRole()== Role.ROLE_ADMIN){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

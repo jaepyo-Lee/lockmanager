@@ -9,7 +9,6 @@ import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -43,5 +42,10 @@ public class UserController {
                         .currentPassword(request.getCurrentPassword())
                         .build());
         return new SuccessResponse("비밀번호가 수정되었습니다.");
+    }
+
+    @GetMapping("/role")
+    public SuccessResponse getUserRole(Principal principal){
+        return new SuccessResponse(userUseCase.checkAdmin(principal.getName()));
     }
 }
