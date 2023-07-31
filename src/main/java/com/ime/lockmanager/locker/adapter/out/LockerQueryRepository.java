@@ -19,7 +19,12 @@ public class LockerQueryRepository implements LockerQueryPort {
     }
 
     @Override
-    public List<Long> findReservedLocker() {
-        return lockerJpaRepository.findReservedLocker();
+    public List<Long> findReservedLockerId() {
+        return lockerJpaRepository.findReservedLockerId();
+    }
+
+    @Override
+    public List<Locker> findAll() {
+        return lockerJpaRepository.findAll();
     }
 }

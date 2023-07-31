@@ -1,5 +1,6 @@
 package com.ime.lockmanager.auth.domain;
 
+import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,10 @@ public class AuthUser implements UserDetails {
 
     public AuthUser(User user){
         this.user = user;
+    }
+
+    public Role getRole(){
+        return user.getRole();
     }
 
     public static AuthUser of(User user){

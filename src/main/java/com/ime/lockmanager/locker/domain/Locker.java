@@ -3,6 +3,7 @@ package com.ime.lockmanager.locker.domain;
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.user.domain.User;
 import lombok.*;
+import reactor.util.annotation.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,5 +27,8 @@ public class Locker extends BaseTimeEntity {
     @Builder.Default
     @Column(name = "RESERVED_TIME")
     private LocalDateTime reservedTime=null;
+
+    @Embedded
+    private Period period;
 
 }

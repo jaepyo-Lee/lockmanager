@@ -8,10 +8,13 @@ import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserExcep
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
+import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerReserveResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +62,42 @@ public class LockerService implements LockerUseCase  {
 
     @Override
     public LockerReserveResponseDto findReserveLocker() {
-        List<Long> reservedLockerId = lockerQueryPort.findReservedLocker();
+        List<Long> reservedLockerId = lockerQueryPort.findReservedLockerId();
         return LockerReserveResponseDto.builder()
                 .lockerId(reservedLockerId)
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void setLockerPeriod(LockerSetTimeRequestDto requestDto) {
+        List<Locker> lockers = lockerQueryPort.findAll();
+        log.info("시간설정 시작");
+        for (Locker locker : lockers) {
+            if(locker.getPeriod()==null){
+                locker.setPeriod(new Period(requestDto.getStartDateTime(),requestDto.getEndDateTime()));
+            }
+            else{
+                locker.getPeriod().modifiedDateTime(requestDto);
+            }
+        }
+        log.info("시간설정 완료");
+    }
+
+    @Override
+    public LockerPeriodResponseDto getLockerPeriod() {
+        List<Locker> lockers = lockerQueryPort.findAll();
+        Locker locker = lockers.get(0);
+        if(locker.getPeriod() == null){
+            return LockerPeriodResponseDto.builder()
+                    .endDateTime(null)
+                    .startDateTime(null)
+                    .build();
+        } else{
+            return LockerPeriodResponseDto.builder()
+                    .startDateTime(locker.getPeriod().getStartDateTime())
+                    .endDateTime(locker.getPeriod().getEndDateTime())
+                    .build();
+        }
     }
 }

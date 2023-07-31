@@ -28,6 +28,7 @@ public class JwtProvider {
 
     private final String USER_NAME = "userName";
     private final String STUDENT_NUM = "studentNum";
+    private final String ROLE = "role";
 
     public JwtProvider(
             @Value("${jwt.secret-key}") String SECRET_KEY,
@@ -84,6 +85,7 @@ public class JwtProvider {
         Map<String, Object> map = new HashMap<>();
         map.put(USER_NAME, user.getUser().getName());
         map.put(STUDENT_NUM, user.getUser().getStudentNum());
+        map.put(ROLE, user.getRole());
         return map;
     }
 
@@ -97,10 +99,11 @@ public class JwtProvider {
             log.debug("{}",tokenClaims.get("userName"));
 
             log.debug("{}",tokenClaims.get("studentNum"));
-
-            Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get("studentNum").toString()})
+            log.info("{}",tokenClaims.get("role"));
+            Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get("role").toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
+            System.out.println(authorities);
             User principal = new User((String) tokenClaims.get("studentNum"), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {
