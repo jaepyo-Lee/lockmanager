@@ -35,8 +35,6 @@ jobs:
           cd ./src/main/resources # resources 폴더로 이동
           touch ./application.properties # application.yml 생성
           echo "${{ secrets.APPLICATION }}" > ./application.properties # github actions에서 설정한 값을 application.yml 파일에 쓰기
-          cd ../../..
-          ls
 
         shell: bash
 
@@ -64,8 +62,8 @@ jobs:
           host: ${{ secrets.AWS_HOST }} # EC2 퍼블릭 IPv4 DNS
           username: ${{ secrets.AWS_USERNAME }} # ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
+          envs: GITHUB_SHA
           script: |
-            ls
             sudo docker rm - f $(docker ps -qa)
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
