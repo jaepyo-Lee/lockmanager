@@ -44,6 +44,12 @@ class LockerServiceTest {
     @Autowired
     private RedissonLockLockerFacade redissonLockLockerFacade;
 
+    @BeforeEach
+    public void cleanUp(){
+        userJpaRepository.deleteAll();
+
+    }
+
     @DisplayName("각각 다른 사물함을 예약할때")
     @Test
     void reserveTest() throws Exception {
