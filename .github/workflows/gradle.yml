@@ -68,8 +68,18 @@ jobs:
             sudo docker rm - f $(docker ps -qa)
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            sudo docker-compose up -d            
+            docker-compose up -d            
+
+      - name: Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }} # EC2 퍼블릭 IPv4 DNS
+          username: ${{ secrets.AWS_USERNAME }} # ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            docker-compose up -d            
             docker image prune -f
+            
 
   current-time:
     needs: build
