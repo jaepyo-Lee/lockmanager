@@ -63,6 +63,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }} # ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           envs: GITHUB_SHA
+          source: "docker-compose.yaml"
           script: |
             sudo docker rm - f $(docker ps -qa)
             sudo docker pull redis
