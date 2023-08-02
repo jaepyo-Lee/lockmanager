@@ -69,7 +69,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker -d -p 6379:6379 --network lockermanager-network --name redis redis
             docker -d -p 8080:8080 --network lockermanager-network --name ime jaepyo99/lockermanager
-#            docker-compose up -d
             docker image prune -f
 
       - name: why
