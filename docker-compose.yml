@@ -20,5 +20,5 @@ services:
       - redis
 
 networks:
-  lockmanager-network:
+  lockermanager-network:
     external: true
