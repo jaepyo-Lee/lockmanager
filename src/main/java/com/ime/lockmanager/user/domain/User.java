@@ -13,22 +13,20 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class User extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "USER_ID")
     private Long Id;
 
     @Column(name = "NAME")
     private String name;
-
-    @Column(name = "PASSWORD")//비밀번호
-    private String password;
-
-    @Column(name = "STUDENT_NUM")//아이디
+    @Column(name = "STUDENT_NUM")
     private String studentNum;
+
+    @Column(name = "STATUS")
+    private String status;
 
     @Column(name = "MEMBERSHIP")
     private boolean membership;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -37,13 +35,17 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "LOCKER_ID")
     private Locker locker;
 
+    @Builder
+    public User(String name, String studentNum, String status, Role role) {
+        this.name = name;
+        this.studentNum = studentNum;
+        this.status = status;
+        this.role = role;
+    }
+
     public void registerLocker(Locker locker){
         this.locker = locker;
         locker.setUsable(false);
         locker.setUser(this);
-    }
-
-    public void changePassword(String newPassword){
-        this.password = newPassword;
     }
 }

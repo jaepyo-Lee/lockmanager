@@ -60,6 +60,9 @@ dependencies {
 
 	// Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	//WebClient
+	compileOnly('org.springframework.boot:spring-boot-starter-webflux')
 }
 
 

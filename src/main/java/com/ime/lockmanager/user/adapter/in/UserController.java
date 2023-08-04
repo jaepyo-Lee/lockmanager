@@ -1,6 +1,7 @@
 package com.ime.lockmanager.user.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
+import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.user.adapter.in.req.ChangePasswordRequest;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -20,6 +21,12 @@ import java.security.Principal;
 public class UserController {
 
     private final UserUseCase userUseCase;
+    private final SejongLoginService service;
+
+    @PostMapping("/test")
+    public SuccessResponse test(@RequestBody SejongMemberRequest request){
+        return new SuccessResponse(service.callSejongMemberDetailApi(request.toRequest()));
+    }
 
     @GetMapping("/info")
     public SuccessResponse findUserInfo(Principal principal) throws Exception {

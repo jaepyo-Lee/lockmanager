@@ -6,12 +6,14 @@ import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
 import com.ime.lockmanager.auth.domain.AuthUser;
-import com.ime.lockmanager.common.format.exception.auth.InvalidLoginParamException;
 import com.ime.lockmanager.common.format.exception.auth.InvalidRefreshTokenException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;
 import com.ime.lockmanager.common.jwt.TokenSet;
+import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
+import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
+import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +32,23 @@ public class AuthService implements AuthUseCase {
     private final JwtProvider jwtProvider;
     private final AuthToRedisQueryPort authToRedisQueryPort;
     private final JwtHeaderUtil jwtHeaderUtil;
+    private final SejongLoginService sejongLoginService;
 
     @Override
     @Transactional
     public TokenResponseDto login(LoginRequestDto loginRequestDto) {
-        User user = authToUserQueryPort.findByStudentNumAndPassword(loginRequestDto.getStudentNum(),loginRequestDto.getPassword())
-                .orElseThrow(InvalidLoginParamException::new);
+        SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
+
+        User user = authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(
+                () -> authToUserQueryPort.save(User.builder()
+                        .name(sejongMemberResponseDto.getResult().getBody().getName())
+                        .status(sejongMemberResponseDto.getResult().getBody().getStatus())
+                        .studentNum(loginRequestDto.getId())
+                        .role(Role.ROLE_USER)
+                        .build())
+        );
         TokenSet tokenSet = makeToken(user);
-        authToRedisQueryPort.refreshSave(loginRequestDto.getStudentNum(),jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
+        authToRedisQueryPort.refreshSave(loginRequestDto.getId(),jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return TokenResponseDto.of(tokenSet.getAccessToken(),tokenSet.getRefreshToken());
     }
 

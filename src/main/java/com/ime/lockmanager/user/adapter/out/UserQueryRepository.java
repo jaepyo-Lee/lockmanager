@@ -13,10 +13,6 @@ import java.util.Optional;
 public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
-    @Override
-    public Optional<User> findByStudentNumAndPassword(String studentNum,String password) {
-        return userJpaRepository.findByStudentNumAndPassword(studentNum,password);
-    }
 
     @Override
     public Optional<User> findByStudentNameAndStudentNum(String studentName, String studentNum) {
@@ -28,4 +24,8 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
         return userJpaRepository.findByStudentNum(studentNum);
     }
 
+    @Override
+    public User save(User user) {
+        return userJpaRepository.save(user);
+    }
 }

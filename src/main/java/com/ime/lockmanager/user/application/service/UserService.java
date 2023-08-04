@@ -42,12 +42,12 @@ public class UserService implements UserUseCase {
     @Transactional
     @Override
     public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
-        User byStudentNum = userQueryRepository.findByStudentNum(changePasswordRequestDto.getStudentNum())
+        /*User byStudentNum = userQueryRepository.findByStudentNum(changePasswordRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
         if(!byStudentNum.getPassword().equals(changePasswordRequestDto.getCurrentPassword())){
             throw new IncorrectPasswordException();
         }
-        byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());
+        byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());*/
     }
 
     @Override
