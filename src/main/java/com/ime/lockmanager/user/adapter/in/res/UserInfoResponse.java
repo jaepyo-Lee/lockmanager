@@ -4,8 +4,6 @@ import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Optional;
-
 @Getter
 @Builder
 public class UserInfoResponse {
@@ -13,10 +11,10 @@ public class UserInfoResponse {
     private String userNum;
     private boolean membership;
     private Long lockerNum;
-    public static UserInfoResponse fromResponse(UserInfoResponseDto userInfoResponseDto) {
+    public static UserInfoResponse fromResponseDto(UserInfoResponseDto userInfoResponseDto) {
         return UserInfoResponse.builder()
                 .lockerNum(userInfoResponseDto.getLockerNum())
-                .userNum(userInfoResponseDto.getUserNum())
+                .userNum(userInfoResponseDto.getStudentNum())
                 .userName(userInfoResponseDto.getUserName())
                 .membership(userInfoResponseDto.isMembership())
                 .build();

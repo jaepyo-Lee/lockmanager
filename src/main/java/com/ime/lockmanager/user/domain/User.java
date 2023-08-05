@@ -3,8 +3,10 @@ package com.ime.lockmanager.user.domain;
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.Locker;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 
 @Getter
 @Builder
@@ -33,7 +35,7 @@ public class User extends BaseTimeEntity {
 
     @OneToOne
     @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
+    private Locker locker=null;
 
     @Builder
     public User(String name, String studentNum, String status, Role role) {

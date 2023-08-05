@@ -6,6 +6,7 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -13,6 +14,11 @@ import java.util.Optional;
 public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
+
+    @Override
+    public List<User> findAll() {
+        return userJpaRepository.findAll();
+    }
 
     @Override
     public Optional<User> findByStudentNameAndStudentNum(String studentName, String studentNum) {

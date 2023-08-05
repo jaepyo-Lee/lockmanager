@@ -1,6 +1,5 @@
 package com.ime.lockmanager.user.application.service;
 
-import com.ime.lockmanager.common.format.exception.user.IncorrectPasswordException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.user.adapter.out.UserQueryRepository;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -14,24 +13,42 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class UserService implements UserUseCase {
     private final UserQueryRepository userQueryRepository;
+
+    @Override
+    public List<UserInfoResponseDto> findAllUserInfo() {
+        List<User> all = userQueryRepository.findAll();
+        List<UserInfoResponseDto> userInfoResponseDtos=new ArrayList<>();
+        for (User user : all) {
+            userInfoResponseDtos.add(getUserInfoResponseDto(user));
+        }
+        return userInfoResponseDtos;
+
+    }
+
     @Override
     public UserInfoResponseDto findUserInfo(UserInfoRequestDto userRequestDto){
         User byStudentNum = userQueryRepository.findByStudentNum(userRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
+        return getUserInfoResponseDto(byStudentNum);
+    }
+
+    private static UserInfoResponseDto getUserInfoResponseDto(User user) {
         UserInfoResponseDtoBuilder build = UserInfoResponseDto.builder()
-                .userNum(byStudentNum.getStudentNum())
-                .userName(byStudentNum.getName())
-                .membership(byStudentNum.isMembership());
-        // null처리 안해주면 NullPointException뜸 db의 값이 없으면 자동으로 null반환되서 들어갈줄 알았는데 안됨
-        if(byStudentNum.getLocker()!=null){
+                .studentNum(user.getStudentNum())
+                .userName(user.getName())
+                .membership(user.isMembership())
+                .role(user.getRole());
+        // null처리 안해주면 getId를 못하니까 NullPointException뜸
+        if(user.getLocker()!=null){
             UserInfoResponseDto userInfoResponseDto = build
-                    .lockerNum(byStudentNum.getLocker().getId())
+                    .lockerNum(user.getLocker().getId())
                     .build();
             return userInfoResponseDto;
         }
