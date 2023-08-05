@@ -62,7 +62,7 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 	//WebClient
-	compileOnly('org.springframework.boot:spring-boot-starter-webflux')
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 
