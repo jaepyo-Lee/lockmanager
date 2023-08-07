@@ -5,6 +5,7 @@ import com.ime.lockmanager.locker.domain.Locker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +27,17 @@ public class LockerQueryRepository implements LockerQueryPort {
     @Override
     public List<Locker> findAll() {
         return lockerJpaRepository.findAll();
+    }
+
+    @Override
+    public List<Long> findNotReservedLockerId() {
+        List<Long> notReservedLockerId = new ArrayList<>();
+        List<Locker> all = lockerJpaRepository.findAll();
+        for (Locker locker : all) {
+            if(locker.getUser()==null){
+                notReservedLockerId.add(locker.getId());
+            }
+        }
+        return notReservedLockerId;
     }
 }

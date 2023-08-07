@@ -12,4 +12,6 @@ public interface LockerQueryPort {
 
     List<Locker> findAll();
 
+    List<Long> findNotReservedLockerId();
+
 }
