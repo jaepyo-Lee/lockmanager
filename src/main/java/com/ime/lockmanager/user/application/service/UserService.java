@@ -44,7 +44,8 @@ public class UserService implements UserUseCase {
                 .studentNum(user.getStudentNum())
                 .userName(user.getName())
                 .membership(user.isMembership())
-                .role(user.getRole());
+                .role(user.getRole())
+                .status(user.getStatus());
         // null처리 안해주면 getId를 못하니까 NullPointException뜸
         if(user.getLocker()!=null){
             UserInfoResponseDto userInfoResponseDto = build
