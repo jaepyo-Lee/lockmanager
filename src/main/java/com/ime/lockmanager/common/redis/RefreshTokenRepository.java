@@ -25,7 +25,7 @@ public class RefreshTokenRepository implements AuthToRedisQueryPort {
     @Override
     public String getRefreshToken(String studentNum) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        return (String) valueOperations.get(studentNum);
+        return "Bearer "+(String) valueOperations.get(studentNum);
     }
 
     @Override
