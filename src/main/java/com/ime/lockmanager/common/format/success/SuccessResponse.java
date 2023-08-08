@@ -3,10 +3,7 @@ package com.ime.lockmanager.common.format.success;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
@@ -26,6 +23,14 @@ public class SuccessResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
+    @Builder
+    public SuccessResponse(int status, LocalDateTime time, String code, String message) {
+        this.status = status;
+        this.time = time;
+        this.code = code;
+        this.message = message;
+    }
+
     //성공의 경우
     public SuccessResponse(T result){
         this.status= HttpStatus.OK.value();
@@ -40,5 +45,13 @@ public class SuccessResponse<T> {
         this.time = now();
         this.code = SuccessResponseStatus.SUCCESS.getCode();
         this.message = message;
+    }
+    public static SuccessResponse ok(){
+        return SuccessResponse.builder()
+                .status(HttpStatus.OK.value())
+                .time(now())
+                .code(SuccessResponseStatus.SUCCESS.getCode())
+                .message("SUCCESS")
+                .build();
     }
 }

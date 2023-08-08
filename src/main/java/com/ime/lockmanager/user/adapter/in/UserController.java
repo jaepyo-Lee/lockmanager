@@ -2,11 +2,15 @@ package com.ime.lockmanager.user.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.user.adapter.in.req.ChangePasswordRequest;
+import com.ime.lockmanager.user.adapter.in.res.UserCancelLockerResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto;
+import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
+import com.ime.lockmanager.user.application.port.in.res.UserCancelLockerResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +35,16 @@ public class UserController {
         return new SuccessResponse(UserInfoResponse.fromResponseDto(
                 userInfo
         ));
+    }
+
+    @PutMapping
+    public SuccessResponse cancelLocker(Principal principal){
+        userUseCase.cancelLocker(
+                UserCancelLockerRequestDto.builder()
+                        .studentNum(principal.getName())
+                        .build()
+        );
+        return SuccessResponse.ok();
     }
 
     @PutMapping("/password")

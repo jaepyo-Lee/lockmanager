@@ -15,7 +15,7 @@ import javax.validation.constraints.Null;
 @AllArgsConstructor
 public class User extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long Id;
 
@@ -49,5 +49,11 @@ public class User extends BaseTimeEntity {
         this.locker = locker;
         locker.setUsable(false);
         locker.setUser(this);
+    }
+
+    public void cancelLocker(){
+        locker.setUser(null);
+        locker.setUsable(true);
+        this.locker = null;
     }
 }
