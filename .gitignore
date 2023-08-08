@@ -8,6 +8,7 @@ build/
 application.properties
 application-dev.properties
 application-prod.properties
+application.yml
 
 ### STS ###
 .apt_generated

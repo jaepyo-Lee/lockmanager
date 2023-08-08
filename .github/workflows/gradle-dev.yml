@@ -33,8 +33,8 @@ jobs:
         run: |
           mkdir ./src/main/resources # resources 폴더 생성
           cd ./src/main/resources # resources 폴더로 이동
-          touch ./application.properties # application.yml 생성
-          echo "${{ secrets.APPLICATION }}" > ./application.properties # github actions에서 설정한 값을 application.yml 파일에 쓰기
+          touch ./application.yml # application.yml 생성
+          echo "${{ secrets.APPLICATION }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
 
         shell: bash
 
@@ -67,8 +67,8 @@ jobs:
             sudo docker rm -f $(docker ps -qa) 
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            docker run -d -p 6379:6379 --network lockermanager-network --name redis redis
-            docker run -d -p 8080:8080 --network lockermanager-network --name ime jaepyo99/lockermanager
+            docker run -d -p 6380:6380 --network lockermanager-network --name redis redis
+            docker run -d -p 8081:8081 --network lockermanager-network --name ime jaepyo99/lockermanager
             docker image prune -f
       
 
