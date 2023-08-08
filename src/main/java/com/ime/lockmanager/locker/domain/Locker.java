@@ -24,10 +24,6 @@ public class Locker extends BaseTimeEntity {
 
     private boolean usable;
 
-    @Builder.Default
-    @Column(name = "RESERVED_TIME")
-    private LocalDateTime reservedTime=null;
-
     @Embedded
     private Period period;
 

@@ -25,6 +25,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -40,8 +42,11 @@ public class LockerService implements LockerUseCase  {
                 .orElseThrow(NotFoundUserException::new);
         Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum())
                 .orElseThrow(NotFoundLockerException::new);
-        if(byLockerId.getReservedTime()!=null){
-            if(byLockerId.getReservedTime().isBefore(LocalDateTime.now())){
+        if(byLockerId.getPeriod()!=null){
+            if(
+                    byLockerId.getPeriod().getEndDateTime().isBefore(now()) &&
+                            byLockerId.getPeriod().getStartDateTime().isAfter(now())
+            ){
                 if(byStudentNum.getLocker()==null){
                     if(byLockerId.isUsable()){
                         byStudentNum.registerLocker(byLockerId);
