@@ -36,6 +36,17 @@ public class LockerService implements LockerUseCase  {
 
     @Transactional
     @Override
+    public void initLockerInfo() {
+        log.info("사물함 초기화 진행");
+        List<Locker> allLocker = lockerQueryPort.findAll();
+        List<User> allUser = userQueryPort.findAll();
+        for (User user : allUser) {
+            user.cancelLocker();
+        }
+    }
+
+    @Transactional
+    @Override
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
         log.info("예약 시작 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
         User byStudentNum = userQueryPort.findByStudentNum(dto.getStudentNum())
@@ -44,8 +55,8 @@ public class LockerService implements LockerUseCase  {
                 .orElseThrow(NotFoundLockerException::new);
         if(byLockerId.getPeriod()!=null){
             if(
-                    byLockerId.getPeriod().getEndDateTime().isBefore(now()) &&
-                            byLockerId.getPeriod().getStartDateTime().isAfter(now())
+                    byLockerId.getPeriod().getEndDateTime().isAfter(now()) &&
+                            byLockerId.getPeriod().getStartDateTime().isBefore(now())
             ){
                 if(byStudentNum.getLocker()==null){
                     if(byLockerId.isUsable()){
