@@ -14,4 +14,6 @@ public interface LockerUseCase {
     void setLockerPeriod(LockerSetTimeRequestDto requestDto);
 
     LockerPeriodResponseDto getLockerPeriod();
+
+    void initLockerInfo();
 }

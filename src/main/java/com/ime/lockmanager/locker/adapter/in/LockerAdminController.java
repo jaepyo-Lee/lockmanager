@@ -23,4 +23,10 @@ public class LockerAdminController {
         lockerUseCase.setLockerPeriod(timeRequest.toRequestDto());
         return new SuccessResponse("시간설정완료");
     }
+
+    @PostMapping("/reset")
+    public SuccessResponse resetLocker(){
+        lockerUseCase.initLockerInfo();
+        return SuccessResponse.ok();
+    }
 }
