@@ -1,9 +1,7 @@
 package com.ime.lockmanager.locker.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.common.jwt.JwtProvider;
 import com.ime.lockmanager.locker.adapter.in.req.LockerRegisterRequest;
-import com.ime.lockmanager.locker.adapter.in.req.LockerSetTimeRequest;
 import com.ime.lockmanager.locker.adapter.in.res.LockerPeriodResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerRegisterResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
@@ -12,8 +10,10 @@ import com.ime.lockmanager.locker.application.service.RedissonLockLockerFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
+
+import static java.time.LocalTime.now;
 
 
 @RequiredArgsConstructor
@@ -39,8 +39,13 @@ public class LockerController {
     }
 
 
-    @GetMapping("/time")
-    public SuccessResponse getTime() {
+    @GetMapping("/period")
+    public SuccessResponse getPeriod() {
         return new SuccessResponse(LockerPeriodResponse.fromResponse(lockerUseCase.getLockerPeriod()));
+    }
+
+    @GetMapping("/livetime")
+    public SuccessResponse getLiveTime(){
+        return new SuccessResponse(now());
     }
 }
