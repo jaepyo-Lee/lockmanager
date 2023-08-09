@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
-import static java.time.LocalTime.now;
+import static java.time.LocalDateTime.now;
 
 
 @RequiredArgsConstructor
