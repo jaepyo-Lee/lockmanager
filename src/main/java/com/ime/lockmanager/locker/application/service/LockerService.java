@@ -20,32 +20,30 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
 
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class LockerService implements LockerUseCase  {
     private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
 
-    @Transactional
     @Override
     public void initLockerInfo() {
         log.info("사물함 초기화 진행");
-        List<Locker> allLocker = lockerQueryPort.findAll();
         List<User> allUser = userQueryPort.findAll();
         for (User user : allUser) {
             user.cancelLocker();
         }
     }
 
-    @Transactional
     @Override
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
         log.info("예약 시작 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
@@ -76,6 +74,7 @@ public class LockerService implements LockerUseCase  {
         throw new ReserveTimeNullException();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public LockerReserveResponseDto findReserveLocker() {
         List<Long> reservedLockerId = lockerQueryPort.findReservedLockerId();
@@ -100,6 +99,7 @@ public class LockerService implements LockerUseCase  {
         log.info("시간설정 완료");
     }
 
+    @Transactional(readOnly = true)
     @Override
     public LockerPeriodResponseDto getLockerPeriod() {
         List<Locker> lockers = lockerQueryPort.findAll();

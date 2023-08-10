@@ -1,5 +1,6 @@
 package com.ime.lockmanager.locker.application.service;
 
+import com.ime.lockmanager.common.format.exception.locker.InvalidCancelLockerException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
@@ -23,14 +24,21 @@ public class RedissonLockLockerFacade{
     public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
 
         RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
-        boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
-        if (!available) {
-            log.error("lock 획득실패");
-            return null;
+        try{
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            if (!available) {
+                log.error("lock 획득실패");
+                return null;
+            }
+            log.info("redisson : lock 획득 후 로직 진행");
+            register = lockerUseCase.register(dto);
+        }catch (InterruptedException e){
+            throw new RuntimeException(e);
+        }finally {
+            lock.unlock();
+            return register;
         }
-        log.info("redisson : lock 획득 후 로직 진행");
-        register = lockerUseCase.register(dto);
-        lock.unlock();
-        return register;
+
+
     }
 }

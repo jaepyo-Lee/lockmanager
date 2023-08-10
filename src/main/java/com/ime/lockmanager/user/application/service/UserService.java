@@ -15,20 +15,19 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class UserService implements UserUseCase {
     private final UserQueryRepository userQueryRepository;
 
 
-    @Transactional
     @Override
     public void cancelLocker(UserCancelLockerRequestDto cancelLockerDto) {
         User byStudentNum = userQueryRepository.findByStudentNum(cancelLockerDto.getStudentNum())
@@ -36,12 +35,12 @@ public class UserService implements UserUseCase {
         if(byStudentNum.getLocker()==null){
             throw new InvalidCancelLockerException();
         }
-        log.info("{} : 사물함 취소 시작",cancelLockerDto.getStudentNum());
+        log.info("{} : 사물함 취소",cancelLockerDto.getStudentNum());
         byStudentNum.cancelLocker();
-        log.info("{} : 사물함 취소완료",cancelLockerDto.getStudentNum());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserInfoResponseDto> findAllUserInfo() {
         List<User> all = userQueryRepository.findAll();
         List<UserInfoResponseDto> userInfoResponseDtos=new ArrayList<>();
@@ -52,6 +51,7 @@ public class UserService implements UserUseCase {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserInfoResponseDto findUserInfo(UserInfoRequestDto userRequestDto){
         User byStudentNum = userQueryRepository.findByStudentNum(userRequestDto.getStudentNum())
@@ -77,17 +77,7 @@ public class UserService implements UserUseCase {
         return userInfoResponseDto;
     }
 
-    @Transactional
-    @Override
-    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
-        /*User byStudentNum = userQueryRepository.findByStudentNum(changePasswordRequestDto.getStudentNum())
-                .orElseThrow(NotFoundUserException::new);
-        if(!byStudentNum.getPassword().equals(changePasswordRequestDto.getCurrentPassword())){
-            throw new IncorrectPasswordException();
-        }
-        byStudentNum.changePassword(changePasswordRequestDto.getNewPassword());*/
-    }
-
+    @Transactional(readOnly = true)
     @Override
     public boolean checkAdmin(String studentNum) {
         User byStudentNum = userQueryRepository.findByStudentNum(studentNum)
