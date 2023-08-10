@@ -13,8 +13,6 @@ public interface UserUseCase {
 
     List<UserInfoResponseDto> findAllUserInfo();
 
-    void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
-
     boolean checkAdmin(String studentNum);
 
     void cancelLocker(UserCancelLockerRequestDto cancelLockerDto);

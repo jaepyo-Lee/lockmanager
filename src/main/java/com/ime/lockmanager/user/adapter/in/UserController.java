@@ -47,17 +47,6 @@ public class UserController {
         return SuccessResponse.ok();
     }
 
-    @PutMapping("/password")
-    public SuccessResponse changePassword(Principal principal, @RequestBody ChangePasswordRequest request){
-        userUseCase.changePassword(
-                ChangePasswordRequestDto.builder()
-                        .studentNum(principal.getName())
-                        .newPassword(request.getNewPassword())
-                        .currentPassword(request.getCurrentPassword())
-                        .build());
-        return new SuccessResponse("비밀번호가 수정되었습니다.");
-    }
-
     @GetMapping("/role")
     public SuccessResponse getUserRole(Principal principal){
         return new SuccessResponse(userUseCase.checkAdmin(principal.getName()));
