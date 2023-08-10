@@ -21,7 +21,7 @@ public class LockerAdminController {
     @PostMapping("/time")
     public SuccessResponse setPeriod(HttpServletRequest req, @RequestBody LockerSetTimeRequest timeRequest){
         lockerUseCase.setLockerPeriod(timeRequest.toRequestDto());
-        return new SuccessResponse("시간설정완료");
+        return SuccessResponse.ok("시간설정완료");
     }
 
     @PostMapping("/reset")

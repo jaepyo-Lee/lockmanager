@@ -40,11 +40,13 @@ public class SuccessResponse<T> {
         this.result = result;
     }
 
-    public SuccessResponse(String message){
-        this.status= HttpStatus.OK.value();
-        this.time = now();
-        this.code = SuccessResponseStatus.SUCCESS.getCode();
-        this.message = message;
+    public static SuccessResponse ok(String message){
+        return SuccessResponse.builder()
+                .status(HttpStatus.OK.value())
+                .time(now())
+                .code(SuccessResponseStatus.SUCCESS.getCode())
+                .message(message)
+                .build();
     }
     public static SuccessResponse ok(){
         return SuccessResponse.builder()
