@@ -2,6 +2,7 @@ package com.ime.lockmanager.user.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -43,6 +44,12 @@ public class User extends BaseTimeEntity {
         this.studentNum = studentNum;
         this.status = status;
         this.role = role;
+    }
+
+    public void modifiedUserInfo(UserModifiedInfoDto dto){
+        this.locker = dto.getLocker();
+        this.role = dto.getRole();
+        this.membership = dto.isMembership();
     }
 
     public void registerLocker(Locker locker){

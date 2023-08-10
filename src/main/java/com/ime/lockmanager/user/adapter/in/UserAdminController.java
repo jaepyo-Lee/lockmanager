@@ -1,15 +1,15 @@
 package com.ime.lockmanager.user.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
+import com.ime.lockmanager.user.adapter.in.req.ModifiedUserInfoRequest;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.AllUserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -32,5 +32,16 @@ public class UserAdminController {
         );
 
     }
+
+    @PutMapping("/modifiedInfo")
+    public SuccessResponse modifiedUserInfo(@RequestBody List<ModifiedUserInfoRequest> modifiedUserInfoRequest){
+        userUseCase.modifiedUserInfo(
+                modifiedUserInfoRequest.stream()
+                        .map(ModifiedUserInfoRequest::toRequestDto)
+                        .collect(Collectors.toList())
+        );
+        return SuccessResponse.ok();
+    }
+
 
 }
