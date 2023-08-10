@@ -52,8 +52,10 @@ public class User extends BaseTimeEntity {
     }
 
     public void cancelLocker(){
-        locker.setUser(null);
-        locker.setUsable(true);
-        this.locker = null;
+        if(locker!=null){
+            locker.setUser(null);
+            locker.setUsable(true);
+            this.locker = null;
+        }
     }
 }
