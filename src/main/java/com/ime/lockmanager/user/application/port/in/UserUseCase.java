@@ -18,5 +18,5 @@ public interface UserUseCase {
 
     void cancelLocker(UserCancelLockerRequestDto cancelLockerDto);
 
-    void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto);
+    void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception;
 }

@@ -27,4 +27,8 @@ public class Locker extends BaseTimeEntity {
     @Embedded
     private Period period;
 
+    public void cancelLocker(){
+        this.usable = true;
+        this.user = null;
+    }
 }

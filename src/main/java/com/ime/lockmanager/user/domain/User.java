@@ -47,7 +47,6 @@ public class User extends BaseTimeEntity {
     }
 
     public void modifiedUserInfo(UserModifiedInfoDto dto){
-        this.locker = dto.getLocker();
         this.role = dto.getRole();
         this.membership = dto.isMembership();
     }

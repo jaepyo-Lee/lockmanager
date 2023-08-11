@@ -5,6 +5,7 @@ import com.ime.lockmanager.common.format.exception.locker.IsNotReserveTimeExcept
 import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerException;
 import com.ime.lockmanager.common.format.exception.locker.ReserveTimeNullException;
 import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserException;
+import com.ime.lockmanager.common.format.exception.user.InvalidReservedStatusException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -34,7 +36,7 @@ import static java.time.LocalDateTime.now;
 public class LockerService implements LockerUseCase  {
     private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
-
+    private final static List<String> notInvalidStatus = new ArrayList<>(List.of("휴햑", "재학"));
     @Override
     public void initLockerInfo() {
         log.info("사물함 초기화 진행");
@@ -56,18 +58,21 @@ public class LockerService implements LockerUseCase  {
                     byLockerId.getPeriod().getEndDateTime().isAfter(now()) &&
                             byLockerId.getPeriod().getStartDateTime().isBefore(now())
             ){
-                if(byStudentNum.getLocker()==null){
-                    if(byLockerId.isUsable()){
-                        byStudentNum.registerLocker(byLockerId);
-                        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
-                        return LockerRegisterResponseDto.builder()
-                                .lockerNum(byLockerId.getId())
-                                .studentNum(byStudentNum.getStudentNum())
-                                .build();
+                if(notInvalidStatus.contains(byStudentNum.getStatus())){
+                    if(byStudentNum.getLocker()==null){
+                        if(byLockerId.isUsable()){
+                            byStudentNum.registerLocker(byLockerId);
+                            log.info("예약 완료 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
+                            return LockerRegisterResponseDto.builder()
+                                    .lockerNum(byLockerId.getId())
+                                    .studentNum(byStudentNum.getStudentNum())
+                                    .build();
+                        }
+                        throw new AlreadyReservedLockerException();
                     }
-                    throw new AlreadyReservedLockerException();
+                    throw new AlreadyReservedUserException();
                 }
-                throw new AlreadyReservedUserException();
+                throw new InvalidReservedStatusException();
             }
             throw new IsNotReserveTimeException();
         }

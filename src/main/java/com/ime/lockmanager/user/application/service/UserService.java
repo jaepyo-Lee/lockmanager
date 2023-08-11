@@ -4,7 +4,11 @@ import com.ime.lockmanager.common.format.exception.locker.InvalidCancelLockerExc
 import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.adapter.out.LockerQueryRepository;
+import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
+import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
+import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
+import com.ime.lockmanager.locker.application.service.RedissonLockLockerFacade;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.user.adapter.out.UserQueryRepository;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -34,18 +38,23 @@ import java.util.Optional;
 public class UserService implements UserUseCase {
     private final UserQueryRepository userQueryRepository;
     private final LockerQueryPort lockerQueryPort;
-
+    private final RedissonLockLockerFacade lockLockerFacade;
     @Override
-    public void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) {
+    public void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception {
         for (ModifiedUserInfoRequestDto modifiedUserInfoRequestDto : requestDto) {
             User byStudentNum = userQueryRepository.findByStudentNum(modifiedUserInfoRequestDto.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
             if(modifiedUserInfoRequestDto.getLockerNumber()==""){
-                byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto,null));
+                byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }else{
-                Locker byLockerId = lockerQueryPort.findByLockerId(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
-                        .orElseThrow(NotFoundLockerException::new);
-                byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto,byLockerId));
+                cancelLocker(UserCancelLockerRequestDto.builder()
+                        .studentNum(modifiedUserInfoRequestDto.getStudentNum())
+                        .build());
+                lockLockerFacade.register(LockerRegisterRequestDto.builder()
+                        .studentNum(modifiedUserInfoRequestDto.getStudentNum())
+                        .lockerNum(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
+                        .build());
+                byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }
         }
     }

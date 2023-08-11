@@ -34,7 +34,7 @@ public class UserAdminController {
     }
 
     @PutMapping("/modifiedInfo")
-    public SuccessResponse modifiedUserInfo(@RequestBody List<ModifiedUserInfoRequest> modifiedUserInfoRequest){
+    public SuccessResponse modifiedUserInfo(@RequestBody List<ModifiedUserInfoRequest> modifiedUserInfoRequest) throws Exception {
         userUseCase.modifiedUserInfo(
                 modifiedUserInfoRequest.stream()
                         .map(ModifiedUserInfoRequest::toRequestDto)

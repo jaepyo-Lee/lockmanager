@@ -13,11 +13,9 @@ import lombok.Getter;
 public class UserModifiedInfoDto {
     private Role role;
     private boolean membership;
-    private Locker locker;
 
-    public static UserModifiedInfoDto fromModifiedUserInfoRequestDto(ModifiedUserInfoRequestDto requestDto,Locker locker){
+    public static UserModifiedInfoDto fromModifiedUserInfoRequestDto(ModifiedUserInfoRequestDto requestDto){
         return UserModifiedInfoDto.builder()
-                .locker(locker)
                 .role(requestDto.getRole())
                 .membership(requestDto.isMembership())
                 .build();
