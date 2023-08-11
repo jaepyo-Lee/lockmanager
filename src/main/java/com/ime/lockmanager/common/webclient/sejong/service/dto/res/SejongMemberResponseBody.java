@@ -8,4 +8,5 @@ public class SejongMemberResponseBody {
     private String grade;
     private String status;
     private String message;
+    private String major;
 }
