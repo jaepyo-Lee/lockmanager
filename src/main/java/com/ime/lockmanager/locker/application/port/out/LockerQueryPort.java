@@ -2,6 +2,7 @@ package com.ime.lockmanager.locker.application.port.out;
 
 import com.ime.lockmanager.locker.domain.Locker;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 

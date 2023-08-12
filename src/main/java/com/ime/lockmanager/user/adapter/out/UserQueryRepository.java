@@ -4,6 +4,8 @@ import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +20,11 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     @Override
     public List<User> findAll() {
         return userJpaRepository.findAll();
+    }
+
+    @Override
+    public Page<User> findAllOrderByStudentNumAsc(Pageable pageable) {
+        return userJpaRepository.findAll(pageable);
     }
 
     @Override

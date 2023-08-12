@@ -10,6 +10,8 @@ import com.ime.lockmanager.user.application.port.in.res.AllUserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -28,8 +30,8 @@ public class UserAdminController {
             notes = "모든 사용자의 정보를 조회하여 반환해주는 API(관리자용)"
     )
     @GetMapping("")
-    public SuccessResponse adminInfo(){
-        List<UserInfoResponseDto> allUserInfo = userUseCase.findAllUserInfo();
+    public SuccessResponse adminInfo(Pageable pageable){
+        Page<UserInfoResponseDto> allUserInfo = userUseCase.findAllUserInfo(pageable);
         return new SuccessResponse(
                 allUserInfo.stream()
                         .map(userInfoResponseDto -> userInfoResponseDto.toResponse())
