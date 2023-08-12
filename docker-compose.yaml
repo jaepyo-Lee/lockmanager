@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - lockermanager-network
+
+  lockmanager:
+    image: jaepyo99/lockermanager
+    container_name: ime_lockmanager
+    ports:
+      - "8080:8080"
+    networks:
+      - lockermanager-network
+    depends_on:
+      - redis
+
+networks:
+  lockermanager-network:
+    external: true

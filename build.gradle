@@ -19,21 +19,57 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	//spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	//jdbc
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	//h2
+
+	//mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	//valid
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	// H2
 	runtimeOnly 'com.h2database:h2'
-	//thymleaf
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	//redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.22.1'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// Swagger
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	//WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
+
+
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+jar {
+	enabled = false
 }
