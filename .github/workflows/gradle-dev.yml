@@ -64,13 +64,13 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f $(docker ps -qa) 
+            sudo docker rm -f redis
+            sudo docker rm -f ime-dev
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker run -d -p 6379:6379 --network lockermanager-network --name redis redis
-            docker run -d -p 8081:8081 --network lockermanager-network --name ime jaepyo99/lockermanager
+            docker run -d -p 8081:8081 --network lockermanager-network --name ime-dev jaepyo99/lockermanager
             docker image prune -f
-      
 
   current-time:
     needs: build
