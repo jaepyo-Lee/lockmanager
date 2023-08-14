@@ -5,24 +5,28 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Release
+name: Merge Release
 on:
-  pull_request:
-    branches: ["master"]
-    types: [ closed ]
+  push:
+    branches:
+      - master
 
-  jobs:
-    if_merged:
-      if: github.evnt.pull_request.merged == true
-      runs-on: ubuntu-latest
-      steps:
-        - run: |
-            echo The PR was merged
+jobs:
+  if_merged:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if merged
+        run: |
+          if [[ "$(git log -1 --pretty=%B)" == *"Merge branch"* ]]; then
+            echo "The branch was merged"
+          else
+            echo "The branch was pushed without merge"
+          fi
 
 permissions:
   contents: read
 
-jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -70,9 +74,9 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f $(docker ps -qa) 
+            sudo docker rm -f ime-prod 
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            docker run -d -p 8080:8080 --network lockermanager-network --name ime-prod jaepyo99/lockermanager
+            docker run -d -p 8082:8082 --network lockermanager-network --name ime-prod jaepyo99/lockermanager
             docker image prune -f
       
 
