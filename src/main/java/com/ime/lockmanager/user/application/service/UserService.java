@@ -41,9 +41,11 @@ public class UserService implements UserUseCase {
             if(modifiedUserInfoRequestDto.getLockerNumber()==""){
                 byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }else{
-                cancelLocker(UserCancelLockerRequestDto.builder()
-                        .studentNum(modifiedUserInfoRequestDto.getStudentNum())
-                        .build());
+                if(byStudentNum.getLocker()!=null){
+                    cancelLocker(UserCancelLockerRequestDto.builder()
+                            .studentNum(modifiedUserInfoRequestDto.getStudentNum())
+                            .build());
+                }
                 lockLockerFacade.register(LockerRegisterRequestDto.builder()
                         .studentNum(modifiedUserInfoRequestDto.getStudentNum())
                         .lockerNum(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
