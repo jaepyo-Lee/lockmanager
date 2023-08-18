@@ -37,16 +37,15 @@ public class AuthService implements AuthUseCase {
     @Override
     @Transactional
     public TokenResponseDto login(LoginRequestDto loginRequestDto) {
-        SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
-
-        User user = authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(
-                () -> authToUserQueryPort.save(User.builder()
-                        .name(sejongMemberResponseDto.getResult().getBody().getName())
-                        .status(sejongMemberResponseDto.getResult().getBody().getStatus())
-                        .studentNum(loginRequestDto.getId())
-                        .role(Role.ROLE_USER)
-                        .build())
-        );
+        User user = authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() -> {
+            SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
+            return authToUserQueryPort.save(User.builder()
+                    .name(sejongMemberResponseDto.getResult().getBody().getName())
+                    .status(sejongMemberResponseDto.getResult().getBody().getStatus())
+                    .studentNum(loginRequestDto.getId())
+                    .role(Role.ROLE_USER)
+                    .build());
+        });
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(),jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return TokenResponseDto.of(tokenSet.getAccessToken(),tokenSet.getRefreshToken());

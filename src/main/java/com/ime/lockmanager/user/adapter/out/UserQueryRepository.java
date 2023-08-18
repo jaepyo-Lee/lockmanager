@@ -16,6 +16,10 @@ import java.util.Optional;
 public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
+    @Override
+    public void deleteAll() {
+        userJpaRepository.deleteAll();
+    }
 
     @Override
     public List<User> findAll() {

@@ -105,7 +105,7 @@ public class JwtProvider {
                     .collect(Collectors.toList());
             System.out.println(authorities);
             User principal = new User((String) tokenClaims.get("studentNum"), "", authorities);
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+            return new UsernamePasswordAuthenticationToken(principal,null ,authorities);
         } else {
             throw new TokenValidFailedException();
         }

@@ -14,6 +14,17 @@ import java.util.Optional;
 public class LockerQueryRepository implements LockerQueryPort {
 
     private final LockerJpaRepository lockerJpaRepository;
+
+    @Override
+    public Locker save(Locker locker) {
+        return lockerJpaRepository.save(locker);
+    }
+
+    @Override
+    public void deleteAll() {
+        lockerJpaRepository.deleteAll();
+    }
+
     @Override
     public Optional<Locker> findByLockerId(Long lockerId) {
         return lockerJpaRepository.findById(lockerId);

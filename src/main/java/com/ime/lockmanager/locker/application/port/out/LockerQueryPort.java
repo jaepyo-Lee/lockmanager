@@ -15,4 +15,8 @@ public interface LockerQueryPort {
 
     List<Long> findNotReservedLockerId();
 
+    void deleteAll();
+
+    Locker save(Locker locker);
+
 }
