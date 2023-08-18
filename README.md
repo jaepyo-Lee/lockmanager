@@ -28,7 +28,7 @@
 
 ## API 문서
 
-[http://ime-locker.shop:8081/swagger-ui/index.html](http://ime-locker.shop:8081/swagger-ui/index.html)
+[http://ime-locker.shop:8082/swagger-ui/index.html](http://ime-locker.shop:8082/swagger-ui/index.html)
 
 ## ERD
 
