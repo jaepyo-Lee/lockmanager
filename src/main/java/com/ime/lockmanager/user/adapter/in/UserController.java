@@ -1,16 +1,11 @@
 package com.ime.lockmanager.user.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.user.adapter.in.req.ChangePasswordRequest;
-import com.ime.lockmanager.user.adapter.in.res.UserCancelLockerResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
-import com.ime.lockmanager.user.application.port.in.req.ChangePasswordRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
-import com.ime.lockmanager.user.application.port.in.res.UserCancelLockerResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
-import com.ime.lockmanager.user.domain.User;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +28,7 @@ public class UserController {
     @GetMapping("/info")
     public SuccessResponse findUserInfo(Principal principal) throws Exception {
         log.info("{}정보조회",principal.getName());
-        UserInfoResponseDto userInfo = userUseCase.findUserInfo(
+        UserInfoResponseDto userInfo = userUseCase.findUserInfoByStudentNum(
                 UserInfoRequestDto.builder()
                         .studentNum(principal.getName())
                         .build());
@@ -48,7 +43,7 @@ public class UserController {
     )
     @PutMapping
     public SuccessResponse cancelLocker(Principal principal){
-        userUseCase.cancelLocker(
+        userUseCase.cancelLockerByStudentNum(
                 UserCancelLockerRequestDto.builder()
                         .studentNum(principal.getName())
                         .build()

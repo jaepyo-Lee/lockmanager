@@ -42,7 +42,7 @@ public class UserService implements UserUseCase {
                 byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }else{
                 if(byStudentNum.getLocker()!=null){
-                    cancelLocker(UserCancelLockerRequestDto.builder()
+                    cancelLockerByStudentNum(UserCancelLockerRequestDto.builder()
                             .studentNum(modifiedUserInfoRequestDto.getStudentNum())
                             .build());
                 }
@@ -56,7 +56,7 @@ public class UserService implements UserUseCase {
     }
 
     @Override
-    public void cancelLocker(UserCancelLockerRequestDto cancelLockerDto) {
+    public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
         User byStudentNum = userQueryPort.findByStudentNum(cancelLockerDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
         if(byStudentNum.getLocker()==null){
@@ -79,7 +79,7 @@ public class UserService implements UserUseCase {
 
     @Transactional(readOnly = true)
     @Override
-    public UserInfoResponseDto findUserInfo(UserInfoRequestDto userRequestDto){
+    public UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto){
         User byStudentNum = userQueryPort.findByStudentNum(userRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
         return getUserInfoResponseDto(byStudentNum);

@@ -10,13 +10,13 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UserUseCase {
-    UserInfoResponseDto findUserInfo(UserInfoRequestDto userRequestDto);
+    UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
 
     Page<UserInfoResponseDto> findAllUserInfo(Pageable pageable);
 
     boolean checkAdmin(String studentNum);
 
-    void cancelLocker(UserCancelLockerRequestDto cancelLockerDto);
+    void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto);
 
     void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception;
 }
