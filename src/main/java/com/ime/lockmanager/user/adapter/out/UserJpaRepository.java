@@ -22,4 +22,7 @@ public interface UserJpaRepository extends JpaRepository<User,Long> {
 
     @Override
     Page<User> findAll(Pageable pageable);
+
+    @Query("select u from USER_TABLE u ORDER BY u.studentNum ASC")
+    Page<User> findAllOrderByStudentNumAsc(Pageable pageable);
 }
