@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Builder
 public class LockerReserveResponseDto {
-    private List<Long> lockerId;
+    private List<Long> lockerIdList;
 }

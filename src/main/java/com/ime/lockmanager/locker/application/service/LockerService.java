@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +40,7 @@ class LockerService implements LockerUseCase  {
     public void initLockerInfo() {
         log.info("사물함 초기화 진행");
         List<User> allUsers = userQueryPort.findAll();
-        allUsers.stream().forEach((user)->user.cancelLocker());
-/*        for (User user : allUsers) {
-            user.cancelLocker();
-        }*/
+        allUsers.stream().parallel().forEach((user)->user.cancelLocker());
     }
 
     @Override
@@ -85,7 +81,7 @@ class LockerService implements LockerUseCase  {
     public LockerReserveResponseDto findReserveLocker() {
         List<Long> reservedLockerId = lockerQueryPort.findReservedLockerId();
         return LockerReserveResponseDto.builder()
-                .lockerId(reservedLockerId)
+                .lockerIdList(reservedLockerId)
                 .build();
     }
 
@@ -94,14 +90,18 @@ class LockerService implements LockerUseCase  {
     public void setLockerPeriod(LockerSetTimeRequestDto requestDto) {
         List<Locker> lockers = lockerQueryPort.findAll();
         log.info("시간설정 시작");
-        for (Locker locker : lockers) {
+        lockers.stream().filter(locker -> locker.getPeriod() == null).parallel()
+                .forEach(locker -> locker.setPeriod(new Period(requestDto.getStartDateTime(), requestDto.getEndDateTime()))
+                );
+
+        /*for (Locker locker : lockers) {
             if(locker.getPeriod()==null){
                 locker.setPeriod(new Period(requestDto.getStartDateTime(),requestDto.getEndDateTime()));
             }
             else{
                 locker.getPeriod().modifiedDateTime(requestDto);
             }
-        }
+        }*/
         log.info("시간설정 완료");
     }
 

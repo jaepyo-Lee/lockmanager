@@ -12,7 +12,7 @@ public class LockerReserveResponse {
     List<Long> reservedLockerId;
     public static LockerReserveResponse fromResponse(LockerReserveResponseDto reserveLocker) {
         return LockerReserveResponse.builder()
-                .reservedLockerId(reserveLocker.getLockerId())
+                .reservedLockerId(reserveLocker.getLockerIdList())
                 .build();
     }
 }
