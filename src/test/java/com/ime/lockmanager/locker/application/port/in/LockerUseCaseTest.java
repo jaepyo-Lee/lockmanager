@@ -19,12 +19,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
 @SpringBootTest
@@ -46,6 +49,23 @@ class LockerUseCaseTest {
     public void cleanUp(){
         userQueryPort.deleteAll();
         lockerQueryPort.deleteAll();
+    }
+
+    @DisplayName("배정된 사물함을 초기화")
+    @Test
+    void initLockerTest() throws Exception {
+        //given
+        userQueryPort.save(getUser("test", "재학", "test"));
+        lockerQueryPort.save(getLocker(1L, LocalDateTime.now().plusDays(1), LocalDateTime.now().minusDays(1)));
+        lockerUseCase.register(LockerRegisterRequestDto.builder()
+                .lockerNum(1L)
+                .studentNum("test")
+                .build());
+        //when
+        lockerUseCase.initLockerInfo();
+        //then
+        List<Locker> all = lockerQueryPort.findAll();
+        assertThat(all.stream().filter(locker -> locker.isUsable()==false).count()).isEqualTo(0);
     }
 
     @DisplayName("휴햑생이 사물함을 예약할때")

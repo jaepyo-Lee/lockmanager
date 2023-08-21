@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserService implements UserUseCase {
+class UserService implements UserUseCase {
     private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
     private final RedissonLockLockerFacade lockLockerFacade;

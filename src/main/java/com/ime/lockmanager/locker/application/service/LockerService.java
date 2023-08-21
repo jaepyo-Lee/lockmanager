@@ -33,17 +33,18 @@ import static java.time.LocalDateTime.now;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class LockerService implements LockerUseCase  {
+class LockerService implements LockerUseCase  {
     private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
     private final static List<String> notInvalidStatus = new ArrayList<>(List.of("휴햑", "재학"));
     @Override
     public void initLockerInfo() {
         log.info("사물함 초기화 진행");
-        List<User> allUser = userQueryPort.findAll();
-        for (User user : allUser) {
+        List<User> allUsers = userQueryPort.findAll();
+        allUsers.stream().forEach((user)->user.cancelLocker());
+/*        for (User user : allUsers) {
             user.cancelLocker();
-        }
+        }*/
     }
 
     @Override
