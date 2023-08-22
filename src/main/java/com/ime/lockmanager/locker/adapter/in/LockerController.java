@@ -20,7 +20,7 @@ import static java.time.LocalDateTime.now;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/locker")
-public class LockerController {
+class LockerController {
 
     private final RedissonLockLockerFacade redissonLockLockerFacade;
     private final LockerUseCase lockerUseCase;

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+class AuthController {
     private final AuthUseCase authUseCase;
 
     @ApiOperation(

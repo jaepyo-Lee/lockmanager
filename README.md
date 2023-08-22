@@ -8,8 +8,7 @@
 1. [개요](#개요)
 2. [기술 스택](#기술-스택)
 3. [API 문서](#api-문서)
-4. [ERD](#erd)
-5. [버전](#버전)
+4. [버전](#버전)
 
 ## 개요
 
@@ -22,17 +21,13 @@
 
 ## 기술 스택
 
-- Java, Spring Boot,Spring Data Jpa
+- Java11, Spring Boot,Spring Data Jpa
 - MySQL, Redis
 - AWS EC2, Docker, Github Action
 
 ## API 문서
 
 [http://ime-locker.shop:8082/swagger-ui/index.html](http://ime-locker.shop:8082/swagger-ui/index.html)
-
-## ERD
-
-![https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0](https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0)
 
 ## 버전
 
@@ -43,12 +38,16 @@
 ### 개발 기간
 23.06.27 ~ 23.08.14
 
-### 추가 기능
+### 기능 및 수정내용 
 
 - 로그인 (세종대학교 학사정보시스템)
 - 사물함 예약 기능
 - 마이페이지
 - 사물함 시간 및 사용자 정보 수정 기능(관리자용)
+
+### ERD
+
+![https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0](https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0)
 
 ### 아키텍쳐
 

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/api/locker")
-public class LockerAdminController {
+class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 
     @ApiOperation(

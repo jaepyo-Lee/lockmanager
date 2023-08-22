@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/api/user")
-public class UserAdminController {
+class UserAdminController {
 
     private final UserUseCase userUseCase;
 

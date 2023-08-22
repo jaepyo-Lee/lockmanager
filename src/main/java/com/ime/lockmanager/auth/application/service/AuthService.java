@@ -16,8 +16,6 @@ import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import org.javers.core.Javers;
-import org.javers.core.JaversBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

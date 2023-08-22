@@ -17,7 +17,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
-public class UserController {
+class UserController {
 
     private final UserUseCase userUseCase;
 
