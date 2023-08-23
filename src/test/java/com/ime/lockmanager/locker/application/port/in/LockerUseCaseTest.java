@@ -7,9 +7,12 @@ import com.ime.lockmanager.common.format.exception.user.InvalidReservedStatusExc
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
-import com.ime.lockmanager.locker.application.port.in.res.LockerReserveResponseDto;
+import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
-import com.ime.lockmanager.locker.application.service.RedissonLockLockerFacade;
+import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
+import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
+import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
+import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
@@ -22,15 +25,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.security.Principal;
+import java.security.Security;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,16 +54,22 @@ class LockerUseCaseTest {
     private LockerUseCase lockerUseCase;
 
     @Autowired
+    private ReservationUseCase reservationUseCase;
+
+    @Autowired
     private UserQueryPort userQueryPort;
 
     @Autowired
     private LockerQueryPort lockerQueryPort;
+    @Autowired
+    private ReservationQueryPort reservationQueryPort;
 
     @Autowired
-    private RedissonLockLockerFacade redissonLockLockerFacade;
+    private RedissonLockReservationFacade redissonLockReservationFacade;
 
     @BeforeEach
     public void cleanUp(){
+        reservationQueryPort.deleteAll();
         userQueryPort.deleteAll();
         lockerQueryPort.deleteAll();
     }
@@ -69,39 +85,22 @@ class LockerUseCaseTest {
         userQueryPort.save(getUser("test2", "재학", "19011722"));
         lockerQueryPort.save(getLocker(1L, end, start));
         lockerQueryPort.save(getLocker(2L, end, start));
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
-                .studentNum("19011721")
+        redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
                 .lockerNum(1L)
+                .studentNum("19011721")
                 .build());
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
-                .studentNum("19011722")
+        redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
                 .lockerNum(2L)
+                .studentNum("19011722")
                 .build());
+
         //when
-        LockerReserveResponseDto reserveLocker = lockerUseCase.findReserveLocker();
+        ReservationOfLockerResponseDto reserveLocker = reservationUseCase.findReservedLockers();
         //then
         assertThat(reserveLocker.getLockerIdList()).hasSize(2);
     }
 
-    @DisplayName("예약된 사물함 조회테스트(예약되지 않은사물함이 존재할때)")
-    @Test
-    void findReserveLockerWithoutFullTest() throws Exception {
-        //given
-        LocalDateTime start = now().minusDays(1);
-        LocalDateTime end = now().plusDays(1);
-        userQueryPort.save(getUser("test", "재학", "19011721"));
-        userQueryPort.save(getUser("test2", "재학", "19011722"));
-        lockerQueryPort.save(getLocker(1L, end, start));
-        lockerQueryPort.save(getLocker(2L, end, start));
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
-                .studentNum("19011721")
-                .lockerNum(1L)
-                .build());
-        //when
-        LockerReserveResponseDto reserveLocker = lockerUseCase.findReserveLocker();
-        //then
-        assertThat(reserveLocker.getLockerIdList()).hasSize(1);
-    }
+
 
 
 //    LockerPeriodResponseDto getLockerPeriod();
@@ -155,12 +154,17 @@ class LockerUseCaseTest {
         //given
         userQueryPort.save(getUser("test", "재학", "test"));
         lockerQueryPort.save(getLocker(1L, now().plusDays(1), now().minusDays(1)));
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.register(LockerRegisterRequestDto.builder()
                 .lockerNum(1L)
                 .studentNum("test")
                 .build());
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{"ROLE_ADMIN"})
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User("ROLE_ADMIN", "", authorities);
         //when
-        lockerUseCase.initLockerInfo();
+
+        reservationUseCase.resetReservation(new UsernamePasswordAuthenticationToken(principal, "", authorities));
         //then
         List<Locker> all = lockerQueryPort.findAll();
         assertThat(all.stream().filter(locker -> locker.isUsable()==false).count()).isEqualTo(0);
@@ -177,7 +181,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> lockerUseCase.register(lockerRegisterRequestDto)).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(RuntimeException.class);
     }
 
     @DisplayName("졸업생이 사물함을 예약할때")
@@ -191,7 +195,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> lockerUseCase.register(lockerRegisterRequestDto)).isInstanceOf(InvalidReservedStatusException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(InvalidReservedStatusException.class);
     }
 
     @DisplayName("예약시간이 되지 않았는데 예약을 진행할때")
@@ -205,7 +209,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> lockerUseCase.register(lockerRegisterRequestDto)).isInstanceOf(IsNotReserveTimeException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(IsNotReserveTimeException.class);
     }
 
     @DisplayName("이미 예약된 사물함을 예약시도할때 에러 반환 테스트")
@@ -222,9 +226,9 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto2 = getLockerRegisterRequestDto(user2, locker);
 
         //when
-        lockerUseCase.register(lockerRegisterRequestDto1);
+        redissonLockReservationFacade.register(lockerRegisterRequestDto1);
         //then
-        Assertions.assertThatThrownBy(() -> lockerUseCase.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedLockerException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedLockerException.class);
     }
 
     @DisplayName("이미 예약한 사용자가 예약시도할때 에러 반환 테스트")
@@ -243,9 +247,9 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto2 = getLockerRegisterRequestDto(user1, locker2);
 
         //when
-        lockerUseCase.register(lockerRegisterRequestDto1);
+        reservationUseCase.register(lockerRegisterRequestDto1);
         //then
-        Assertions.assertThatThrownBy(() -> lockerUseCase.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedUserException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedUserException.class);
     }
 
     @DisplayName("재학생이 각각 다른 사물함을 예약할때")
@@ -262,8 +266,8 @@ class LockerUseCaseTest {
         );
         LockerRegisterRequestDto dto1 = getLockerRegisterRequestDto(user1, locker1);
         LockerRegisterRequestDto dto2 = getLockerRegisterRequestDto(user2, locker2);
-        LockerRegisterResponseDto register = lockerUseCase.register(dto1);
-        LockerRegisterResponseDto register1 = lockerUseCase.register(dto2);
+        LockerRegisterResponseDto register = redissonLockReservationFacade.register(dto1);
+        LockerRegisterResponseDto register1 = redissonLockReservationFacade.register(dto2);
         assertThat(register.getLockerNum()).isEqualTo(dto1.getLockerNum());
         assertThat(register1.getLockerNum()).isEqualTo(dto2.getLockerNum());
     }
@@ -335,7 +339,7 @@ class LockerUseCaseTest {
             service.execute(
                     ()->{
                         try {
-                            redissonLockLockerFacade.register(LockerRegisterRequestDto.builder()
+                            redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
                                             .lockerNum(1L)
                                             .studentNum(studentNums)
                                     .build());
@@ -354,8 +358,9 @@ class LockerUseCaseTest {
         int count = 0;
         for(int i=0;i<100;i++){
             String studentNum = Integer.toString(19011721 + i);
-            Optional<User> byStudentNum = userQueryPort.findByStudentNum(studentNum);
-            if(byStudentNum.get().getLocker()!=null){
+            if(reservationQueryPort.isReservationByStudentNum(FindReservationByStudentNumDto.builder()
+                    .studentNum(studentNum)
+                    .build())){
                 count++;
             }
         }

@@ -26,10 +26,6 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
         return userJpaRepository.findAll();
     }
 
-    @Override
-    public Page<User> findAllOrderByStudentNumAsc(Pageable pageable) {
-        return userJpaRepository.findAllOrderByStudentNumAsc(pageable);
-    }
 
     @Override
     public Optional<User> findByStudentNameAndStudentNum(String studentName, String studentNum) {

@@ -8,6 +8,7 @@ import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestD
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.AllUserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoForAdminModifiedPageResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,10 +32,10 @@ class UserAdminController {
     )
     @GetMapping("")
     public SuccessResponse adminInfo(Pageable pageable){
-        Page<UserInfoResponseDto> allUserInfo = userUseCase.findAllUserInfo(pageable);
+        Page<UserInfoForAdminModifiedPageResponseDto> allUserInfo = userUseCase.findAllUserInfo(pageable);
         return new SuccessResponse(
                 allUserInfo.stream()
-                        .map(userInfoResponseDto -> userInfoResponseDto.toResponse())
+                        .map(UserInfoForAdminModifiedPageResponseDto::toResponse)
                         .collect(Collectors.toList())
         );
 

@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Builder
-public class LockerReserveResponseDto {
+public class ReservationOfLockerResponseDto {
     private List<Long> lockerIdList;
 }

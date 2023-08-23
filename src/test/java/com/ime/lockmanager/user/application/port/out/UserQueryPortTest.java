@@ -1,5 +1,6 @@
 package com.ime.lockmanager.user.application.port.out;
 
+import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import org.assertj.core.api.Assertions;
@@ -25,9 +26,12 @@ class UserQueryPortTest {
 
     @Autowired
     private UserQueryPort userQueryPort;
+    @Autowired
+    private ReservationQueryPort reservationQueryPort;
 
     @BeforeEach
     void tearDown() {
+        reservationQueryPort.deleteAll();
         userQueryPort.deleteAll();
     }
 

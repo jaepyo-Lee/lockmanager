@@ -1,9 +1,8 @@
-package com.ime.lockmanager.locker.application.service;
+package com.ime.lockmanager.reservation.application.service;
 
-import com.ime.lockmanager.common.format.exception.locker.InvalidCancelLockerException;
-import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
+import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -15,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RedissonLockLockerFacade{
+public class RedissonLockReservationFacade {
     private final RedissonClient redissonClient;
-    private final LockerUseCase lockerUseCase;
+    private final ReservationUseCase reservationUseCase;
     private static LockerRegisterResponseDto register;
     private static final String LOCK_PREFIX = "lockerId : ";
 
@@ -31,7 +30,7 @@ public class RedissonLockLockerFacade{
             return null;
         }
         log.info("redisson : lock 획득 후 로직 진행");
-        register = lockerUseCase.register(dto);
+        register = reservationUseCase.register(dto);
 
         if(lock.isLocked() && lock.isHeldByCurrentThread()) {
             lock.unlock();

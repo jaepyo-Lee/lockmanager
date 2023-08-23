@@ -11,10 +11,10 @@ public interface LockerJpaRepository extends JpaRepository<Locker,Long> {
     @Override
     Optional<Locker> findById(Long aLong);
 
-    @Query("select L.id FROM LOCKER_TABLE L join L.user U")
-    List<Long> findReservedLockerId();
-
     @Override
     List<Locker> findAll();
+
+    @Query("select L.id From LOCKER_TABLE L left join L.reservation as R where R.id=null")
+    List<Long> findNotReservationLocker();
 
 }

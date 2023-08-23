@@ -2,11 +2,14 @@ package com.ime.lockmanager.user.application.port.in;
 
 import com.ime.lockmanager.common.format.exception.locker.InvalidCancelLockerException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
-import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
+import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
+import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
+import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
+import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
@@ -39,10 +42,14 @@ class UserUseCaseTest {
     @Autowired
     private LockerQueryPort lockerQueryPort;
     @Autowired
-    private LockerUseCase lockerUseCase;
-
+    private RedissonLockReservationFacade redissonLockReservationFacade;
+    @Autowired
+    private ReservationQueryPort reservationQueryPort;
+    @Autowired
+    private ReservationUseCase reservationUseCase;
     @BeforeEach
     void tearDown() {
+        reservationQueryPort.deleteAll();
         userQueryPort.deleteAll();
         lockerQueryPort.deleteAll();
     }
@@ -129,7 +136,7 @@ class UserUseCaseTest {
         //given
         userQueryPort.save(getUser("이재표", "재학", "19011721"));
         lockerQueryPort.save(getLocker(1L));
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.register(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
                 .lockerNum(1L)
                 .build());
@@ -203,10 +210,10 @@ class UserUseCaseTest {
         //when
         userUseCase.modifiedUserInfo(List.of(modifiedUserInfoRequestDto));
         //then
-        User byStudentNum = userQueryPort.findByStudentNum("19011721").orElseThrow(NotFoundUserException::new);
+        Reservation reservationByStudentNum = reservationQueryPort.findReservationByStudentNum("19011721");
         Assertions.assertAll(
-                ()->assertThat(byStudentNum.getStudentNum()).isEqualTo("19011721"),
-                ()->assertThat(byStudentNum.getLocker().getId()).isEqualTo(1)
+                ()->assertThat(reservationByStudentNum.getUser().getStudentNum()).isEqualTo("19011721"),
+                ()->assertThat(reservationByStudentNum.getLocker().getId()).isEqualTo(1)
         );
     }
 
@@ -217,7 +224,7 @@ class UserUseCaseTest {
         userQueryPort.save(getUser("이재표", "재학", "19011721"));
         lockerQueryPort.save(getLocker(1L));
         lockerQueryPort.save(getLocker(2L));
-        lockerUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.register(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
                 .lockerNum(1L)
                 .build());
@@ -226,9 +233,10 @@ class UserUseCaseTest {
         userUseCase.modifiedUserInfo(List.of(modifiedUserInfoRequestDto));
         //then
         User byStudentNum = userQueryPort.findByStudentNum("19011721").orElseThrow(NotFoundUserException::new);
+        Reservation reservationByStudentNum = reservationQueryPort.findReservationByStudentNum("19011721");
         Assertions.assertAll(
-                ()->assertThat(byStudentNum.getStudentNum()).isEqualTo("19011721"),
-                ()->assertThat(byStudentNum.getLocker().getId()).isEqualTo(2)
+                () -> assertThat(byStudentNum.getStudentNum()).isEqualTo("19011721"),
+                () -> assertThat(reservationByStudentNum.getLocker().getId()).isEqualTo(2L)
         );
     }
 

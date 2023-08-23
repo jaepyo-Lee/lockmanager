@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface LockerQueryPort {
     Optional<Locker> findByLockerId(Long lockerId);
 
-    List<Long> findReservedLockerId();
-
     List<Locker> findAll();
 
     List<Long> findNotReservedLockerId();

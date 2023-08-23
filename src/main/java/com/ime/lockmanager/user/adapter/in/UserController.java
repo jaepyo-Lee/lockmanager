@@ -37,19 +37,7 @@ class UserController {
         ));
     }
 
-    @ApiOperation(
-            value = "사물함 취소",
-            notes = "현재 사용자의 예약된 사물함을 취소하는 API"
-    )
-    @PutMapping
-    public SuccessResponse cancelLocker(Principal principal){
-        userUseCase.cancelLockerByStudentNum(
-                UserCancelLockerRequestDto.builder()
-                        .studentNum(principal.getName())
-                        .build()
-        );
-        return SuccessResponse.ok();
-    }
+
 
     @ApiOperation(
             value = "사용자 권한 조회",
