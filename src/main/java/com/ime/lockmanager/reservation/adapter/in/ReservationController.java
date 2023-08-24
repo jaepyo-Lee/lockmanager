@@ -42,7 +42,7 @@ public class ReservationController {
     @PostMapping("/register")
     public SuccessResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
         System.out.println(principal.getName());
-        return new SuccessResponse(LockerRegisterResponse.fromResponse(redissonLockReservationFacade.register(lockerRegisterRequest.toRequestDto(principal.getName()))));
+        return new SuccessResponse(LockerRegisterResponse.fromResponse(redissonLockReservationFacade.registerForUser(lockerRegisterRequest.toRequestDto(principal.getName()))));
     }
 
     //예약된 사물함 가져오기

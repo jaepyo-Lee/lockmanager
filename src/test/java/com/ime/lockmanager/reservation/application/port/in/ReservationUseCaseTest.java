@@ -1,12 +1,10 @@
 package com.ime.lockmanager.reservation.application.port.in;
 
-import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
-import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.Role;
@@ -21,7 +19,6 @@ import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -47,7 +44,7 @@ class ReservationUseCaseTest {
         userQueryPort.save(getUser("test2", "재학", "19011722"));
         lockerQueryPort.save(getLocker(1L, end, start));
         lockerQueryPort.save(getLocker(2L, end, start));
-        redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
+        redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
                 .lockerNum(1L)
                 .studentNum("19011721")
                 .build());

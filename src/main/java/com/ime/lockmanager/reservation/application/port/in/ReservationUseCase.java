@@ -8,7 +8,8 @@ import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestD
 import java.security.Principal;
 
 public interface ReservationUseCase {
-    LockerRegisterResponseDto register(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
+    LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
+    LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
 
     ReservationOfLockerResponseDto findReservedLockers();
 

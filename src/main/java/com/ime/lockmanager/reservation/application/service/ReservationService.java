@@ -57,11 +57,38 @@ public class ReservationService implements ReservationUseCase {
                 .build();
     }
 
+    @Override
+    public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception {
+        log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerNum());
+        User byStudentNum = userQueryPort.findByStudentNum(lockerRegisterRequestDto.getStudentNum())
+                .orElseThrow(NotFoundUserException::new);
+        Locker byLockerId = lockerQueryPort.findByLockerId(lockerRegisterRequestDto.getLockerNum())
+                .orElseThrow(NotFoundLockerException::new);
+        if (notInvalidStatus.contains(byStudentNum.getStatus())) {
+            if (!reservationQueryPort.isReservationByStudentNum(FindReservationByStudentNumDto.builder()
+                    .studentNum(byStudentNum.getStudentNum())
+                    .build())) {
+                if (!reservationQueryPort.isReservationByLockerId(FindReservationByLockerNumDto.builder()
+                        .lockerNum(byLockerId.getId())
+                        .build())) {
+                    reservationQueryPort.registerLocker(UserJpaEntity.of(byStudentNum), LockerJpaEntity.of(byLockerId));
+                    log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerNum());
+                    return LockerRegisterResponseDto.builder()
+                            .lockerNum(byLockerId.getId())
+                            .studentNum(byStudentNum.getStudentNum())
+                            .build();
+                }
+                throw new AlreadyReservedLockerException();
+            }
+            throw new AlreadyReservedUserException();
+        }
+        throw new InvalidReservedStatusException();
+    }
 
 
     @Override
-    public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
-        log.info("예약 시작 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
+    public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
+        log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]",dto.getStudentNum(),dto.getLockerNum());
         User byStudentNum = userQueryPort.findByStudentNum(dto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
         Locker byLockerId = lockerQueryPort.findByLockerId(dto.getLockerNum())

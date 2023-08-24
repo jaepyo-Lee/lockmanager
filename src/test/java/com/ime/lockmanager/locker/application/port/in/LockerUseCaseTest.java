@@ -30,8 +30,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.security.Principal;
-import java.security.Security;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -85,11 +83,11 @@ class LockerUseCaseTest {
         userQueryPort.save(getUser("test2", "재학", "19011722"));
         lockerQueryPort.save(getLocker(1L, end, start));
         lockerQueryPort.save(getLocker(2L, end, start));
-        redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
+        redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
                 .lockerNum(1L)
                 .studentNum("19011721")
                 .build());
-        redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
+        redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
                 .lockerNum(2L)
                 .studentNum("19011722")
                 .build());
@@ -154,7 +152,7 @@ class LockerUseCaseTest {
         //given
         userQueryPort.save(getUser("test", "재학", "test"));
         lockerQueryPort.save(getLocker(1L, now().plusDays(1), now().minusDays(1)));
-        reservationUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
                 .lockerNum(1L)
                 .studentNum("test")
                 .build());
@@ -181,7 +179,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto)).isInstanceOf(RuntimeException.class);
     }
 
     @DisplayName("졸업생이 사물함을 예약할때")
@@ -195,7 +193,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(InvalidReservedStatusException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto)).isInstanceOf(InvalidReservedStatusException.class);
     }
 
     @DisplayName("예약시간이 되지 않았는데 예약을 진행할때")
@@ -209,7 +207,7 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto = getLockerRegisterRequestDto(user, locker);
         //when
         //then
-        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto)).isInstanceOf(IsNotReserveTimeException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto)).isInstanceOf(IsNotReserveTimeException.class);
     }
 
     @DisplayName("이미 예약된 사물함을 예약시도할때 에러 반환 테스트")
@@ -226,9 +224,9 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto2 = getLockerRegisterRequestDto(user2, locker);
 
         //when
-        redissonLockReservationFacade.register(lockerRegisterRequestDto1);
+        redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto1);
         //then
-        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedLockerException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedLockerException.class);
     }
 
     @DisplayName("이미 예약한 사용자가 예약시도할때 에러 반환 테스트")
@@ -247,9 +245,9 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto lockerRegisterRequestDto2 = getLockerRegisterRequestDto(user1, locker2);
 
         //when
-        reservationUseCase.register(lockerRegisterRequestDto1);
+        reservationUseCase.registerForUser(lockerRegisterRequestDto1);
         //then
-        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.register(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedUserException.class);
+        Assertions.assertThatThrownBy(() -> redissonLockReservationFacade.registerForUser(lockerRegisterRequestDto2)).isInstanceOf(AlreadyReservedUserException.class);
     }
 
     @DisplayName("재학생이 각각 다른 사물함을 예약할때")
@@ -266,8 +264,8 @@ class LockerUseCaseTest {
         );
         LockerRegisterRequestDto dto1 = getLockerRegisterRequestDto(user1, locker1);
         LockerRegisterRequestDto dto2 = getLockerRegisterRequestDto(user2, locker2);
-        LockerRegisterResponseDto register = redissonLockReservationFacade.register(dto1);
-        LockerRegisterResponseDto register1 = redissonLockReservationFacade.register(dto2);
+        LockerRegisterResponseDto register = redissonLockReservationFacade.registerForUser(dto1);
+        LockerRegisterResponseDto register1 = redissonLockReservationFacade.registerForUser(dto2);
         assertThat(register.getLockerNum()).isEqualTo(dto1.getLockerNum());
         assertThat(register1.getLockerNum()).isEqualTo(dto2.getLockerNum());
     }
@@ -339,7 +337,7 @@ class LockerUseCaseTest {
             service.execute(
                     ()->{
                         try {
-                            redissonLockReservationFacade.register(LockerRegisterRequestDto.builder()
+                            redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
                                             .lockerNum(1L)
                                             .studentNum(studentNums)
                                     .build());

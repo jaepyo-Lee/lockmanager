@@ -1,19 +1,16 @@
 package com.ime.lockmanager.user.application.service;
 
-import com.ime.lockmanager.common.format.exception.locker.InvalidCancelLockerException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
-import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
-import com.ime.lockmanager.reservation.domain.Reservation;
+import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
-import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto.UserInfoResponseDtoBuilder;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoForAdminModifiedPageResponseDto;
@@ -39,6 +36,7 @@ class UserService implements UserUseCase {
     private final ReservationUseCase reservationUseCase;
     private final ReservationQueryPort reservationQueryPort;
     private final UserToReservationQueryPort userToReservationQueryPort;
+    private final RedissonLockReservationFacade redissonLockReservationFacade;
     @Override
     public void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception {
         for (ModifiedUserInfoRequestDto modifiedUserInfoRequestDto : requestDto) {
@@ -54,7 +52,7 @@ class UserService implements UserUseCase {
                             .studentNum(modifiedUserInfoRequestDto.getStudentNum())
                             .build());
                 }
-                reservationUseCase.register(LockerRegisterRequestDto.builder()
+                redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder()
                         .studentNum(modifiedUserInfoRequestDto.getStudentNum())
                         .lockerNum(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
                         .build());

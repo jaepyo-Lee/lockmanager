@@ -20,7 +20,7 @@ public class RedissonLockReservationFacade {
     private static LockerRegisterResponseDto register;
     private static final String LOCK_PREFIX = "lockerId : ";
 
-    public LockerRegisterResponseDto register(LockerRegisterRequestDto dto) throws Exception {
+    public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto dto) throws Exception {
 
         RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
 
@@ -30,7 +30,26 @@ public class RedissonLockReservationFacade {
             return null;
         }
         log.info("redisson : lock 획득 후 로직 진행");
-        register = reservationUseCase.register(dto);
+        register = reservationUseCase.registerForAdmin(dto);
+
+        if(lock.isLocked() && lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
+        return register;
+
+    }
+
+    public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
+
+        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
+
+        boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+        if (!available) {
+            log.error("lock 획득실패");
+            return null;
+        }
+        log.info("redisson : lock 획득 후 로직 진행");
+        register = reservationUseCase.registerForUser(dto);
 
         if(lock.isLocked() && lock.isHeldByCurrentThread()) {
             lock.unlock();

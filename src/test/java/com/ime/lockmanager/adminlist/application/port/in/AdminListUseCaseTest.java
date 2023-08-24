@@ -50,13 +50,11 @@ class AdminListUseCaseTest {
     void getAdminListUseCaseWithoutReserve(){
         //given
         lockerQueryPort.save(Locker.builder()
-                .usable(true)
                 .period(Period.builder()
                         .startDateTime(LocalDateTime.now())
                         .endDateTime(LocalDateTime.now())
                         .build())
                 .id(1L)
-                .user(null)
                 .build());
         //when
         AdminListResponseDto adminList = adminListUseCase.getAdminList();

@@ -98,7 +98,6 @@ class AuthUseCaseTest {
         return User.builder()
                 .Id(1L)
                 .studentNum("19011721")
-                .locker(null)
                 .membership(false)
                 .status("재학")
                 .role(ROLE_USER)

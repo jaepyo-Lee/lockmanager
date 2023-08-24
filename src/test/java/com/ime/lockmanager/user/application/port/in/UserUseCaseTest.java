@@ -136,7 +136,7 @@ class UserUseCaseTest {
         //given
         userQueryPort.save(getUser("이재표", "재학", "19011721"));
         lockerQueryPort.save(getLocker(1L));
-        reservationUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
                 .lockerNum(1L)
                 .build());
@@ -224,7 +224,7 @@ class UserUseCaseTest {
         userQueryPort.save(getUser("이재표", "재학", "19011721"));
         lockerQueryPort.save(getLocker(1L));
         lockerQueryPort.save(getLocker(2L));
-        reservationUseCase.register(LockerRegisterRequestDto.builder()
+        reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
                 .lockerNum(1L)
                 .build());
