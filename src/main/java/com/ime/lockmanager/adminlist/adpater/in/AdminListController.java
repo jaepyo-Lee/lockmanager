@@ -14,7 +14,7 @@ import java.awt.print.Pageable;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/api/list")
-public class AdminListController {
+class AdminListController {
 
     private final AdminListUseCase adminListUseCase;
 

@@ -9,6 +9,9 @@ application-dev.properties
 application-prod.properties
 application.yml
 
+### Querydsl
+/src/main/generated
+
 ### STS ###
 .apt_generated
 .classpath

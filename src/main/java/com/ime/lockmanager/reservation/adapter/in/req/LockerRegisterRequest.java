@@ -1,4 +1,4 @@
-package com.ime.lockmanager.locker.adapter.in.req;
+package com.ime.lockmanager.reservation.adapter.in.req;
 
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import lombok.Getter;
@@ -7,7 +7,6 @@ import lombok.Getter;
 public class LockerRegisterRequest {
     //사물함 번호
     private Long lockerId;
-
 
     public LockerRegisterRequestDto toRequestDto(String studentNum){
         return LockerRegisterRequestDto.builder()

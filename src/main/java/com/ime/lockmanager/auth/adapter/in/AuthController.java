@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+class AuthController {
     private final AuthUseCase authUseCase;
 
     @ApiOperation(
             value = "로그인 기능",
             notes = "세종대학교 학사정보시스템의 아이디와 비밀번호를 받아 로그인 하는 API"
     )
-    @CrossOrigin(origins = "file:///C:/Users/jaepy/OneDrive/%EB%B0%94%ED%83%95%20%ED%99%94%EB%A9%B4/lockmanager_front/src/html/login.html")
     @PostMapping ("/login")
     public SuccessResponse login(@ModelAttribute LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         httpServletResponse.setHeader("Access-Control-Allow-Origin","*");

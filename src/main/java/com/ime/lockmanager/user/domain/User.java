@@ -2,7 +2,9 @@ package com.ime.lockmanager.user.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
+import com.ime.lockmanager.user.domain.response.UpdateUserInfoDto;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -34,9 +36,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker=null;
+    @OneToOne(mappedBy = "user")
+    private Reservation reservation;
 
     @Builder
     public User(String name, String studentNum, String status, Role role) {
@@ -46,22 +47,12 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
+    public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
+        this.status = updateUserInfoDto.getStatus();
+    }
+
     public void modifiedUserInfo(UserModifiedInfoDto dto){
         this.role = dto.getRole();
         this.membership = dto.isMembership();
-    }
-
-    public void registerLocker(Locker locker){
-        this.locker = locker;
-        locker.setUsable(false);
-        locker.setUser(this);
-    }
-
-    public void cancelLocker(){
-        if(locker!=null){
-            locker.setUser(null);
-            locker.setUsable(true);
-            this.locker = null;
-        }
     }
 }

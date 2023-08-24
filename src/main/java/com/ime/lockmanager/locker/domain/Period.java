@@ -23,8 +23,4 @@ public class Period {
     private LocalDateTime endDateTime;
 
 
-    public void modifiedDateTime(LockerSetTimeRequestDto requestDto){
-        this.startDateTime = requestDto.getStartDateTime();
-        this.endDateTime = requestDto.getEndDateTime();
-    }
 }

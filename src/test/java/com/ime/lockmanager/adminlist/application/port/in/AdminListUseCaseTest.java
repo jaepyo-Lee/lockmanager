@@ -5,6 +5,7 @@ import com.ime.lockmanager.locker.adapter.out.LockerJpaRepository;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
+import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.user.adapter.out.UserJpaRepository;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.Role;
@@ -31,12 +32,14 @@ class AdminListUseCaseTest {
 
     @Autowired
     private LockerQueryPort lockerQueryPort;
-
+    @Autowired
+    private ReservationQueryPort reservationQueryPort;
     @Autowired
     private UserQueryPort userQueryPort;
 
     @BeforeEach
     void tearDown() {
+        reservationQueryPort.deleteAll();
         userQueryPort.deleteAll();
         lockerQueryPort.deleteAll();
     }
@@ -47,13 +50,11 @@ class AdminListUseCaseTest {
     void getAdminListUseCaseWithoutReserve(){
         //given
         lockerQueryPort.save(Locker.builder()
-                .usable(true)
                 .period(Period.builder()
                         .startDateTime(LocalDateTime.now())
                         .endDateTime(LocalDateTime.now())
                         .build())
                 .id(1L)
-                .user(null)
                 .build());
         //when
         AdminListResponseDto adminList = adminListUseCase.getAdminList();

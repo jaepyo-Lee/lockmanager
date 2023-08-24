@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/api/locker")
-public class LockerAdminController {
+class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 
     @ApiOperation(
@@ -29,13 +29,5 @@ public class LockerAdminController {
         return SuccessResponse.ok("시간설정완료");
     }
 
-    @ApiOperation(
-            value = "사물함 정보 전체 삭제",
-            notes = "사물함 초기화(eg. 학기초 및 롤백)의 경우 예약된 모든 사물함을 초기화하는 API"
-    )
-    @PostMapping("/reset")
-    public SuccessResponse resetLocker(){
-        lockerUseCase.initLockerInfo();
-        return SuccessResponse.ok();
-    }
+
 }

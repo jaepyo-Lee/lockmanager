@@ -4,7 +4,6 @@ import com.ime.lockmanager.auth.application.port.in.response.LoginRequestDto;
 import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
-import com.ime.lockmanager.auth.application.service.AuthService;
 import com.ime.lockmanager.auth.domain.AuthUser;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;
@@ -50,7 +49,7 @@ class AuthUseCaseTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        authUseCase = new AuthService(authToUserQueryPort, jwtProvider, authToRedisQueryPort, jwtHeaderUtil, sejongLoginService);
+//        authUseCase = new AuthService(authToUserQueryPort, jwtProvider, authToRedisQueryPort, jwtHeaderUtil, sejongLoginService);
     }
 
     @DisplayName("로그인 성공(회원가입이 안되어있는 상태)")
@@ -99,7 +98,6 @@ class AuthUseCaseTest {
         return User.builder()
                 .Id(1L)
                 .studentNum("19011721")
-                .locker(null)
                 .membership(false)
                 .status("재학")
                 .role(ROLE_USER)

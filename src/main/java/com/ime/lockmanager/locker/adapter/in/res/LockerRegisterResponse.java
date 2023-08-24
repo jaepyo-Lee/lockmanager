@@ -1,6 +1,5 @@
 package com.ime.lockmanager.locker.adapter.in.res;
 
-import com.ime.lockmanager.locker.adapter.in.req.LockerRegisterRequest;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 import lombok.Builder;
 import lombok.Getter;

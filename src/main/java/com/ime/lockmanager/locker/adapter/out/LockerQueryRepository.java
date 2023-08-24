@@ -31,24 +31,13 @@ public class LockerQueryRepository implements LockerQueryPort {
     }
 
     @Override
-    public List<Long> findReservedLockerId() {
-        return lockerJpaRepository.findReservedLockerId();
-    }
-
-    @Override
     public List<Locker> findAll() {
         return lockerJpaRepository.findAll();
     }
 
     @Override
     public List<Long> findNotReservedLockerId() {
-        List<Long> notReservedLockerId = new ArrayList<>();
-        List<Locker> all = lockerJpaRepository.findAll();
-        for (Locker locker : all) {
-            if(locker.getUser()==null){
-                notReservedLockerId.add(locker.getId());
-            }
-        }
-        return notReservedLockerId;
+        List<Long> notReservationLockerId = lockerJpaRepository.findNotReservationLocker();
+        return notReservationLockerId;
     }
 }
