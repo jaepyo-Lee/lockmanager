@@ -36,9 +36,6 @@ class UserController {
                 userInfo
         ));
     }
-
-
-
     @ApiOperation(
             value = "사용자 권한 조회",
             notes = "사용자의 권한 조회 API"

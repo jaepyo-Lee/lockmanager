@@ -152,4 +152,4 @@ VALUES
     (148, NOW(), NOW()),
     (149, NOW(), NOW()),
     (150, NOW(), NOW());
-INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num) values (1,now(),now(),true,'이재표','ROLE_ADMIN','재학','19011721');
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num) values (100,now(),now(),true,'이재표','ROLE_ADMIN','재학','19011721');

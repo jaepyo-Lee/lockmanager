@@ -45,7 +45,7 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort {
     public UserInfoForMyPageResponseDto findUserInfoWithLockerIdByStudentNum(String studentNum) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (user.studentNum.equals(studentNum)) {
+        if (studentNum!=null) {
             builder.and(user.studentNum.eq(studentNum));
         }
 
