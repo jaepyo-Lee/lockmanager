@@ -9,10 +9,13 @@ import com.ime.lockmanager.reservation.application.service.RedissonLockReservati
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/reservation")
@@ -25,7 +28,8 @@ public class ReservationController {
             notes = "현재 사용자의 예약된 사물함을 취소하는 API"
     )
     @DeleteMapping
-    public SuccessResponse cancelLocker(Principal principal){
+    public SuccessResponse cancelLocker(@ApiIgnore Principal principal){
+        log.info("{} : 사물함 취소",principal.getName());
         reservationUseCase.cancelLockerByStudentNum(
                 UserCancelLockerRequestDto.builder()
                         .studentNum(principal.getName())
@@ -40,15 +44,15 @@ public class ReservationController {
             notes = "사용자가 사물함을 선택할시 해당 사물함을 예약하는 API"
     )
     @PostMapping("/register")
-    public SuccessResponse registerLocker(Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
-        System.out.println(principal.getName());
+    public SuccessResponse registerLocker(@ApiIgnore Principal principal, @RequestBody LockerRegisterRequest lockerRegisterRequest) throws Exception {
+        log.info("{} : 시믈함 예약",principal.getName());
         return new SuccessResponse(LockerRegisterResponse.fromResponse(redissonLockReservationFacade.registerForUser(lockerRegisterRequest.toRequestDto(principal.getName()))));
     }
 
     //예약된 사물함 가져오기
     @ApiOperation(
             value = "예약된 사물함 조회",
-            notes = "예약된 사물함을 조회하는 API"
+            notes = "예약된 사물함을 조회하는 API(화면 표시용 api)"
     )
     @GetMapping("/reserved")
     public SuccessResponse findReservedLocker(){
