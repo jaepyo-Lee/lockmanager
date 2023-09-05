@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 
@@ -26,8 +27,8 @@ class UserController {
             notes = "마이페이지접속시 사용자 정보조회 API"
     )
     @GetMapping("/info")
-    public SuccessResponse findUserInfo(Principal principal) throws Exception {
-        log.info("{}정보조회",principal.getName());
+    public SuccessResponse findUserInfo(@ApiIgnore Principal principal) throws Exception {
+        log.info("{} : 정보조회",principal.getName());
         UserInfoResponseDto userInfo = userUseCase.findUserInfoByStudentNum(
                 UserInfoRequestDto.builder()
                         .studentNum(principal.getName())
