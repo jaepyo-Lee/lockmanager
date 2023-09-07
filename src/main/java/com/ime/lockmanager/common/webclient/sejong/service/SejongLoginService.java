@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class SejongLoginService {
-    private static List<String> MAJOR_LIST = new ArrayList<>(List.of("스마트기기공학전공", "무인이동체공학전공", "지능기전공학과"));
+    private static List<String> MAJOR_LIST = new ArrayList<>(List.of("스마트기기공학전공", "무인이동체공학전공", "지능기전공학과","지능기전공학부"));
 
     public SejongMemberResponseDto callSejongMemberDetailApi(SejongMemberRequestDto requestDto) {
         WebClient webClient = WebClient.builder()
