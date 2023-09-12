@@ -47,7 +47,7 @@
 
 ### ERD
 
-![https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0](https://github.com/jaepyo-Lee/lockmanager/assets/74135929/b3515b30-0cd5-4edb-ba45-2739e12076f0)
+![image](https://github.com/jaepyo-Lee/lockmanager/assets/74135929/1c84cfd1-ebaa-4e0a-8e98-f72bb09d7ac7)
 
 ### 아키텍쳐
 
