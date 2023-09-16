@@ -22,7 +22,7 @@ public class Locker extends BaseTimeEntity {
     @Embedded
     private Period period;
 
-    @OneToOne(mappedBy = "locker")
+    @OneToOne(mappedBy = "locker",fetch = FetchType.LAZY)
     private Reservation reservation;
 
     public void modifiedDateTime(LockerSetTimeRequestDto requestDto){
