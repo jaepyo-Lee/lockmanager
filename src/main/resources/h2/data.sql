@@ -152,4 +152,12 @@ VALUES
     (148, NOW(), NOW()),
     (149, NOW(), NOW()),
     (150, NOW(), NOW());
-INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num) values (100,now(),now(),true,'이재표','ROLE_ADMIN','재학','19011721');
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (101,now(),now(),false,'이재표2','ROLE_ADMIN','재학','19011722',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (102,now(),now(),false,'이재표3','ROLE_ADMIN','재학','19011723',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (103,now(),now(),false,'이재표4','ROLE_ADMIN','재학','19011724',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (104,now(),now(),false,'이재표5','ROLE_ADMIN','재학','19011725',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (105,now(),now(),false,'이재표6','ROLE_ADMIN','재학','19011726',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (106,now(),now(),false,'이재표7','ROLE_ADMIN','재학','19011727',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (107,now(),now(),false,'이재표8','ROLE_ADMIN','재학','19011728',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (108,now(),now(),false,'이재표9','ROLE_ADMIN','재학','19011729',false);
+INSERT INTO user_table (user_id,created_time,modified_time,membership,name,role,status,student_num,auth) values (1,now(),now(),false,'이재표','ROLE_ADMIN','재학','19011721',true);

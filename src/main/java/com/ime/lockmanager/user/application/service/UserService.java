@@ -7,6 +7,7 @@ import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,6 +63,22 @@ class UserService implements UserUseCase {
         }
     }
 
+    @Override
+    public void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception{
+        User byStudentNum = userQueryPort.findByStudentNum(updateUserDueInfoDto.getStudentNum())
+                .orElseGet(() -> userQueryPort.save(User.builder()
+                        .name(updateUserDueInfoDto.getName())
+                        .studentNum(updateUserDueInfoDto.getStudentNum())
+                        .membership(updateUserDueInfoDto.isDue())
+                        .role(Role.ROLE_USER)
+                        .auth(false)
+                        .build()));
+        if(byStudentNum.isAuth()){
+            if(updateUserDueInfoDto.isDue()!=byStudentNum.isMembership()){
+                byStudentNum.updateDueInfo(updateUserDueInfoDto.isDue());
+            }
+        }
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -1,15 +1,13 @@
 package com.ime.lockmanager.user.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
-import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
-import com.ime.lockmanager.user.domain.response.UpdateUserInfoDto;
+import com.ime.lockmanager.user.domain.dto.UpdateUserInfoDto;
+import com.ime.lockmanager.user.domain.response.UpdateUserStatusInfoDto;
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
 
 @Getter
 @Builder
@@ -38,6 +36,11 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
     private Reservation reservation;
 
+    private String grade;
+    private String major;
+    private boolean auth;
+
+
     @Builder
     public User(String name, String studentNum, String status, Role role) {
         this.name = name;
@@ -46,12 +49,22 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
+    public void updateUserStatusInfo(UpdateUserStatusInfoDto updateUserStatusInfoDto){
+        this.status = updateUserStatusInfoDto.getStatus();
+    }
+
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
+        this.auth = updateUserInfoDto.isAuth();
         this.status = updateUserInfoDto.getStatus();
+        this.grade = updateUserInfoDto.getGrade();
+        this.major = updateUserInfoDto.getMajor();
     }
 
     public void modifiedUserInfo(UserModifiedInfoDto dto){
         this.role = dto.getRole();
         this.membership = dto.isMembership();
+    }
+    public void updateDueInfo(boolean isDue){
+        this.membership = isDue;
     }
 }

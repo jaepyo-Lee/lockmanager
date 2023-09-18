@@ -1,7 +1,7 @@
 package com.ime.lockmanager.user.application.port.in;
 
+import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
-import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoForAdminModifiedPageResponseDto;
@@ -18,4 +18,6 @@ public interface UserUseCase {
     boolean checkAdmin(String studentNum);
 
     void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception;
+
+    void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
 }

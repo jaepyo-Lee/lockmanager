@@ -44,12 +44,24 @@ class AuthService implements AuthUseCase {
                         .status(sejongMemberResponseDto.getResult().getBody().getStatus())
                         .studentNum(loginRequestDto.getId())
                         .role(Role.ROLE_USER)
+                        .auth(true)
+                        .grade(sejongMemberResponseDto.getResult().getIs_auth())
+                        .major(sejongMemberResponseDto.getResult().getBody().getMajor())
                         .build())
         );
-        updateUserInfo(user,sejongMemberResponseDto);
+        /*if(user.isAuth()==false){ //로그인이 아닌 학생회비 파일로 회원등록이 된 사람이 들어올때, 모든 값을 넣어줘야함
+            updateUserInfo(user, sejongMemberResponseDto);
+        }else{ // 이미 로그인을 했던사람, 재학상태만 바꾸면됨
+            updateUserStatusInfo(user,sejongMemberResponseDto);
+        } db 컬럼이 변경되면서 추가 정보를 넣어야하는데, 로그인한 사람들이 이미많은데, 정보를 넣어줄 방법이없어서 일단 주석 */
+        updateUserInfo(user, sejongMemberResponseDto);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(),jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return TokenResponseDto.of(tokenSet.getAccessToken(),tokenSet.getRefreshToken());
+    }
+
+    private void updateUserInfo(User user,SejongMemberResponseDto sejongMemberResponseDto) {
+        user.updateUserInfo(sejongMemberResponseDto.toUpdateUserInfoDto());
     }
 
     @Override
@@ -84,8 +96,8 @@ class AuthService implements AuthUseCase {
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
 
-    private void updateUserInfo(User user,SejongMemberResponseDto sejongMemberResponseDto){
-        user.updateUserInfo(sejongMemberResponseDto.toUpdateUserInfoDto());
+    private void updateUserStatusInfo(User user, SejongMemberResponseDto sejongMemberResponseDto){
+        user.updateUserStatusInfo(sejongMemberResponseDto.toUpdateUserStatusInfoDto());
     }
 
 
