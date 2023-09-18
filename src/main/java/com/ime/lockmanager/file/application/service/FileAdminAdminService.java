@@ -2,7 +2,7 @@ package com.ime.lockmanager.file.application.service;
 
 import com.ime.lockmanager.common.format.exception.file.NotValidDuesCheckingException;
 import com.ime.lockmanager.common.format.exception.file.NotValidExcelFormatException;
-import com.ime.lockmanager.file.application.port.in.usecase.FileUseCase;
+import com.ime.lockmanager.file.application.port.in.usecase.FileAdminUseCase;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class FileService implements FileUseCase {
+public class FileAdminAdminService implements FileAdminUseCase {
     private final UserUseCase userUseCase;
     private final UserQueryPort userQueryPort;
 

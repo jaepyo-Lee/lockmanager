@@ -1,7 +1,7 @@
 package com.ime.lockmanager.file.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.file.application.port.in.usecase.FileUseCase;
+import com.ime.lockmanager.file.application.port.in.usecase.FileAdminUseCase;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/admin/api/file")
 @RestController
-public class FileController {
-    private final FileUseCase fileUseCase;
+public class FileAdminController {
+    private final FileAdminUseCase fileAdminUseCase;
 
     @ApiOperation(
             value = "학생회비 엑셀파일을 업로드시 학생들의 학생회비 납부여부 업데이트",
@@ -26,7 +26,7 @@ public class FileController {
             @Parameter(name = "membershipFile", description = "학생회비 납부명단 엑셀파일", in = ParameterIn.QUERY)
             @RequestPart MultipartFile membershipFile
     ) throws Exception {
-        fileUseCase.ParseMembershipExcelForUpdateUserDuesInfo(membershipFile);
+        fileAdminUseCase.ParseMembershipExcelForUpdateUserDuesInfo(membershipFile);
         return SuccessResponse.ok();
     }
 }
