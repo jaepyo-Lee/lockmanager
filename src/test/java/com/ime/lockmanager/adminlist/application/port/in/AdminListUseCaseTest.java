@@ -1,16 +1,13 @@
 package com.ime.lockmanager.adminlist.application.port.in;
 
 import com.ime.lockmanager.adminlist.application.port.in.res.AdminListResponseDto;
-import com.ime.lockmanager.locker.adapter.out.LockerJpaRepository;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
-import com.ime.lockmanager.user.adapter.out.UserJpaRepository;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
