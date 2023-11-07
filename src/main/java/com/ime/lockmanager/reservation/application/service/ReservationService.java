@@ -52,9 +52,10 @@ public class ReservationService implements ReservationUseCase {
     @Override
     public ReservationOfLockerResponseDto findReservedLockers() {
         List<Long> reservedLockersIdList = reservationQueryPort.findReservedLockers();
-        return ReservationOfLockerResponseDto.builder()
+        ReservationOfLockerResponseDto build = ReservationOfLockerResponseDto.builder()
                 .lockerIdList(reservedLockersIdList)
                 .build();
+        return build;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.ime.lockmanager.auth.adapter.in;
 
 import com.ime.lockmanager.auth.adapter.in.req.LoginRequest;
+import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
+import com.ime.lockmanager.common.format.success.SuccessResponseStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +15,12 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
+import static com.ime.lockmanager.common.format.success.SuccessResponseStatus.*;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 class AuthController {
     private final AuthUseCase authUseCase;
 
@@ -25,10 +29,10 @@ class AuthController {
             notes = "세종대학교 학사정보시스템의 아이디와 비밀번호를 받아 로그인 하는 API"
     )
     @PostMapping ("/login")
-    public SuccessResponse login(@ModelAttribute LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+    public SuccessResponse<TokenResponseDto> login(@ModelAttribute LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         httpServletResponse.setHeader("Access-Control-Allow-Origin","*");
         log.info("{} : 로그인",loginRequest.getId());
-        return new SuccessResponse(authUseCase.login(loginRequest.toRequestDto()));
+        return new SuccessResponse(authUseCase.login(loginRequest.toRequestDto()),SUCCESS_LOGIN);
     }
 
     @ApiOperation(
@@ -36,9 +40,9 @@ class AuthController {
             notes = "access token 만료시 refresh token을 이용하여 access token을 재발급받는 API"
     )
     @PostMapping("/reissue")
-    public SuccessResponse reissue(Principal principal,@RequestHeader(value = "RefreshToken") String refreshToken){
+    public SuccessResponse<TokenResponseDto> reissue(Principal principal,@RequestHeader(value = "RefreshToken") String refreshToken){
         log.info("{} : 토큰 재발급",principal.getName());
-        return new SuccessResponse(authUseCase.reissue(refreshToken));
+        return new SuccessResponse(authUseCase.reissue(refreshToken),SUCCESTT_REISSUE_TOKEN);
     }
 
     @ApiOperation(
@@ -46,9 +50,10 @@ class AuthController {
             notes = "로그아웃 API"
     )
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@ApiIgnore Principal principal, @RequestHeader(value = "AccessToken") String accessToken){
+    public SuccessResponse logout(@ApiIgnore Principal principal, @RequestHeader(value = "AccessToken") String accessToken){
         log.info("{} : 로그아웃",principal.getName());
-        return authUseCase.logout(accessToken);
+        authUseCase.logout(accessToken);
+        return new SuccessResponse(SUCCESS_LOGOUT);
     }
 
 }

@@ -13,7 +13,7 @@ import static java.time.LocalDateTime.now;
 @ToString
 @Getter
 @AllArgsConstructor
-@JsonPropertyOrder({"time","status","code","message","result"})
+@JsonPropertyOrder({"time", "status", "code", "message", "result"})
 public class SuccessResponse<T> {
     @JsonProperty("status")
     private int status;
@@ -32,15 +32,30 @@ public class SuccessResponse<T> {
     }
 
     //성공의 경우
-    public SuccessResponse(T result){
-        this.status= HttpStatus.OK.value();
+    public SuccessResponse(T result) {
+        this.status = HttpStatus.OK.value();
         this.time = now();
         this.code = SuccessResponseStatus.SUCCESS.getCode();
         this.message = SuccessResponseStatus.SUCCESS.getMessage();
         this.result = result;
     }
 
-    public static SuccessResponse ok(String message){
+    public SuccessResponse(SuccessResponseStatus successResponseStatus) {
+        this.status = HttpStatus.OK.value();
+        this.time = now();
+        this.code = successResponseStatus.getCode();
+        this.message = successResponseStatus.getMessage();
+    }
+
+    public SuccessResponse(T result, SuccessResponseStatus successResponseStatus) {
+        this.status = HttpStatus.OK.value();
+        this.time = now();
+        this.code = successResponseStatus.getCode();
+        this.message = successResponseStatus.getMessage();
+        this.result = result;
+    }
+
+    public static SuccessResponse ok(String message) {
         return SuccessResponse.builder()
                 .status(HttpStatus.OK.value())
                 .time(now())
@@ -48,7 +63,8 @@ public class SuccessResponse<T> {
                 .message(message)
                 .build();
     }
-    public static SuccessResponse ok(){
+
+    public static SuccessResponse ok() {
         return SuccessResponse.builder()
                 .status(HttpStatus.OK.value())
                 .time(now())

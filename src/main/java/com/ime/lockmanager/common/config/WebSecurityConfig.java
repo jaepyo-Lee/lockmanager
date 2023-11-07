@@ -45,7 +45,7 @@ public class WebSecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/auth/login","/swagger-ui/**").permitAll()
+                .antMatchers("/api/v1/auth/login","/swagger-ui/**").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","MASTER")
                 .antMatchers("/master/**").hasRole("MASTER")
                 .anyRequest().authenticated()

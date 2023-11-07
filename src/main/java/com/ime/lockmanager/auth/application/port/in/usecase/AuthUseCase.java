@@ -10,6 +10,6 @@ public interface AuthUseCase {
 
     TokenResponseDto reissue(String refreshToken);
 
-    ResponseEntity<String> logout(String accessToken);
+    void logout(String accessToken);
 
 }
