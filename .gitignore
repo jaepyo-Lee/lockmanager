@@ -11,7 +11,8 @@ application.yml
 
 ### Querydsl
 /src/main/generated
-/resources/h2/data.sql
+
+/src/main/resources/h2/data.sql
 
 ### STS ###
 .apt_generated
