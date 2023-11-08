@@ -1,25 +1,18 @@
 package com.ime.lockmanager.common.webclient.sejong.service;
 
 import com.ime.lockmanager.common.format.exception.auth.InvalidLoginParamException;
-import com.ime.lockmanager.common.format.exception.auth.NotImeStudentException;
-import com.ime.lockmanager.common.format.exception.webclient.SejongIncorrectInformException;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.req.SejongMemberRequestDto;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @RequiredArgsConstructor
 @Service
@@ -31,18 +24,26 @@ public class SejongLoginService {
                 .baseUrl("https://auth.imsejong.com/auth")
                 .build()
                 .post()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("method", "ClassicSession")
-                        .build())
+                .uri(uriBuilder -> uriBuilder.queryParam("method", "ClassicSession").build())
                 .body(BodyInserters.fromValue(requestDto))
                 .retrieve()
-                .onStatus(httpStatus -> httpStatus.is4xxClientError(), this::handleInvalidParamError)
-                .bodyToMono(SejongMemberResponseDto.class).block();
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new IllegalStateException("Server Error")))
+                .bodyToMono(SejongMemberResponseDto.class)
+                .flatMap(responseDto -> verifyLoginParamError(responseDto))
+                .block();
     }
 
-    private Mono<? extends Throwable> handleInvalidParamError(ClientResponse clientResponse) {
-        return ClientResponse.create(HttpStatus.BAD_REQUEST)
-                .build().createException()
-                .flatMap(e -> Mono.error(new InvalidLoginParamException()));
+    private Mono<SejongMemberResponseDto> verifyLoginParamError(SejongMemberResponseDto responseDto) {
+        if ("false".equals(responseDto.getResult().getIs_auth())) {
+            return Mono.error(new InvalidLoginParamException());
+        }
+        return Mono.just(responseDto);
     }
+
+    /*private Mono<? extends Throwable> handleLoginServerError(ClientResponse clientResponse) {
+
+        ClientResponse.create(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build().createException()
+                .flatMap(e -> Mono.error(new IllegalArgumentException("로그인 서버 에러입니다. 관리자에게 문의해주세요")));
+    }*/
 }
