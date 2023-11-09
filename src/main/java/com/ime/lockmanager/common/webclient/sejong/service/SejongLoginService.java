@@ -1,6 +1,8 @@
 package com.ime.lockmanager.common.webclient.sejong.service;
 
 import com.ime.lockmanager.common.format.exception.auth.InvalidLoginParamException;
+import com.ime.lockmanager.common.format.exception.auth.NotEnoughWebclientLoginParamException;
+import com.ime.lockmanager.common.format.exception.webclient.WebClientAuthServerException;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.req.SejongMemberRequestDto;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,8 @@ public class SejongLoginService {
                 .uri(uriBuilder -> uriBuilder.queryParam("method", "ClassicSession").build())
                 .body(BodyInserters.fromValue(requestDto))
                 .retrieve()
-                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new IllegalStateException("Server Error")))
+                .onStatus(HttpStatus::is5xxServerError,clientResponse -> handleLoginServerError(clientResponse))
+                .onStatus(HttpStatus::is4xxClientError,clientResponse -> handleWebclientLoginParamError(clientResponse))
                 .bodyToMono(SejongMemberResponseDto.class)
                 .flatMap(responseDto -> verifyLoginParamError(responseDto))
                 .block();
@@ -40,10 +43,14 @@ public class SejongLoginService {
         return Mono.just(responseDto);
     }
 
-    /*private Mono<? extends Throwable> handleLoginServerError(ClientResponse clientResponse) {
-
-        ClientResponse.create(HttpStatus.INTERNAL_SERVER_ERROR)
+    private Mono<? extends Throwable> handleWebclientLoginParamError(ClientResponse clientResponse) {
+        return ClientResponse.create(HttpStatus.BAD_REQUEST)
                 .build().createException()
-                .flatMap(e -> Mono.error(new IllegalArgumentException("로그인 서버 에러입니다. 관리자에게 문의해주세요")));
-    }*/
+                .flatMap(e -> Mono.error(new NotEnoughWebclientLoginParamException()));
+    }
+    private Mono<? extends Throwable> handleLoginServerError(ClientResponse clientResponse) {
+        return ClientResponse.create(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build().createException()
+                .flatMap(e -> Mono.error(new WebClientAuthServerException()));
+    }
 }

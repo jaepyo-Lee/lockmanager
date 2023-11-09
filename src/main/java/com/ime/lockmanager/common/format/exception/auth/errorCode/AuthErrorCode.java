@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum AuthErrorCode implements ErrorEnumCode {
     INVALID_LOGIN_PARAM("AE001","로그인 정보가 틀렸습니다. 아이디와 비밀번호를 다시 확인해주세요"),
 
-    NOT_IME_STUDENT("AE002","지능기전공학과 학우들만 이용할수 있는 서비스입니다.");
+    NOT_IME_STUDENT("AE002","지능기전공학과 학우들만 이용할수 있는 서비스입니다."),
+    NOT_ENOUGH_WEBCLIENT_LOGIN_PARAM("AE003","API요청시 파라미터를 확인해주세요. 관리자에게 문의바랍니다.");
 
     private final String code;
     private final String message;
