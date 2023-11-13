@@ -2,6 +2,7 @@ package com.ime.lockmanager.common.config;
 
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.common.filter.JwtAuthenticationFilter;
+import com.ime.lockmanager.common.filter.JwtExceptionFilter;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtHeaderUtil,jwtProvider,authToRedisQueryPort);
-
+        JwtExceptionFilter jwtExceptionFilter = new JwtExceptionFilter();
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
@@ -57,7 +58,8 @@ public class WebSecurityConfig {
                 .cors()
                 .configurationSource(corsConfiguration())
                 .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter,JwtAuthenticationFilter.class);
         return http.build();
     }
     public CorsConfigurationSource corsConfiguration(){
