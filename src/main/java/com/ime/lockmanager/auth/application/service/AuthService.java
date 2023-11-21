@@ -44,20 +44,20 @@ class AuthService implements AuthUseCase {
     @Override
     public TokenResponseDto login(LoginRequestDto loginRequestDto) {
         SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
-        Major major = findMajorByMajorDetailName(getMajorName(sejongMemberResponseDto));
-        User user = saveOrFindUser(major, loginRequestDto, sejongMemberResponseDto);
-        updateUserInfo(sejongMemberResponseDto, major, user);
+        MajorDetail majorDetail = findMajorDetailByName(getMajorName(sejongMemberResponseDto));
+        User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
+        updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return TokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
     }
 
-    private User saveOrFindUser(Major major, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
+    private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
                 authToUserQueryPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
                                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
-                                .major(major)
+                                .majorDetail(majorDetail)
                                 .name(sejongMemberResponseDto.getResult().getBody().getName())
                                 .status(sejongMemberResponseDto.getResult().getBody().getStatus())
                                 .studentNum(loginRequestDto.getId())
@@ -65,23 +65,17 @@ class AuthService implements AuthUseCase {
                 ));
     }
 
-    private void updateUserInfo(SejongMemberResponseDto sejongMemberResponseDto, Major major, User user) {
+    private void updateUserInfo(SejongMemberResponseDto sejongMemberResponseDto, MajorDetail majorDetail, User user) {
         user.updateUserInfo(UpdateUserInfoDto.builder()
                 .auth(true)
                 .status(sejongMemberResponseDto.getResult().getBody().getStatus())
                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
-                .major(major)
+                .majorDetail(majorDetail)
                 .build());
     }
 
     private String getMajorName(SejongMemberResponseDto sejongMemberResponseDto) {
         return sejongMemberResponseDto.getResult().getBody().getMajor();
-    }
-
-    private Major findMajorByMajorDetailName(String majorName) {
-        MajorDetail majorDetailByMajorName = findMajorDetailByName(majorName);
-        Major major = majorDetailByMajorName.getMajor();
-        return major;
     }
 
     private MajorDetail findMajorDetailByName(String majorName) {
@@ -98,7 +92,7 @@ class AuthService implements AuthUseCase {
                 .role(ROLE_USER)
                 .auth(true)
                 .grade(loginInfoDto.getGrade())
-                .major(loginInfoDto.getMajor())
+                .majorDetail(loginInfoDto.getMajorDetail())
                 .build();
     }
 

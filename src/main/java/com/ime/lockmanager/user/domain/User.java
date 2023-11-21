@@ -1,6 +1,8 @@
 package com.ime.lockmanager.user.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
+import com.ime.lockmanager.major.domain.Major;
+import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import com.ime.lockmanager.user.domain.dto.UpdateUserInfoDto;
@@ -8,6 +10,8 @@ import com.ime.lockmanager.user.domain.response.UpdateUserStatusInfoDto;
 import lombok.*;
 
 import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Builder
@@ -33,11 +37,13 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user",fetch = LAZY)
     private Reservation reservation;
 
     private String grade;
-    private String major;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "major_detail_id")
+    private MajorDetail majorDetail;
     private boolean auth;
 
 
@@ -49,15 +55,11 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
-    public void updateUserStatusInfo(UpdateUserStatusInfoDto updateUserStatusInfoDto){
-        this.status = updateUserStatusInfoDto.getStatus();
-    }
-
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
         this.auth = updateUserInfoDto.isAuth();
         this.status = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();
-        this.major = updateUserInfoDto.getMajor();
+        this.majorDetail = updateUserInfoDto.getMajorDetail();
     }
 
     public void modifiedUserInfo(UserModifiedInfoDto dto){

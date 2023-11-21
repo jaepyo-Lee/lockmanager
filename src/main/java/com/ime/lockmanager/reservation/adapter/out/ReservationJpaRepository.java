@@ -15,6 +15,5 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation,Long
     @Query("select R.locker.id from RESERVATION_TABLE as R")
     List<Long> findAllIds();
 
-
     void deleteByUserStudentNum(String studentNum);
 }
