@@ -2,6 +2,7 @@ package com.ime.lockmanager.locker.adapter.out;
 
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.major.domain.Major;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -39,5 +40,10 @@ public class LockerQueryRepository implements LockerQueryPort {
     public List<Long> findNotReservedLockerId() {
         List<Long> notReservationLockerId = lockerJpaRepository.findNotReservationLocker();
         return notReservationLockerId;
+    }
+
+    @Override
+    public List<Locker> findLockerByUserMajor(Major major) {
+        return lockerJpaRepository.findLockerByUserMajor(major);
     }
 }

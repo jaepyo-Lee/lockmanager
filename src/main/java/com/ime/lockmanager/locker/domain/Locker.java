@@ -2,13 +2,14 @@ package com.ime.lockmanager.locker.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.domain.Reservation;
-import com.ime.lockmanager.user.domain.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import reactor.util.annotation.Nullable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @NoArgsConstructor
@@ -19,10 +20,21 @@ public class Locker extends BaseTimeEntity {
     @Id
     @Column(name = "LOCKER_ID")
     private Long id;
+
+    @Schema(name = "사물함 예약 기간")
     @Embedded
     private Period period;
 
-    @OneToOne(mappedBy = "locker",fetch = FetchType.LAZY)
+    @Schema(name = "사물함명")
+    private String name;
+
+    @Schema(name = "사물함 보유 학과")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "major_id")
+    private Major major;
+
+    @Schema(name = "사물함의 예약현황")
+    @OneToOne(mappedBy = "locker",fetch = LAZY)
     private Reservation reservation;
 
     public void modifiedDateTime(LockerSetTimeRequestDto requestDto){

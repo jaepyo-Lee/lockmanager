@@ -6,6 +6,7 @@ import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDt
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.Period;
+import com.ime.lockmanager.major.domain.Major;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,5 +48,10 @@ class LockerService implements LockerUseCase  {
                     .endDateTime(locker.getPeriod().getEndDateTime())
                     .build();
         }
+    }
+
+    @Override
+    public List<Locker> findLockerByUserMajor(Major major) {
+        return lockerQueryPort.findLockerByUserMajor(major);
     }
 }

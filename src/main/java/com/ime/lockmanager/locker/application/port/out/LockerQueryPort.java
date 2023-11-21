@@ -1,6 +1,7 @@
 package com.ime.lockmanager.locker.application.port.out;
 
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.major.domain.Major;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,5 @@ public interface LockerQueryPort {
 
     Locker save(Locker locker);
 
+    List<Locker> findLockerByUserMajor(Major major);
 }
