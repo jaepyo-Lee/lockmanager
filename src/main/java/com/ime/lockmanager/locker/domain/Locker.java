@@ -2,6 +2,7 @@ package com.ime.lockmanager.locker.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.domain.dto.LockerCreateDto;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity(name = "LOCKER_TABLE")
 public class Locker extends BaseTimeEntity {
     @Id
+    @GeneratedValue
     @Column(name = "LOCKER_ID")
     private Long id;
 
@@ -33,14 +35,35 @@ public class Locker extends BaseTimeEntity {
     @JoinColumn(name = "major_id")
     private Major major;
 
+    //===================//
     @Schema(name = "사물함의 예약현황")
     @OneToOne(mappedBy = "locker",fetch = LAZY)
     private Reservation reservation;
+    //===================//
+    private String imageName;
+    private String imageUrl;
+    private String totalRow;
+    private String totalColumn;
 
     public void modifiedDateTime(LockerSetTimeRequestDto requestDto){
         this.period = Period.builder()
                 .startDateTime(requestDto.getStartDateTime())
                 .endDateTime(requestDto.getEndDateTime())
+                .build();
+    }
+
+    public static Locker createLocker(LockerCreateDto lockercreateDto){
+        return Locker.builder()
+                .name(lockercreateDto.getLockerName())
+                .major(lockercreateDto.getMajor())
+                .period(getPeriod(lockercreateDto))
+                .build();
+    }
+
+    private static Period getPeriod(LockerCreateDto lockercreateDto) {
+        return Period.builder()
+                .startDateTime(lockercreateDto.getStartReservationTime())
+                .endDateTime(lockercreateDto.getEndReservationTime())
                 .build();
     }
 }

@@ -8,13 +8,15 @@ import lombok.Getter;
 @Builder
 public class UserInfoResponse {
     private String userName;
-    private String userNum;
+    private String studentNum;
     private boolean membership;
     private Long lockerNum;
+    private String lockerName;
+    private String majorDetail;
     public static UserInfoResponse fromResponseDto(UserInfoResponseDto userInfoResponseDto) {
         return UserInfoResponse.builder()
                 .lockerNum(userInfoResponseDto.getLockerNum())
-                .userNum(userInfoResponseDto.getStudentNum())
+                .studentNum(userInfoResponseDto.getStudentNum())
                 .userName(userInfoResponseDto.getUserName())
                 .membership(userInfoResponseDto.isMembership())
                 .build();

@@ -5,6 +5,7 @@ import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestD
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoForAdminModifiedPageResponseDto;
+import com.ime.lockmanager.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,6 @@ public interface UserUseCase {
     void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception;
 
     void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
+
+    User findByStudentNum(String studentNum);
 }
