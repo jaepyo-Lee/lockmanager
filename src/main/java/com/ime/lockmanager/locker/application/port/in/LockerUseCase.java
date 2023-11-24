@@ -1,6 +1,8 @@
 package com.ime.lockmanager.locker.application.port.in;
 
+import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
 import com.ime.lockmanager.locker.domain.Locker;
@@ -16,4 +18,6 @@ public interface LockerUseCase {
     LockerPeriodResponseDto getLockerPeriod();
 
     List<Locker> findLockerByUserMajor(Major major);
+
+    LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, String studentNum);
 }

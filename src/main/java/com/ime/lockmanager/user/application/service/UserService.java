@@ -108,4 +108,9 @@ class UserService implements UserUseCase {
             return false;
         }
     }
+
+    @Override
+    public User findByStudentNum(String studentNum) {
+        return userQueryPort.findByStudentNum(studentNum).orElseThrow(NotFoundUserException::new);
+    }
 }

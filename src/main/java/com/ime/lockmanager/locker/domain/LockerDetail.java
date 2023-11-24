@@ -1,8 +1,15 @@
 package com.ime.lockmanager.locker.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity(name = "LOCKER_DETAIL_TABLE")
 public class LockerDetail {
     @Id
     @GeneratedValue
