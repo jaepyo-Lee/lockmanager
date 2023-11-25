@@ -16,4 +16,6 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation,Long
     List<Long> findAllIds();
 
     void deleteByUserStudentNum(String studentNum);
+
+    Reservation findByLockerDetailId(Long lockerDetailId);
 }

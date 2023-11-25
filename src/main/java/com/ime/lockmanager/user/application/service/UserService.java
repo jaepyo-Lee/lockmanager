@@ -55,7 +55,7 @@ class UserService implements UserUseCase {
                 }
                 redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder()
                         .studentNum(modifiedUserInfoRequestDto.getStudentNum())
-                        .lockerNum(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
+                        .lockerDetailId(Long.parseLong(modifiedUserInfoRequestDto.getLockerNumber()))
                         .build());
                 byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }

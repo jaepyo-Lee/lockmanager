@@ -45,7 +45,7 @@ class ReservationUseCaseTest {
         lockerQueryPort.save(getLocker(1L, end, start));
         lockerQueryPort.save(getLocker(2L, end, start));
         redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
-                .lockerNum(1L)
+                .lockerDetailId(1L)
                 .studentNum("19011721")
                 .build());
         //when
@@ -57,7 +57,7 @@ class ReservationUseCaseTest {
     private static LockerRegisterRequestDto getLockerRegisterRequestDto(User user1, Locker locker1) {
         return LockerRegisterRequestDto.builder()
                 .studentNum(user1.getStudentNum())
-                .lockerNum(locker1.getId())
+                .lockerDetailId(locker1.getId())
                 .build();
     }
 

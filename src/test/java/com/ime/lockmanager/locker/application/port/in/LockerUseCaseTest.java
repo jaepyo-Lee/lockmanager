@@ -84,11 +84,11 @@ class LockerUseCaseTest {
         lockerQueryPort.save(getLocker(1L, end, start));
         lockerQueryPort.save(getLocker(2L, end, start));
         redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
-                .lockerNum(1L)
+                .lockerDetailId(1L)
                 .studentNum("19011721")
                 .build());
         redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
-                .lockerNum(2L)
+                .lockerDetailId(2L)
                 .studentNum("19011722")
                 .build());
 
@@ -153,7 +153,7 @@ class LockerUseCaseTest {
         userQueryPort.save(getUser("test", "재학", "test"));
         lockerQueryPort.save(getLocker(1L, now().plusDays(1), now().minusDays(1)));
         reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
-                .lockerNum(1L)
+                .lockerDetailId(1L)
                 .studentNum("test")
                 .build());
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{"ROLE_ADMIN"})
@@ -266,14 +266,14 @@ class LockerUseCaseTest {
         LockerRegisterRequestDto dto2 = getLockerRegisterRequestDto(user2, locker2);
         LockerRegisterResponseDto register = redissonLockReservationFacade.registerForUser(dto1);
         LockerRegisterResponseDto register1 = redissonLockReservationFacade.registerForUser(dto2);
-        assertThat(register.getLockerNum()).isEqualTo(dto1.getLockerNum());
-        assertThat(register1.getLockerNum()).isEqualTo(dto2.getLockerNum());
+        assertThat(register.getLockerDetailId()).isEqualTo(dto1.getLockerDetailId());
+        assertThat(register1.getLockerDetailId()).isEqualTo(dto2.getLockerDetailId());
     }
 
     private static LockerRegisterRequestDto getLockerRegisterRequestDto(User user1, Locker locker1) {
         return LockerRegisterRequestDto.builder()
                 .studentNum(user1.getStudentNum())
-                .lockerNum(locker1.getId())
+                .lockerDetailId(locker1.getId())
                 .build();
     }
 
@@ -338,7 +338,7 @@ class LockerUseCaseTest {
                     ()->{
                         try {
                             redissonLockReservationFacade.registerForUser(LockerRegisterRequestDto.builder()
-                                            .lockerNum(1L)
+                                            .lockerDetailId(1L)
                                             .studentNum(studentNums)
                                     .build());
                         } catch (Exception e) {

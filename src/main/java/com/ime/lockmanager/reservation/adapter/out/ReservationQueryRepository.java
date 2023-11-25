@@ -1,8 +1,10 @@
 package com.ime.lockmanager.reservation.adapter.out;
 
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.LockerDetail;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
+import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerNumDto;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.domain.Reservation;
@@ -51,10 +53,10 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public void registerLocker(User userJpaEntity, Locker lockerJpaEntity) {
+    public void registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
         reservationJpaRepository.save(
                 Reservation.builder()
-                        .locker(lockerJpaEntity)
+                        .lockerDetail(lockerDetail)
                         .user(userJpaEntity)
                         .build()
         );
@@ -63,5 +65,10 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     @Override
     public void deleteAll() {
         reservationJpaRepository.deleteAll();
+    }
+
+    @Override
+    public Reservation findByLockerDetailId(FindReservationByLockerDetailIdDto findReservationByLockerDetailIdDto) {
+        return reservationJpaRepository.findByLockerDetailId(findReservationByLockerDetailIdDto.getLockerDetailId());
     }
 }
