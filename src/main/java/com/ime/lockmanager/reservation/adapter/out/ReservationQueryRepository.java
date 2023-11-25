@@ -1,6 +1,5 @@
 package com.ime.lockmanager.reservation.adapter.out;
 
-import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.locker.domain.LockerDetail;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -25,31 +25,13 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public Reservation findReservationByStudentNum(String studentNum) {
+    public Optional<Reservation> findReservationByStudentNum(String studentNum) {
         return reservationJpaRepository.findByUserStudentNum(studentNum);
     }
 
     @Override
     public List<Long> findReservedLockers() {
         return reservationJpaRepository.findAllIds();
-    }
-
-    @Override
-    public boolean isReservationByStudentNum(FindReservationByStudentNumDto findReservationByStudentNumDto) {
-        Reservation reservationByStudentNum = reservationJpaRepository.findByUserStudentNum(findReservationByStudentNumDto.getStudentNum());
-        if(reservationByStudentNum==null){ //예약이 안되어있음
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isReservationByLockerId(FindReservationByLockerNumDto findReservationByLockerNumDto) {
-        Reservation reservationByLockerId = reservationJpaRepository.findByLockerId(findReservationByLockerNumDto.getLockerNum());
-        if(reservationByLockerId==null){ //예약이 안되어있음
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -68,7 +50,7 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public Reservation findByLockerDetailId(FindReservationByLockerDetailIdDto findReservationByLockerDetailIdDto) {
+    public Optional<Reservation> findByLockerDetailId(FindReservationByLockerDetailIdDto findReservationByLockerDetailIdDto) {
         return reservationJpaRepository.findByLockerDetailId(findReservationByLockerDetailIdDto.getLockerDetailId());
     }
 }

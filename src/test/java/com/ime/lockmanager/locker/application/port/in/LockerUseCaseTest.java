@@ -356,9 +356,7 @@ class LockerUseCaseTest {
         int count = 0;
         for(int i=0;i<100;i++){
             String studentNum = Integer.toString(19011721 + i);
-            if(reservationQueryPort.isReservationByStudentNum(FindReservationByStudentNumDto.builder()
-                    .studentNum(studentNum)
-                    .build())){
+            if(reservationUseCase.isReservationExistByStudentNum(studentNum){
                 count++;
             }
         }

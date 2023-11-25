@@ -15,6 +15,7 @@ import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStuden
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
+import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
@@ -122,21 +123,28 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private boolean isReservationExistByUserId(User user) {
-        return reservationQueryPort.findReservationByStudentNum(user.getStudentNum()) == null;
+        return reservationQueryPort.findReservationByStudentNum(user.getStudentNum()).isEmpty();
     }
 
     private boolean isReservationExistByLockerDetail(LockerDetail lockerDetail) {
         return reservationQueryPort.findByLockerDetailId(FindReservationByLockerDetailIdDto.builder()
                 .lockerDetailId(lockerDetail.getId())
-                .build()) == null;
+                .build()).isEmpty();
     }
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
-        Reservation reservationByStudentNum = reservationQueryPort.findReservationByStudentNum(cancelLockerDto.getStudentNum());
-        if (reservationByStudentNum == null) {
+        if (!isReservationExistByStudentNum(cancelLockerDto.getStudentNum())) {
             throw new InvalidCancelLockerException();
         }
         log.info("{} : 사물함 취소", cancelLockerDto.getStudentNum());
-        reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder().studentNum(cancelLockerDto.getStudentNum()).build());
+        reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder()
+                .studentNum(cancelLockerDto.getStudentNum())
+                .build());
+
+    }
+
+    public boolean isReservationExistByStudentNum(String studentNum) {
+        return !reservationQueryPort.findReservationByStudentNum(studentNum)
+                .isEmpty();
     }
 }

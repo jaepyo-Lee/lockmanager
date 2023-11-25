@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationJpaRepository extends JpaRepository<Reservation,Long> {
 
-    Reservation findByUserStudentNum(String studentNum);
+    Optional<Reservation> findByUserStudentNum(String studentNum);
 
     Reservation findByLockerId(Long lockerId);
 
@@ -17,5 +18,5 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation,Long
 
     void deleteByUserStudentNum(String studentNum);
 
-    Reservation findByLockerDetailId(Long lockerDetailId);
+    Optional<Reservation> findByLockerDetailId(Long lockerDetailId);
 }

@@ -4,11 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class UserCancelLockerRequestDto {
     private String studentNum;
-
-    @Builder
-    public UserCancelLockerRequestDto(String studentNum) {
-        this.studentNum = studentNum;
-    }
+    private Long lockerDetailId;
 }

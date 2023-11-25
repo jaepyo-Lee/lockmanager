@@ -35,9 +35,9 @@ import java.util.List;
 class UserService implements UserUseCase {
     private final UserQueryPort userQueryPort;
     private final ReservationUseCase reservationUseCase;
-    private final ReservationQueryPort reservationQueryPort;
     private final UserToReservationQueryPort userToReservationQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
+
     @Override
     public void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception {
         for (ModifiedUserInfoRequestDto modifiedUserInfoRequestDto : requestDto) {
@@ -46,9 +46,7 @@ class UserService implements UserUseCase {
             if(modifiedUserInfoRequestDto.getLockerNumber()==""){
                 byStudentNum.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoRequestDto(modifiedUserInfoRequestDto));
             }else{
-                if (reservationQueryPort.isReservationByStudentNum(FindReservationByStudentNumDto.builder()
-                        .studentNum(modifiedUserInfoRequestDto.getStudentNum())
-                        .build())) { //예약이 되어있다면, 해당 사물함 취소후 재등록
+                if (reservationUseCase.isReservationExistByStudentNum(modifiedUserInfoRequestDto.getStudentNum())) { //예약이 되어있다면, 해당 사물함 취소후 재등록
                     reservationUseCase.cancelLockerByStudentNum(UserCancelLockerRequestDto.builder()
                             .studentNum(modifiedUserInfoRequestDto.getStudentNum())
                             .build());

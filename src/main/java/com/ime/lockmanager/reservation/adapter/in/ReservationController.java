@@ -28,12 +28,14 @@ public class ReservationController {
             value = "사물함 취소",
             notes = "현재 사용자의 예약된 사물함을 취소하는 API"
     )
-    @DeleteMapping
-    public SuccessResponse cancelLocker(@ApiIgnore Principal principal) {
+    @PostMapping("/lockerDetail/{lockerDetailId}")
+    public SuccessResponse cancelLocker(@ApiIgnore Principal principal,
+                                        @PathVariable Long lockerDetailId) {
         log.info("{} : 사물함 취소", principal.getName());
         reservationUseCase.cancelLockerByStudentNum(
                 UserCancelLockerRequestDto.builder()
                         .studentNum(principal.getName())
+                        .lockerDetailId(lockerDetailId)
                         .build()
         );
         return SuccessResponse.ok();

@@ -16,4 +16,6 @@ public interface ReservationUseCase {
     void resetReservation(Principal principal);
 
     void cancelLockerByStudentNum(UserCancelLockerRequestDto build);
+
+    boolean isReservationExistByStudentNum(String studentNum);
 }
