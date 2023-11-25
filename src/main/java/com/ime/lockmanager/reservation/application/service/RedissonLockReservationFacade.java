@@ -22,7 +22,7 @@ public class RedissonLockReservationFacade {
 
     public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto dto) throws Exception {
 
-        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
+        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerDetailId());
 
         boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
         if (!available) {
@@ -41,7 +41,7 @@ public class RedissonLockReservationFacade {
 
     public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
 
-        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerNum());
+        RLock lock = redissonClient.getLock(LOCK_PREFIX+dto.getLockerDetailId());
 
         boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
         if (!available) {

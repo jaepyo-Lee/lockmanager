@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.LAZY;
 
 @Builder
@@ -65,5 +66,10 @@ public class Locker extends BaseTimeEntity {
                 .startDateTime(lockercreateDto.getStartReservationTime())
                 .endDateTime(lockercreateDto.getEndReservationTime())
                 .build();
+    }
+
+    public boolean isDeadlineValid(){
+        return this.period.getEndDateTime().isAfter(now()) &&
+                this.period.getStartDateTime().isBefore(now());
     }
 }

@@ -138,7 +138,7 @@ class UserUseCaseTest {
         lockerQueryPort.save(getLocker(1L));
         reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
-                .lockerNum(1L)
+                .lockerDetailId(1L)
                 .build());
         UserCancelLockerRequestDto cancelLockerRequestDto = UserCancelLockerRequestDto.builder()
                 .studentNum("19011721")
@@ -226,7 +226,7 @@ class UserUseCaseTest {
         lockerQueryPort.save(getLocker(2L));
         reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
                 .studentNum("19011721")
-                .lockerNum(1L)
+                .lockerDetailId(1L)
                 .build());
         ModifiedUserInfoRequestDto modifiedUserInfoRequestDto = getModifiedUserInfoRequestDto(Role.ROLE_USER, true, "19011721", "2");
         //when

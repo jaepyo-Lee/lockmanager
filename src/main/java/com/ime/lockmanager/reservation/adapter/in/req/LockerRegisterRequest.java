@@ -10,7 +10,7 @@ public class LockerRegisterRequest {
 
     public LockerRegisterRequestDto toRequestDto(String studentNum){
         return LockerRegisterRequestDto.builder()
-                .lockerNum(lockerId)
+                .lockerDetailId(lockerId)
                 .studentNum(studentNum)
                 .build();
     }

@@ -2,6 +2,7 @@ package com.ime.lockmanager.reservation.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.LockerDetail;
 import com.ime.lockmanager.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,8 @@ public class Reservation extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_id")
     private Locker locker;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "locker_detail_id")
+    private LockerDetail lockerDetail;
 }

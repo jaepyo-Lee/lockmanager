@@ -7,11 +7,13 @@ import lombok.Getter;
 @Getter
 @Builder
 public class LockerRegisterResponse {
-    private Long lockerNum;
+    private String lockerDetailNum;
     private String studentNum;
+    private String lockerName;
     public static LockerRegisterResponse fromResponse(LockerRegisterResponseDto lockerRegisterResponseDto) {
         return LockerRegisterResponse.builder()
-                .lockerNum(lockerRegisterResponseDto.getLockerNum())
+                .lockerDetailNum(lockerRegisterResponseDto.getLockerDetailNum())
+                .lockerName(lockerRegisterResponseDto.getLockerName())
                 .studentNum(lockerRegisterResponseDto.getStudentNum())
                 .build();
     }

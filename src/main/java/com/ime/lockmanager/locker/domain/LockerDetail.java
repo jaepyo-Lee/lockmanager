@@ -3,12 +3,14 @@ package com.ime.lockmanager.locker.domain;
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
 @Entity(name = "LOCKER_DETAIL_TABLE")
 public class LockerDetail extends BaseTimeEntity {
