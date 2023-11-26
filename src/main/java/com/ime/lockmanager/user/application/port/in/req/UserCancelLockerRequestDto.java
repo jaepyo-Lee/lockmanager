@@ -8,4 +8,11 @@ import lombok.Getter;
 public class UserCancelLockerRequestDto {
     private String studentNum;
     private Long lockerDetailId;
+
+    public static UserCancelLockerRequestDto of(String studentNum,Long lockerDetailId){
+        return UserCancelLockerRequestDto.builder()
+                .studentNum(studentNum)
+                .lockerDetailId(lockerDetailId)
+                .build();
+    }
 }
