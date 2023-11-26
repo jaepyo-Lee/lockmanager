@@ -5,6 +5,7 @@ import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.reservation.adapter.in.req.LockerRegisterRequest;
 import com.ime.lockmanager.locker.adapter.in.res.LockerRegisterResponse;
+import com.ime.lockmanager.reservation.adapter.in.res.CancelLockerDetailResponse;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
@@ -28,17 +29,16 @@ public class ReservationController {
             value = "사물함 취소",
             notes = "현재 사용자의 예약된 사물함을 취소하는 API"
     )
-    @PostMapping("/lockerDetail/{lockerDetailId}")
-    public SuccessResponse cancelLocker(@ApiIgnore Principal principal,
-                                        @PathVariable Long lockerDetailId) {
+    @DeleteMapping("/lockerDetail/{lockerDetailId}")
+    public SuccessResponse<CancelLockerDetailResponse> cancelLocker(@ApiIgnore Principal principal,
+                                                                    @PathVariable Long lockerDetailId) {
         log.info("{} : 사물함 취소", principal.getName());
         reservationUseCase.cancelLockerByStudentNum(
-                UserCancelLockerRequestDto.builder()
-                        .studentNum(principal.getName())
-                        .lockerDetailId(lockerDetailId)
-                        .build()
+                UserCancelLockerRequestDto.of(principal.getName(), lockerDetailId)
         );
-        return SuccessResponse.ok();
+        return new SuccessResponse(CancelLockerDetailResponse.builder()
+                .canceledLockerDetailNum(lockerDetailId)
+                .studentNum(principal.getName()).build());
     }
 
     //사물함 예약하는 api
@@ -57,7 +57,7 @@ public class ReservationController {
         log.info("{} : {}의 {}번 예약완료",
                 lockerRegisterResponse.getStudentNum(),
                 lockerRegisterResponse.getLockerName(),
-                lockerRegisterResponse.getLockerName());
+                lockerRegisterResponse.getLockerDetailNum());
         return new SuccessResponse(lockerRegisterResponse);
     }
 
