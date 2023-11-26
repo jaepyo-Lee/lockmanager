@@ -3,6 +3,7 @@ package com.ime.lockmanager.common.format.success;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -10,16 +11,24 @@ import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 
+@Schema(description = "api요청 성공시 반환 규격")
 @ToString
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"time", "status", "code", "message", "result"})
 public class SuccessResponse<T> {
+
+    @Schema(description = "http 응답상태 값")
     @JsonProperty("status")
     private int status;
+    @Schema(description = "응답 시간")
     private LocalDateTime time;
+    @Schema(description = "api응답에 대한 자체 응답코드")
     private String code;
+    @Schema(description = "응답 메시지 값")
     private String message;
+
+    @Schema(description = "응답에 대한 반환 결과")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
