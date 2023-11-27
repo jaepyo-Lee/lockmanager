@@ -1,8 +1,8 @@
 package com.ime.lockmanager.reservation.domain;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
-import com.ime.lockmanager.locker.domain.Locker;
-import com.ime.lockmanager.locker.domain.LockerDetail;
+import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

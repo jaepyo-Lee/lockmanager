@@ -1,7 +1,8 @@
-package com.ime.lockmanager.locker.domain.dto;
+package com.ime.lockmanager.locker.domain.lockerdetail.dto;
 
 
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,5 @@ public class LockerDetailCreateDto {
 
     private String columnNum;
 
-    private boolean isUsable;
+    private LockerDetailStatus lockerDetailStatus;
 }

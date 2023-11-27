@@ -1,8 +1,9 @@
-package com.ime.lockmanager.locker.domain;
+package com.ime.lockmanager.locker.domain.locker;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
-import com.ime.lockmanager.locker.domain.dto.LockerCreateDto;
+import com.ime.lockmanager.locker.domain.Period;
+import com.ime.lockmanager.locker.domain.locker.dto.LockerCreateDto;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import io.swagger.v3.oas.annotations.media.Schema;

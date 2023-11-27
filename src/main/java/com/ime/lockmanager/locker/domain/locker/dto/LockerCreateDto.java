@@ -1,4 +1,4 @@
-package com.ime.lockmanager.locker.domain.dto;
+package com.ime.lockmanager.locker.domain.locker.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ime.lockmanager.major.domain.Major;

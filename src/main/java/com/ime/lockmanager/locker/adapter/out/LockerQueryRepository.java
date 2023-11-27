@@ -1,12 +1,11 @@
 package com.ime.lockmanager.locker.adapter.out;
 
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.major.domain.Major;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
