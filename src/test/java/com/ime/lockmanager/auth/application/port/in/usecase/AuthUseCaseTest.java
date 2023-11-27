@@ -1,10 +1,8 @@
 package com.ime.lockmanager.auth.application.port.in.usecase;
 
-import com.ime.lockmanager.auth.application.port.in.response.LoginRequestDto;
-import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
+import com.ime.lockmanager.auth.application.port.in.req.LoginRequestDto;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
-import com.ime.lockmanager.auth.domain.AuthUser;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;
 import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;

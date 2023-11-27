@@ -1,4 +1,4 @@
-package com.ime.lockmanager.auth.application.port.in.response;
+package com.ime.lockmanager.auth.application.port.in.req;
 
 import com.ime.lockmanager.common.webclient.sejong.service.dto.req.SejongMemberRequestDto;
 import lombok.AllArgsConstructor;

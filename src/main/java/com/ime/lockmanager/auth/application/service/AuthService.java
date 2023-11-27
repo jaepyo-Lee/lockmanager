@@ -1,7 +1,8 @@
 package com.ime.lockmanager.auth.application.service;
 
-import com.ime.lockmanager.auth.application.port.in.response.LoginRequestDto;
-import com.ime.lockmanager.auth.application.port.in.response.TokenResponseDto;
+import com.ime.lockmanager.auth.application.port.in.req.LoginRequestDto;
+import com.ime.lockmanager.auth.application.port.in.res.LoginTokenResponseDto;
+import com.ime.lockmanager.auth.application.port.in.res.TokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
@@ -15,7 +16,6 @@ import com.ime.lockmanager.common.jwt.TokenSet;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.major.application.port.in.MajorDetailUseCase;
-import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.domain.User;
 import com.ime.lockmanager.user.domain.dto.UpdateUserInfoDto;
@@ -42,14 +42,14 @@ class AuthService implements AuthUseCase {
     private final MajorDetailUseCase majorDetailUseCase;
 
     @Override
-    public TokenResponseDto login(LoginRequestDto loginRequestDto) {
+    public LoginTokenResponseDto login(LoginRequestDto loginRequestDto) {
         SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
         MajorDetail majorDetail = findMajorDetailByName(getMajorName(sejongMemberResponseDto));
         User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
         updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
-        return TokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
+        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(),user.getRole());
     }
 
     private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {

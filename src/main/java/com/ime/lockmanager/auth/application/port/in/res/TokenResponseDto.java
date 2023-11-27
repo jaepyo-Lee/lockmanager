@@ -1,4 +1,4 @@
-package com.ime.lockmanager.auth.application.port.in.response;
+package com.ime.lockmanager.auth.application.port.in.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
