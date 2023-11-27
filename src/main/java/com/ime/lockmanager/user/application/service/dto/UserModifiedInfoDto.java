@@ -1,6 +1,5 @@
 package com.ime.lockmanager.user.application.service.dto;
 
-import com.ime.lockmanager.locker.domain.Locker;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.domain.Role;
 import lombok.AllArgsConstructor;

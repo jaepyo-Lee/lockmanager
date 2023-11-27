@@ -3,10 +3,14 @@ package com.ime.lockmanager.locker.application.service;
 
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
 import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
-import com.ime.lockmanager.locker.domain.LockerDetail;
-import com.ime.lockmanager.locker.domain.dto.LockerDetailCreateDto;
+import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
+import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailCreateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +24,12 @@ public class LockerDetailService implements LockerDetailUseCase {
                 .locker_num(lockerDetailCreateDto.getLockerNum())
                 .row_num(lockerDetailCreateDto.getRowNum())
                 .column_num(lockerDetailCreateDto.getColumnNum())
-                .isUsable(lockerDetailCreateDto.isUsable())
+                .lockerDetailStatus(LockerDetailStatus.NON_RESERVED)
                 .build());
     }
 
-
+    @Override
+    public List<LockerDetail> findLockerDetailByLocker(Locker locker) {
+        return lockerDetailQueryPort.findLockerDetailByLocker(locker);
+    }
 }

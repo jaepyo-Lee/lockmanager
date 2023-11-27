@@ -3,7 +3,7 @@ package com.ime.lockmanager.reservation.application.port.in;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;

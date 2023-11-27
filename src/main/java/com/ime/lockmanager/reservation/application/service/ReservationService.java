@@ -9,14 +9,13 @@ import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponse
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
-import com.ime.lockmanager.locker.domain.Locker;
-import com.ime.lockmanager.locker.domain.LockerDetail;
+import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
-import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
-import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
@@ -105,11 +104,14 @@ public class ReservationService implements ReservationUseCase {
             if (locker.isDeadlineValid()) {
                 if (notInvalidStatus.contains(user.getStatus())) {
                     if (isReservationExistByLockerDetail(lockerDetail)) {
-                        if (isReservationExistByUserId(user)) {
-                            reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
-                            log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
-                            return LockerRegisterResponseDto
-                                    .of(lockerDetail.getLocker_num(), user.getStudentNum(), locker.getName());
+                        if (!lockerDetail.getLockerDetailStatus().equals(LockerDetailStatus.BROKEN)){
+                            if (isReservationExistByUserId(user)) {
+                                reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
+                                log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
+                                return LockerRegisterResponseDto
+                                        .of(lockerDetail.getLocker_num(), user.getStudentNum(), locker.getName());
+                            }
+                            throw new IllegalStateException("고장난 사물함입니다");
                         }
                         throw new AlreadyReservedLockerException();
                     }
@@ -140,6 +142,7 @@ public class ReservationService implements ReservationUseCase {
         reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder()
                 .studentNum(cancelLockerDto.getStudentNum())
                 .build());
+
 
     }
 

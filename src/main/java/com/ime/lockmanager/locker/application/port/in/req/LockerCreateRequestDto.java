@@ -3,7 +3,7 @@ package com.ime.lockmanager.locker.application.port.in.req;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ime.lockmanager.locker.adapter.in.req.LockerCreateRequest;
 import com.ime.lockmanager.locker.adapter.in.req.LockerDetailCreateRequest;
-import com.ime.lockmanager.locker.domain.dto.LockerCreateDto;
+import com.ime.lockmanager.locker.domain.locker.dto.LockerCreateDto;
 import com.ime.lockmanager.major.domain.Major;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

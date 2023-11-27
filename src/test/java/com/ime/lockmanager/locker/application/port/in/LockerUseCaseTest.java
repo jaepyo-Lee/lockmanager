@@ -11,9 +11,8 @@ import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerRes
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
-import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.Role;

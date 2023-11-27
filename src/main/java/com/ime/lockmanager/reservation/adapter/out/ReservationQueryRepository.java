@@ -1,6 +1,6 @@
 package com.ime.lockmanager.reservation.adapter.out;
 
-import com.ime.lockmanager.locker.domain.LockerDetail;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;

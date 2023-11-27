@@ -20,7 +20,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${apiPrefix}")
+@RequestMapping("${api.prefix}")
 public class ReservationController {
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final ReservationUseCase reservationUseCase;

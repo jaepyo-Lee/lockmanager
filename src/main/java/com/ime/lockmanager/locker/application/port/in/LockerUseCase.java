@@ -1,11 +1,12 @@
 package com.ime.lockmanager.locker.application.port.in;
 
+import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
-import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.major.domain.Major;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface LockerUseCase {
     List<Locker> findLockerByUserMajor(Major major);
 
     LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, String studentNum);
+
+    List<AllLockersInMajorResponseDto> findAllLockerInMajor(FindAllLockerInMajorRequestDto build);
 }
