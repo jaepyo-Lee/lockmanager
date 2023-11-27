@@ -21,15 +21,17 @@ public class LockerCreateRequestDto {
     private String lockerName;
     private String totalRow;
     private String totalColumn;
+    private String imageName;
+    private String imageUrl;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startReservationTime;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endReservationTime;
     private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
 
-    public static LockerCreateRequestDto fromRequestDto(LockerCreateRequest lockerCreateRequest){
+    public static LockerCreateRequestDto fromRequestDto(LockerCreateRequest lockerCreateRequest) {
         return LockerCreateRequestDto.of(lockerCreateRequest);
     }
 
@@ -41,10 +43,12 @@ public class LockerCreateRequestDto {
                 .startReservationTime(lockerCreateRequest.getStartReservationTime())
                 .endReservationTime(lockerCreateRequest.getEndReservationTime())
                 .lockerDetailCreateRequests(lockerCreateRequest.getLockerDetailCreateRequests())
+                .imageUrl(lockerCreateRequest.getImageUrl())
+                .imageName(lockerCreateRequest.getImageName())
                 .build();
     }
 
-    public LockerCreateDto toLockerCreateDto(Major major){
+    public LockerCreateDto toLockerCreateDto(Major major) {
         return LockerCreateDto.builder()
                 .totalRow(this.getTotalRow())
                 .totalColumn(this.getTotalColumn())

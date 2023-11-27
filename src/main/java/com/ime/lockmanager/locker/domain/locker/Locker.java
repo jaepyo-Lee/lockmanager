@@ -39,7 +39,7 @@ public class Locker extends BaseTimeEntity {
 
     //===================//
     @Schema(name = "사물함의 예약현황")
-    @OneToOne(mappedBy = "locker",fetch = LAZY)
+    @OneToOne(mappedBy = "locker", fetch = LAZY)
     private Reservation reservation;
     //===================//
     private String imageName;
@@ -47,18 +47,23 @@ public class Locker extends BaseTimeEntity {
     private String totalRow;
     private String totalColumn;
 
-    public void modifiedDateTime(LockerSetTimeRequestDto requestDto){
+    public void modifiedDateTime(LockerSetTimeRequestDto requestDto) {
         this.period = Period.builder()
                 .startDateTime(requestDto.getStartDateTime())
                 .endDateTime(requestDto.getEndDateTime())
                 .build();
     }
 
-    public static Locker createLocker(LockerCreateDto lockercreateDto){
+    public static Locker createLocker(LockerCreateDto lockercreateDto) {
         return Locker.builder()
+                .period(new Period(lockercreateDto.getStartReservationTime(), lockercreateDto.getEndReservationTime()))
                 .name(lockercreateDto.getLockerName())
                 .major(lockercreateDto.getMajor())
                 .period(getPeriod(lockercreateDto))
+                .totalColumn(lockercreateDto.getTotalColumn())
+                .totalRow(lockercreateDto.getTotalRow())
+                .imageName(lockercreateDto.getImageName())
+                .imageUrl(lockercreateDto.getImageUrl())
                 .build();
     }
 
@@ -69,7 +74,7 @@ public class Locker extends BaseTimeEntity {
                 .build();
     }
 
-    public boolean isDeadlineValid(){
+    public boolean isDeadlineValid() {
         return this.period.getEndDateTime().isAfter(now()) &&
                 this.period.getStartDateTime().isBefore(now());
     }

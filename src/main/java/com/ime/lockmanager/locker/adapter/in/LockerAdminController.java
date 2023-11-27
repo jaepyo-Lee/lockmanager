@@ -40,7 +40,7 @@ class LockerAdminController {
 
     @PostMapping()
     public SuccessResponse<LockerCreateResponse> createLocker(@ApiIgnore Authentication authentication,
-                                                @RequestBody LockerCreateRequest lockerCreateRequest) {
+                                                              @RequestBody LockerCreateRequest lockerCreateRequest) {
         log.info("{} : 새로운 사물함 생성", authentication.getName());
 
         String createdLockerName = lockerUseCase.createLocker(
