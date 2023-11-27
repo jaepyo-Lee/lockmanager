@@ -23,7 +23,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/admin/api/locker")
+@RequestMapping("${api.admin.prefix}/locker")
 class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 

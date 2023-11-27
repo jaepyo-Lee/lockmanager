@@ -20,7 +20,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}")
+@RequestMapping("${api.user.prefix}")
 public class ReservationController {
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final ReservationUseCase reservationUseCase;
@@ -47,7 +47,8 @@ public class ReservationController {
             notes = "사용자가 사물함을 선택할시 해당 사물함을 예약하는 API"
     )
     @PostMapping("/lockerDetail/{lockerDetailId}/register")
-    public SuccessResponse<LockerRegisterResponse> registerLocker(@ApiIgnore Principal principal, @PathVariable Long lockerDetailId) throws Exception {
+    public SuccessResponse<LockerRegisterResponse> registerLocker(@ApiIgnore Principal principal,
+                                                                  @PathVariable Long lockerDetailId) throws Exception {
         log.info("{} : 시믈함 예약진행", principal.getName());
         LockerRegisterResponse lockerRegisterResponse =
                 LockerRegisterResponse.fromResponse(

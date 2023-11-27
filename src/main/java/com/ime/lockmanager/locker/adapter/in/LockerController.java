@@ -21,7 +21,7 @@ import static java.time.LocalDateTime.now;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/locker")
+@RequestMapping("${api.user.prefix}/locker")
 class LockerController {
 
     private final LockerUseCase lockerUseCase;
