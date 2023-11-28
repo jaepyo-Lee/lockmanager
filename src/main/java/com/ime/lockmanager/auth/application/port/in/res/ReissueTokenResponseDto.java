@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenResponseDto {
+public class ReissueTokenResponseDto {
     private String accessToken;
     private String refreshToken;
 
-    public static TokenResponseDto of(String accessToken,String refreshToken){
-        return new TokenResponseDto().builder()
+    public static ReissueTokenResponseDto of(String accessToken, String refreshToken){
+        return new ReissueTokenResponseDto().builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

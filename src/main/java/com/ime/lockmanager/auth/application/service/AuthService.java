@@ -2,7 +2,7 @@ package com.ime.lockmanager.auth.application.service;
 
 import com.ime.lockmanager.auth.application.port.in.req.LoginRequestDto;
 import com.ime.lockmanager.auth.application.port.in.res.LoginTokenResponseDto;
-import com.ime.lockmanager.auth.application.port.in.res.TokenResponseDto;
+import com.ime.lockmanager.auth.application.port.in.res.ReissueTokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
@@ -98,7 +98,7 @@ class AuthService implements AuthUseCase {
 
 
     @Override
-    public TokenResponseDto reissue(String refreshToken) {
+    public ReissueTokenResponseDto reissue(String refreshToken) {
         String bearerToken = jwtHeaderUtil.getBearerToken(refreshToken);
         String studentNum = (String) jwtProvider.convertAuthToken(bearerToken).getTokenClaims().get("studentNum");
         String redisRT = authToRedisQueryPort.getRefreshToken(studentNum); //리프레시토큰은 학번 안들어가있음
@@ -110,7 +110,7 @@ class AuthService implements AuthUseCase {
                 .orElseThrow(NotFoundUserException::new);
         TokenSet tokenSet = makeToken(byStudentNum);
         authToRedisQueryPort.removeAndSaveRefreshToken(studentNum, jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
-        return TokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
+        return ReissueTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.ime.lockmanager.auth.adapter.in;
 
 import com.ime.lockmanager.auth.adapter.in.req.LoginRequest;
 import com.ime.lockmanager.auth.adapter.in.res.LoginTokenResponse;
-import com.ime.lockmanager.auth.application.port.in.res.TokenResponseDto;
+import com.ime.lockmanager.auth.application.port.in.res.ReissueTokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +39,7 @@ class AuthController {
             notes = "access token 만료시 refresh token을 이용하여 access token을 재발급받는 API"
     )
     @PostMapping("/reissue")
-    public SuccessResponse<TokenResponseDto> reissue(Principal principal, @RequestHeader(value = "RefreshToken") String refreshToken) {
+    public SuccessResponse<ReissueTokenResponseDto> reissue(Principal principal, @RequestHeader(value = "RefreshToken") String refreshToken) {
         log.info("{} : 토큰 재발급", principal.getName());
         return new SuccessResponse(authUseCase.reissue(refreshToken), SUCCESTT_REISSUE_TOKEN);
     }
