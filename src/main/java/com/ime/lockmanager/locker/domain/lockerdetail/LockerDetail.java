@@ -2,7 +2,6 @@ package com.ime.lockmanager.locker.domain.lockerdetail;
 
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.locker.domain.locker.Locker;
-import com.ime.lockmanager.reservation.domain.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +21,7 @@ public class LockerDetail extends BaseTimeEntity {
 
     private String row_num;
     private String column_num;
-    private String locker_num;
+    private String lockerNum;
     @Enumerated(EnumType.STRING)
     private LockerDetailStatus lockerDetailStatus;
 

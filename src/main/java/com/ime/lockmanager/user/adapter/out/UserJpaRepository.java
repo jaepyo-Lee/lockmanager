@@ -1,6 +1,6 @@
 package com.ime.lockmanager.user.adapter.out;
 
-import com.ime.lockmanager.user.application.port.out.res.UserInfoForMyPageResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public interface UserJpaRepository extends JpaRepository<User,Long>{
     Page<User> findAll(Pageable pageable);
 
     @Query("select u.studentNum,u.name,u.membership from USER_TABLE u left join u.reservation ORDER BY u.studentNum ASC")
-    Page<UserInfoForMyPageResponseDto> findAllOrderByStudentNumAsc(Pageable pageable);
+    Page<UserInfoResponseDto> findAllOrderByStudentNumAsc(Pageable pageable);
 
     /*@Query("select " +
             "new com.ime.lockmanager.user.application.port.out.res.UserInfoWithLockerIdResponseDto(U.studentNum,U.name,U.membership,R.locker.id) " +

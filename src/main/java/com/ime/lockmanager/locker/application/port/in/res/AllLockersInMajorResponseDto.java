@@ -13,9 +13,9 @@ import java.util.List;
 public class AllLockersInMajorResponseDto {
     private String lockerName;
 
-    @JsonFormat(pattern = "yyyy-mm-dd hh:mm:ss")
+    @JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
     private LocalDateTime startReservationTime;
-    @JsonFormat(pattern = "yyyy-mm-dd hh:mm:ss")
+    @JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
     private LocalDateTime endReservationTime;
     private List<LockerDetailInfo> lockerDetailInfoList;
 }

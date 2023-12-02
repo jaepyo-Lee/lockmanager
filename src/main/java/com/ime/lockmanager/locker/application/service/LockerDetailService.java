@@ -21,7 +21,7 @@ public class LockerDetailService implements LockerDetailUseCase {
     public LockerDetail saveLockerDetail(LockerDetailCreateDto lockerDetailCreateDto) {
         return lockerDetailQueryPort.save(LockerDetail.builder()
                 .locker(lockerDetailCreateDto.getLocker())
-                .locker_num(lockerDetailCreateDto.getLockerNum())
+                .lockerNum(lockerDetailCreateDto.getLockerNum())
                 .row_num(lockerDetailCreateDto.getRowNum())
                 .column_num(lockerDetailCreateDto.getColumnNum())
                 .lockerDetailStatus(LockerDetailStatus.NON_RESERVED)

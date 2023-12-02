@@ -17,7 +17,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("${api.user.prefix}/user")
 class UserController {
 
     private final UserUseCase userUseCase;
@@ -27,7 +27,7 @@ class UserController {
             notes = "마이페이지접속시 사용자 정보조회 API"
     )
     @GetMapping("/info")
-    public SuccessResponse findUserInfo(@ApiIgnore Principal principal) throws Exception {
+    public SuccessResponse<UserInfoResponse> findUserInfo(@ApiIgnore Principal principal) throws Exception {
         log.info("{} : 정보조회",principal.getName());
         UserInfoResponseDto userInfo = userUseCase.findUserInfoByStudentNum(
                 UserInfoRequestDto.builder()

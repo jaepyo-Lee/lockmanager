@@ -7,10 +7,11 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserInfoAdminResponse {
+    private String lockerName;
     private String userName;
     private String studentNum;
     private boolean membership;
-    private Long lockerNum;
+    private String lockerNum;
     private Role role;
     private String status;
 }

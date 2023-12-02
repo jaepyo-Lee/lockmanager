@@ -4,7 +4,7 @@ import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
-import com.ime.lockmanager.user.application.port.out.res.UserInfoForAdminModifiedPageResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import com.ime.lockmanager.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserUseCase {
     UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
 
-    Page<UserInfoForAdminModifiedPageResponseDto> findAllUserInfo(Pageable pageable);
+    Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, Pageable pageable);
 
     boolean checkAdmin(String studentNum);
 

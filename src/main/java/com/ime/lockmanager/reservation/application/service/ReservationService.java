@@ -109,7 +109,7 @@ public class ReservationService implements ReservationUseCase {
                                 reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
                                 log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
                                 return LockerRegisterResponseDto
-                                        .of(lockerDetail.getLocker_num(), user.getStudentNum(), locker.getName());
+                                        .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
                             }
                             throw new IllegalStateException("고장난 사물함입니다");
                         }

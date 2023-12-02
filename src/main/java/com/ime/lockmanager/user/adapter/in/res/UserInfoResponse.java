@@ -10,15 +10,16 @@ public class UserInfoResponse {
     private String userName;
     private String studentNum;
     private boolean membership;
-    private Long lockerNum;
-    private String lockerName;
+    private String reservedLockerNum;
+    private String reservedLockerName;
     private String majorDetail;
     public static UserInfoResponse fromResponseDto(UserInfoResponseDto userInfoResponseDto) {
         return UserInfoResponse.builder()
-                .lockerNum(userInfoResponseDto.getLockerNum())
+                .reservedLockerNum(userInfoResponseDto.getLockerNum())
                 .studentNum(userInfoResponseDto.getStudentNum())
                 .userName(userInfoResponseDto.getUserName())
                 .membership(userInfoResponseDto.isMembership())
+                .majorDetail(userInfoResponseDto.getMajorDetail())
                 .build();
     }
 }

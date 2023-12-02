@@ -10,10 +10,8 @@ import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDt
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.locker.Locker;
-import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.domain.Major;
-import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +45,13 @@ class LockerService implements LockerUseCase {
                                         .map(lockerDetail ->
                                                 LockerDetailInfo.builder()
                                                         .lockerDetailStatus(lockerDetail.getLockerDetailStatus())
-                                                        .locker_num(lockerDetail.getLocker_num())
+                                                        .locker_num(lockerDetail.getLockerNum())
                                                         .row_num(lockerDetail.getRow_num())
                                                         .column_num(lockerDetail.getColumn_num())
                                                         .build()).collect(Collectors.toList())
                         )
                         .startReservationTime(locker.getPeriod().getStartDateTime())
-                        .endReservationTime(locker.getPeriod().getStartDateTime())
+                        .endReservationTime(locker.getPeriod().getEndDateTime())
                         .build()
 
         ).collect(Collectors.toList());

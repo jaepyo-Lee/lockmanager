@@ -11,10 +11,11 @@ public class UserInfoResponseDto {
     private String userName;
     private String studentNum;
     private boolean membership;
-    private Long lockerNum;
+    private String lockerNum;
 
     private Role role;
     private String status;
+    private String majorDetail;
 
     public UserInfoAdminResponse toResponse(){
         return UserInfoAdminResponse.builder()
