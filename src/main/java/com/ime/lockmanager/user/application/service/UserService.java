@@ -89,10 +89,10 @@ class UserService implements UserUseCase {
 
     @Transactional(readOnly = true)
     @Override
-    public com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
+    public UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
         UserInfoResponseDto userInfoWithLockerIdByStudentNum = userToReservationQueryPort
                 .findUserInfoWithLockerIdByStudentNum(userRequestDto.getStudentNum());
-        return userInfoWithLockerIdByStudentNum.to();
+        return userInfoWithLockerIdByStudentNum;
     }
 
 

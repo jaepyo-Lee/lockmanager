@@ -1,6 +1,6 @@
 package com.ime.lockmanager.user.adapter.in.res;
 
-import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,9 +17,10 @@ public class UserInfoResponse {
         return UserInfoResponse.builder()
                 .reservedLockerNum(userInfoResponseDto.getLockerNum())
                 .studentNum(userInfoResponseDto.getStudentNum())
-                .userName(userInfoResponseDto.getUserName())
+                .userName(userInfoResponseDto.getName())
                 .membership(userInfoResponseDto.isMembership())
                 .majorDetail(userInfoResponseDto.getMajorDetail())
+                .reservedLockerName(userInfoResponseDto.getLockerName())
                 .build();
     }
 }

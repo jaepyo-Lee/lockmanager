@@ -5,7 +5,7 @@ import com.ime.lockmanager.user.adapter.in.res.UserInfoResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
-import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

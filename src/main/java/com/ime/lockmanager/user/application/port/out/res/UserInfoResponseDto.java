@@ -7,36 +7,36 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UserInfoResponseDto {
     private String name;
-    private boolean member_ship;
+    private boolean membership;
     private String status;
-    private String student_num;
+    private String studentNum;
 
-    private String locker_num;
-    private String locker_name;
+    private String lockerNum;
+    private String lockerName;
     private String majorDetail;
 
-    public UserInfoResponseDto(String name, boolean member_ship, String status, String student_num, String locker_num, String locker_name, String majorDetail) {
+    public UserInfoResponseDto(String name, boolean membership, String status, String studentNum, String lockerNum, String lockerName, String majorDetail) {
         this.name = name;
-        this.member_ship = member_ship;
+        this.membership = membership;
         this.status = status;
-        this.student_num = student_num;
+        this.studentNum = studentNum;
         this.majorDetail = majorDetail;
-        if(locker_num!=null){
-            this.locker_num = locker_num;
-            this.locker_name = locker_name;
+        if(lockerNum !=null){
+            this.lockerNum = lockerNum;
+            this.lockerName = lockerName;
         }else {
-            this.locker_num = null;
-            this.locker_name = null;
+            this.lockerNum = null;
+            this.lockerName = null;
         }
     }
 
     public com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto to(){
         return com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto.builder()
-                .lockerNum(locker_num)
-                .membership(member_ship)
+                .lockerNum(lockerNum)
+                .membership(membership)
                 .userName(name)
                 .status(status)
-                .studentNum(student_num)
+                .studentNum(studentNum)
                 .majorDetail(majorDetail)
                 .build();
     }
