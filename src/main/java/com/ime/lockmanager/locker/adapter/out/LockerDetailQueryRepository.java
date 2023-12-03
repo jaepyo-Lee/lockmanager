@@ -27,4 +27,9 @@ public class LockerDetailQueryRepository implements LockerDetailQueryPort {
     public List<LockerDetail> findLockerDetailByLocker(Locker locker) {
         return lockerDetailRepository.findLockerDetailByLocker(locker);
     }
+
+    @Override
+    public Optional<LockerDetail> findById(Long lockerDetailId) {
+        return lockerDetailRepository.findById(lockerDetailId);
+    }
 }

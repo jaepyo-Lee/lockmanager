@@ -13,4 +13,6 @@ public interface LockerDetailQueryPort {
     Optional<LockerDetail> findByIdWithLocker(Long lockerDetailId);
 
     List<LockerDetail> findLockerDetailByLocker(Locker locker);
+
+    Optional<LockerDetail> findById(Long lockerDetailId);
 }

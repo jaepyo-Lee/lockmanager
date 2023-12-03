@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static java.time.LocalDateTime.now;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -31,4 +35,6 @@ public class Reservation extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_detail_id")
     private LockerDetail lockerDetail;
+
+
 }

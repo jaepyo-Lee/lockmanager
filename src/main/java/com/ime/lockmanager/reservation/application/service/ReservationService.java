@@ -37,9 +37,8 @@ import static java.time.LocalDateTime.now;
 @Transactional
 @Service
 public class ReservationService implements ReservationUseCase {
-
-    private final UserQueryPort userQueryPort;
     private final LockerQueryPort lockerQueryPort;
+    private final UserQueryPort userQueryPort;
     private final ReservationQueryPort reservationQueryPort;
     private final LockerDetailQueryPort lockerDetailQueryPort;
     private final static List<String> notInvalidStatus = new ArrayList<>(List.of("휴햑", "재학"));
@@ -62,33 +61,26 @@ public class ReservationService implements ReservationUseCase {
 
     @Override
     public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception {
-        /*log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
-        User byStudentNum = userQueryPort.findByStudentNum(lockerRegisterRequestDto.getStudentNum())
+        log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
+        User user = userQueryPort.findByStudentNum(lockerRegisterRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
 
-        Locker byLockerId = lockerQueryPort.findByLockerId(lockerRegisterRequestDto.getLockerDetailId())
+        LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(lockerRegisterRequestDto.getLockerDetailId())
                 .orElseThrow(NotFoundLockerException::new);
-        if (notInvalidStatus.contains(byStudentNum.getStatus())) {
-            if (reservationQueryPort.isReservationByStudentNum(FindReservationByStudentNumDto.builder()
-                    .studentNum(byStudentNum.getStudentNum())
-                    .build())) {
-                if (reservationQueryPort.findByLockerDetailId(FindReservationByLockerDetailIdDto
-                        .builder()
-                        .lockerDetailId(lockerRegisterRequestDto.getLockerDetailId())
-                        .build()) != null) {
-//                    reservationQueryPort.registerLocker(UserJpaEntity.of(byStudentNum), LockerJpaEntity.of(byLockerId));
-                    log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
-                    return LockerRegisterResponseDto.builder()
-                            .lockerDetailNum(byLockerId.getId())
-                            .studentNum(byStudentNum.getStudentNum())
-                            .build();
+        if (notInvalidStatus.contains(user.getStatus())) {
+            if (isReservationExistByUserStudentNum(user.getStudentNum())) {
+                if (isReservationExistByLockerDetail(lockerDetail.getId())) {
+                    reservationQueryPort.registerLocker(user, lockerDetail);
+                    log.info("예약 수정 완료 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
+                    return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
+                            user.getStudentNum(),
+                            lockerDetail.getLocker().getName());
                 }
                 throw new AlreadyReservedLockerException();
             }
             throw new AlreadyReservedUserException();
         }
-        throw new InvalidReservedStatusException();*/
-        return null;
+        throw new InvalidReservedStatusException();
     }
 
 
@@ -100,12 +92,12 @@ public class ReservationService implements ReservationUseCase {
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
         Locker locker = lockerDetail.getLocker();
-        if (!Optional.of(locker.getPeriod()).isEmpty()) {
+        if (locker.getPeriod()!=null) {
             if (locker.isDeadlineValid()) {
                 if (notInvalidStatus.contains(user.getStatus())) {
-                    if (isReservationExistByLockerDetail(lockerDetail)) {
-                        if (!lockerDetail.getLockerDetailStatus().equals(LockerDetailStatus.BROKEN)){
-                            if (isReservationExistByUserId(user)) {
+                    if (isReservationExistByLockerDetail(lockerDetail.getId())) {
+                        if (!lockerDetail.getLockerDetailStatus().equals(LockerDetailStatus.BROKEN)) {
+                            if (isReservationExistByUserStudentNum(user.getStudentNum())) {
                                 reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
                                 log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
                                 return LockerRegisterResponseDto
@@ -124,14 +116,12 @@ public class ReservationService implements ReservationUseCase {
         throw new ReserveTimeNullException();
     }
 
-    private boolean isReservationExistByUserId(User user) {
-        return reservationQueryPort.findReservationByStudentNum(user.getStudentNum()).isEmpty();
+    private boolean isReservationExistByUserStudentNum(String userStudentNum) {
+        return reservationQueryPort.findReservationByStudentNum(userStudentNum).isEmpty();
     }
 
-    private boolean isReservationExistByLockerDetail(LockerDetail lockerDetail) {
-        return reservationQueryPort.findByLockerDetailId(FindReservationByLockerDetailIdDto.builder()
-                .lockerDetailId(lockerDetail.getId())
-                .build()).isEmpty();
+    private boolean isReservationExistByLockerDetail(Long lockerDetailId) {
+        return reservationQueryPort.findByLockerDetailId(lockerDetailId).isEmpty();
     }
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
@@ -142,8 +132,6 @@ public class ReservationService implements ReservationUseCase {
         reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder()
                 .studentNum(cancelLockerDto.getStudentNum())
                 .build());
-
-
     }
 
     public boolean isReservationExistByStudentNum(String studentNum) {
