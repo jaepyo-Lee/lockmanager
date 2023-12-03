@@ -22,4 +22,6 @@ public interface LockerJpaRepository extends JpaRepository<Locker,Long> {
 
     @Query("select L from LOCKER_TABLE as L join fetch L.major as M where M=:major")
     List<Locker> findLockerByUserMajor(@Param("major")Major major);
+
+    Locker findByName(String name);
 }

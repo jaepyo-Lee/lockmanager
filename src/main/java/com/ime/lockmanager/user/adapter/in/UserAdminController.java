@@ -51,13 +51,9 @@ class UserAdminController {
             notes = "수정된 사용자의 정보를 받아 실제 dB에 업데이트해주는 API(관리자용)"
     )
     @PutMapping("/modifiedInfo")
-    public SuccessResponse modifiedUserInfo(@ApiIgnore Principal principal, @RequestBody List<ModifiedUserInfoRequest> modifiedUserInfoRequest) throws Exception {
+    public SuccessResponse modifiedUserInfo(@ApiIgnore Principal principal, @RequestBody ModifiedUserInfoRequest modifiedUserInfoRequest) throws Exception {
         log.info("{} : 사용자 정보 수정(관리자)", principal.getName());
-        userUseCase.modifiedUserInfo(
-                modifiedUserInfoRequest.stream()
-                        .map(ModifiedUserInfoRequest::toRequestDto)
-                        .collect(Collectors.toList())
-        );
+        userUseCase.modifiedUserInfo(modifiedUserInfoRequest.toRequestDto());
         return SuccessResponse.ok();
     }
 

@@ -45,4 +45,9 @@ public class LockerQueryRepository implements LockerQueryPort {
     public List<Locker> findLockerByUserMajor(Major major) {
         return lockerJpaRepository.findLockerByUserMajor(major);
     }
+
+    @Override
+    public Locker findByName(String lockerName) {
+        return lockerJpaRepository.findByName(lockerName);
+    }
 }

@@ -18,7 +18,7 @@ public interface UserUseCase {
 
     boolean checkAdmin(String studentNum);
 
-    void modifiedUserInfo(List<ModifiedUserInfoRequestDto> requestDto) throws Exception;
+    void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception;
 
     void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
 

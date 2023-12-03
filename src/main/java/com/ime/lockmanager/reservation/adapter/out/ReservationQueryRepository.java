@@ -18,6 +18,11 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
+    public Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId) {
+        return reservationJpaRepository.findByUserStudentNumAndLockerDetailId(studentNum,lockerDetailId);
+    }
+
+    @Override
     public void deleteByStudentNum(DeleteReservationByStudentNumDto deleteReservationByStudentNumDto) {
         reservationJpaRepository.deleteByUserStudentNum(deleteReservationByStudentNumDto.getStudentNum());
     }
@@ -48,7 +53,7 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public Optional<Reservation> findByLockerDetailId(FindReservationByLockerDetailIdDto findReservationByLockerDetailIdDto) {
-        return reservationJpaRepository.findByLockerDetailId(findReservationByLockerDetailIdDto.getLockerDetailId());
+    public Optional<Reservation> findByLockerDetailId(Long lockerDetailId) {
+        return reservationJpaRepository.findByLockerDetailId(lockerDetailId);
     }
 }
