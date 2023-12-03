@@ -92,7 +92,7 @@ public class ReservationService implements ReservationUseCase {
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
         Locker locker = lockerDetail.getLocker();
-        if (!Optional.of(locker.getPeriod()).isEmpty()) {
+        if (locker.getPeriod()!=null) {
             if (locker.isDeadlineValid()) {
                 if (notInvalidStatus.contains(user.getStatus())) {
                     if (isReservationExistByLockerDetail(lockerDetail.getId())) {
