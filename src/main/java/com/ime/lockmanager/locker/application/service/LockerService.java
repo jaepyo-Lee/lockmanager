@@ -1,19 +1,24 @@
 package com.ime.lockmanager.locker.application.service;
 
+import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerException;
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
 import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
+import com.ime.lockmanager.locker.domain.ImageInfo;
+import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.domain.User;
+import com.ime.lockmanager.user.domain.UserState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +36,31 @@ class LockerService implements LockerUseCase {
     private final LockerQueryPort lockerQueryPort;
     private final LockerDetailUseCase lockerDetailUseCase;
     private final UserUseCase userUseCase;
+
+    @Override
+    public void modifyLockerInfo(ModifyLockerInfoReqeustDto reqeustDto) {
+        Locker locker = lockerQueryPort.findByLockerId(reqeustDto.getLockerId()).orElseThrow(NotFoundLockerException::new);
+        if (reqeustDto.getImageName() != null && reqeustDto.getImageUrl() != null) {
+            locker.modifiedImageInfo(ImageInfo.builder()
+                    .imageUrl(reqeustDto.getImageUrl())
+                    .imageName(reqeustDto.getImageName())
+                    .build());
+        }
+        if (reqeustDto.getStartTime() != null && reqeustDto.getEndTime() != null) {
+            locker.modifiedDateTime(Period.builder()
+                    .startDateTime(reqeustDto.getStartTime())
+                    .endDateTime(reqeustDto.getEndTime())
+                    .build());
+        }
+        if (!reqeustDto.getUserStates().isEmpty() || reqeustDto.getUserStates()!=null) {
+            locker.getPermitUserState().clear();
+            reqeustDto.getUserStates().stream().forEach(userState -> locker.getPermitUserState().add(userState));
+        }
+        if (!reqeustDto.getUserTiers().isEmpty() || reqeustDto.getUserTiers()!=null) {
+            locker.getPermitUserTier().clear();
+            reqeustDto.getUserTiers().stream().forEach(userTier -> locker.getPermitUserTier().add(userTier));
+        }
+    }
 
     @Override
     public List<AllLockersInMajorResponseDto> findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
@@ -59,12 +89,12 @@ class LockerService implements LockerUseCase {
 
     @Override
     public void setLockerPeriod(LockerSetTimeRequestDto setPeriodRequestDto) {
-        List<Locker> lockers = lockerQueryPort.findAll();
+     /*   List<Locker> lockers = lockerQueryPort.findAll();
         log.info("시간설정 시작");
         lockers.stream().parallel()
                 .forEach(locker -> locker.modifiedDateTime(setPeriodRequestDto)
                 );
-        log.info("시간설정 완료");
+        log.info("시간설정 완료");*/
     }
 
     @Transactional(readOnly = true)

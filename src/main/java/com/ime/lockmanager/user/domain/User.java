@@ -37,7 +37,6 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
     @OneToOne(mappedBy = "user",fetch = LAZY)
     private Reservation reservation;
     private String grade;

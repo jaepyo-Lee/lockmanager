@@ -3,6 +3,7 @@ package com.ime.lockmanager.locker.application.port.in;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
+import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
 import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
@@ -23,4 +24,6 @@ public interface LockerUseCase {
     LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, String studentNum);
 
     List<AllLockersInMajorResponseDto> findAllLockerInMajor(FindAllLockerInMajorRequestDto build);
+
+    void modifyLockerInfo(ModifyLockerInfoReqeustDto toReqeustDto);
 }

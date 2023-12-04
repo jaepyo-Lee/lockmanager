@@ -3,6 +3,7 @@ package com.ime.lockmanager.locker.adapter.in;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.locker.adapter.in.req.LockerCreateRequest;
 import com.ime.lockmanager.locker.adapter.in.req.LockerSetTimeRequest;
+import com.ime.lockmanager.locker.adapter.in.req.ModifyLockerInfoReqeust;
 import com.ime.lockmanager.locker.adapter.in.res.LockerCreateResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
@@ -11,10 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,4 +53,15 @@ class LockerAdminController {
         );
     }
 
+    @ApiOperation(
+            value = "사물함 정보 수정",
+            notes = "사물함의 여러 정보를 수정하는 api"
+    )
+    @PutMapping("/{lockerId}")
+    public SuccessResponse modifyLockerInfo(@ApiIgnore Authentication authentication,
+                                            @PathVariable Long lockerId,
+                                            @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust){
+        lockerUseCase.modifyLockerInfo(modifyLockerInfoReqeust.toReqeustDto(lockerId));
+        return SuccessResponse.ok();
+    }
 }
