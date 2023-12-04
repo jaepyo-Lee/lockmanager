@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 import static java.time.LocalDateTime.now;
 
 @Getter
@@ -36,5 +37,11 @@ public class Reservation extends BaseTimeEntity {
     @JoinColumn(name = "locker_detail_id")
     private LockerDetail lockerDetail;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus = RESERVED;
 
+    public void changeReservationStatus(ReservationStatus reservationStatus) {
+        this.reservationStatus = reservationStatus;
+    }
 }

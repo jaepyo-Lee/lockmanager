@@ -30,6 +30,6 @@ public class LockerDetailService implements LockerDetailUseCase {
 
     @Override
     public List<LockerDetail> findLockerDetailByLocker(Locker locker) {
-        return lockerDetailQueryPort.findLockerDetailByLocker(locker);
+        return lockerDetailQueryPort.findLockerDetailByLocker(locker.getId());
     }
 }

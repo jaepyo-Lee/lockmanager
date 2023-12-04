@@ -18,6 +18,11 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
+    public List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker) {
+        return reservationJpaRepository.findAllByLockerDetails(lockerDetailsByLocker);
+    }
+
+    @Override
     public Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId) {
         return reservationJpaRepository.findByUserStudentNumAndLockerDetailId(studentNum,lockerDetailId);
     }

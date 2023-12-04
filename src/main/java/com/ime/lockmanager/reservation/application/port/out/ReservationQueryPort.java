@@ -22,4 +22,6 @@ public interface ReservationQueryPort {
     void deleteByStudentNum(DeleteReservationByStudentNumDto deleteReservationByStudentNumDto);
 
     Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId);
+
+    List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 }
