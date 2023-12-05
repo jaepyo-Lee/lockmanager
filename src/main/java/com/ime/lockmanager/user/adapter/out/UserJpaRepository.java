@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +31,8 @@ public interface UserJpaRepository extends JpaRepository<User,Long>{
             "new com.ime.lockmanager.user.application.port.out.res.UserInfoWithLockerIdResponseDto(U.studentNum,U.name,U.membership,R.locker.id) " +
             "from  USER_TABLE as U join U.reservation AS R ON U.Id=R.user.Id where U.studentNum=:studentNum")
     List<UserInfoWithLockerIdResponseDto> findUserInfoWithReservationByStudentNum(@Param("studentNum") String studentNum);*/
+
+    @Query("select U from USER_TABLE as U join fetch U.majorDetail as MD join fetch MD.major where U.studentNum = :studentNum")
+    Optional<User> findByStudentNumWithMajorDetailWithMajor(@Param("studentNum") String studentNum);
+
 }

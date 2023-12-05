@@ -1,12 +1,18 @@
 package com.ime.lockmanager.major.domain;
 
 import com.ime.lockmanager.major.domain.Major;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.LAZY;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity(name = "MAJOR_DETAIL_TABLE")
 public class MajorDetail {
