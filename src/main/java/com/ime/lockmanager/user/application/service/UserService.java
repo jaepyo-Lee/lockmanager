@@ -1,11 +1,13 @@
 package com.ime.lockmanager.user.application.service;
 
+import com.ime.lockmanager.common.format.exception.reservation.NotFoundReservationException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
+import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.reservation.domain.ReservationStatus;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
@@ -134,10 +136,34 @@ class UserService implements UserUseCase {
     @Transactional(readOnly = true)
     @Override
     public UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
-        UserInfoResponseDto userInfoWithLockerIdByStudentNum = userToReservationQueryPort
-                .findUserInfoWithLockerIdByStudentNum(userRequestDto.getStudentNum());
-        return userInfoWithLockerIdByStudentNum;
+        User user = userQueryPort.findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
+                .orElseThrow(NotFoundUserException::new);
+
+        Reservation findReservation = user.getReservation().stream()
+                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                .findFirst().orElse(null);
+
+        UserInfoResponseDto.UserInfoResponseDtoBuilder userInfoResponseDtoBuilder = UserInfoResponseDto.builder()
+                .majorDetail(user.getMajorDetail().getName())
+                .studentNum(user.getStudentNum())
+                .status(user.getStatus())
+                .membership(user.isMembership())
+                .name(user.getName());
+
+        setReservationDetails(userInfoResponseDtoBuilder, findReservation);
+
+        return userInfoResponseDtoBuilder.build();
     }
+
+    private void setReservationDetails(UserInfoResponseDto.UserInfoResponseDtoBuilder builder, Reservation reservation) {
+        if (reservation != null) {
+            builder.lockerName(reservation.getLockerDetail().getLocker().getName())
+                    .lockerNum(reservation.getLockerDetail().getLockerNum());
+        } else {
+            builder.lockerNum(null).lockerName(null);
+        }
+    }
+
 
 
     @Transactional(readOnly = true)

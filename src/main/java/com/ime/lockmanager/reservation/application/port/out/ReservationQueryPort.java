@@ -24,4 +24,8 @@ public interface ReservationQueryPort {
     Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId);
 
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
+
+    List<Reservation> findAllByLockerDetailId(Long lockerDetailId);
+
+    List<Reservation> findAllByStudentNum(String studentNum);
 }
