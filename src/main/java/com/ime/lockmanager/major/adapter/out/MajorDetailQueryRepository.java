@@ -5,6 +5,7 @@ import com.ime.lockmanager.major.domain.MajorDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -14,5 +15,15 @@ public class MajorDetailQueryRepository implements MajorDetailQueryPort {
     @Override
     public Optional<MajorDetail> findMajorDetailByName(String majorName) {
         return majorDetailRepository.findMajorDetailByName(majorName);
+    }
+
+    @Override
+    public MajorDetail save(MajorDetail majorDetail) {
+        return majorDetailRepository.save(majorDetail);
+    }
+
+    @Override
+    public List<MajorDetail> findAll() {
+        return majorDetailRepository.findAll();
     }
 }

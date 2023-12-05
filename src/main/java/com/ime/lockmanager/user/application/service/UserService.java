@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
@@ -47,6 +48,11 @@ class UserService implements UserUseCase {
     private final UserToReservationQueryPort userToReservationQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final LockerQueryPort lockerQueryPort;
+
+    @Override
+    public Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum) {
+        return userQueryPort.findByStudentNumWithMajorDetailWithMajor(studentNum);
+    }
 
     @Override
     public void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception {

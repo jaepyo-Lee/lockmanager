@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface UserQueryPort {
     Optional<User> findByStudentNum(String studentNum);
 
-
+    Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 
     List<User> findAll();
 
