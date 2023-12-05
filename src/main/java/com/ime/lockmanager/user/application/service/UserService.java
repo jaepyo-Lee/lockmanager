@@ -6,6 +6,7 @@ import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
+import com.ime.lockmanager.reservation.domain.ReservationStatus;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoDto;
@@ -21,10 +22,20 @@ import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,7 +53,7 @@ class UserService implements UserUseCase {
         for (ModifiedUserInfoDto modifiedUserInfo : requestDto.getModifiedUserInfoList()) {
             User requestUser = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
-            if (modifiedUserInfo.getLockerDetailId()==null) { // 요청된 사물함 정보가 없을때
+            if (modifiedUserInfo.getLockerDetailId() == null) { // 요청된 사물함 정보가 없을때
                 requestUser.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
             } else {
                 if (reservationUseCase.isReservationExistByStudentNum(modifiedUserInfo.getStudentNum())) { //예약이 되어있다면, 해당 사물함 취소후 재등록
@@ -81,8 +92,34 @@ class UserService implements UserUseCase {
     public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, Pageable pageable) {
         User adminUser = userQueryPort.findByStudentNum(adminUserStudentNum).orElseThrow(NotFoundUserException::new);
         Major adminMajor = adminUser.getMajorDetail().getMajor();
-        Page<AllUserInfoForAdminResponseDto> userPage = userToReservationQueryPort.findAllOrderByStudentNumAsc(
-                adminMajor, pageable);
+
+        Page<User> allUser = userToReservationQueryPort.findAllOrderByStudentNumAsc(adminMajor, pageable);
+        PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
+        List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
+        for (User user : allUser) {
+            AllUserInfoForAdminResponseDto build = AllUserInfoForAdminResponseDto.builder()
+                    .studentNum(user.getStudentNum())
+                    .status(user.getStatus())
+                    .role(user.getRole())
+                    .membership(user.isMembership())
+                    .name(user.getName())
+                    .lockerName(user.getReservation().stream()
+                            .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                            .findFirst()
+                            .map(reservation -> reservation.getLockerDetail().getLocker().getName())
+                            .orElse(null)
+                    )
+                    .lockerNum(
+                            user.getReservation().stream()
+                                    .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                                    .findFirst()
+                                    .map(reservation -> reservation.getLockerDetail().getLockerNum())
+                                    .orElse(null)
+                    ).build();
+            userPageList.add(build);
+        }
+        PageImpl<AllUserInfoForAdminResponseDto> userPage = new PageImpl<>(userPageList, pageRequest, userPageList.size());
+
 
         return userPage;
 

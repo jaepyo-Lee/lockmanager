@@ -25,7 +25,7 @@ public class Reservation extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -33,7 +33,7 @@ public class Reservation extends BaseTimeEntity {
     @JoinColumn(name = "locker_id")
     private Locker locker;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_detail_id")
     private LockerDetail lockerDetail;
 
