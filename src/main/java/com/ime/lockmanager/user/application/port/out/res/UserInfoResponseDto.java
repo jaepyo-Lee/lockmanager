@@ -1,8 +1,10 @@
 package com.ime.lockmanager.user.application.port.out.res;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @NoArgsConstructor
 @Getter
 public class UserInfoResponseDto {

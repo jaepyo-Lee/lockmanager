@@ -27,4 +27,9 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
 
     @Query("select R from RESERVATION_TABLE as R where R.lockerDetail in (:lockerDetailsByLocker)")
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
+
+    @Query("select R from RESERVATION_TABLE as R where R.lockerDetail.id=:lockerDetailId")
+    List<Reservation> findAllByLockerDetailId(Long lockerDetailId);
+
+    List<Reservation> findAllByUserStudentNum(String studentNum);
 }

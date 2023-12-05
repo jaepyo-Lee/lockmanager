@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -98,9 +100,9 @@ public class ReservationService implements ReservationUseCase {
         if (locker.getPeriod() != null) {
             if (locker.isDeadlineValid()) {
                 if (notInvalidStatus.contains(user.getStatus())) {
-                    if (isReservationExistByLockerDetail(lockerDetail.getId())) {
+                    if (isReservationPossibleByLockerDetailId(lockerDetail.getId())) {
                         if (!lockerDetail.getLockerDetailStatus().equals(LockerDetailStatus.BROKEN)) {
-                            if (isReservationExistByUserStudentNum(user.getStudentNum())) {
+                            if (isReservationPossibleByStudentNum(user.getStudentNum())) {
                                 reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
                                 log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
                                 return LockerRegisterResponseDto
@@ -124,8 +126,29 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private boolean isReservationExistByLockerDetail(Long lockerDetailId) {
-        return reservationQueryPort.findByLockerDetailId(lockerDetailId) .isEmpty();
+        return reservationQueryPort.findByLockerDetailId(lockerDetailId).isEmpty();
     }
+
+    private boolean isReservationPossibleByLockerDetailId(Long lockerDetailId){
+        List<Reservation> allReservationByLockerDetailId = reservationQueryPort.findAllByLockerDetailId(lockerDetailId);
+        List<Reservation> reservations = allReservationByLockerDetailId.stream().filter(reservation -> reservation.getReservationStatus().equals(RESERVED)).collect(Collectors.toList());
+        if(reservations.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isReservationPossibleByStudentNum(String studentNum){
+        List<Reservation> allReservationByLockerDetailId = reservationQueryPort.findAllByStudentNum(studentNum);
+        List<Reservation> reservations = allReservationByLockerDetailId.stream()
+                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                .collect(Collectors.toList());
+        if(reservations.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
         if (!isReservationExistByStudentNum(cancelLockerDto.getStudentNum())) {

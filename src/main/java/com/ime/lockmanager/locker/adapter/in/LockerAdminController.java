@@ -27,7 +27,7 @@ class LockerAdminController {
 
     @ApiOperation(
             value = "사물함 예약 기간 저장",
-            notes = "사물함의 예약기간을 저장하기 위한 API"
+            notes = "사물함의 예약기간을 저장하기 위한 API, 사용안함"
     )
     @PostMapping("/time")
     public SuccessResponse setPeriod(@ApiIgnore Principal principal, HttpServletRequest req, @RequestBody LockerSetTimeRequest timeRequest) {
@@ -36,6 +36,10 @@ class LockerAdminController {
         return SuccessResponse.ok("시간설정완료");
     }
 
+    @ApiOperation(
+            value = "새로운 사물함 생성",
+            notes = "새로운 사물함을 생성하는 API"
+    )
     @PostMapping()
     public SuccessResponse<LockerCreateResponse> createLocker(@ApiIgnore Authentication authentication,
                                                               @RequestBody LockerCreateRequest lockerCreateRequest) {
