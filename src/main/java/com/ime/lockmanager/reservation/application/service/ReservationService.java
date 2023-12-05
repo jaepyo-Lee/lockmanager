@@ -15,7 +15,8 @@ import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
-import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
+import com.ime.lockmanager.reservation.domain.Reservation;
+import com.ime.lockmanager.reservation.domain.ReservationStatus;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
@@ -28,9 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static java.time.LocalDateTime.now;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,9 +44,12 @@ public class ReservationService implements ReservationUseCase {
     private final static List<String> notInvalidStatus = new ArrayList<>(List.of("휴햑", "재학"));
 
     @Override
-    public void resetReservation(Principal principal) {
+    public void resetReservation(Long lockerId, Principal principal) {
         log.info("{} : 모든 사물함 초기화", principal.getName());
-        reservationQueryPort.deleteAll();
+        List<LockerDetail> lockerDetailsByLocker = lockerDetailQueryPort.findLockerDetailByLocker(lockerId);
+        List<Reservation> reservationsByLockerDetails = reservationQueryPort.findAllByLockerDetails(lockerDetailsByLocker);
+        reservationsByLockerDetails.stream()
+                .forEach(reservation -> reservation.changeReservationStatus(ReservationStatus.RESET));
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +95,7 @@ public class ReservationService implements ReservationUseCase {
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
         Locker locker = lockerDetail.getLocker();
-        if (locker.getPeriod()!=null) {
+        if (locker.getPeriod() != null) {
             if (locker.isDeadlineValid()) {
                 if (notInvalidStatus.contains(user.getStatus())) {
                     if (isReservationExistByLockerDetail(lockerDetail.getId())) {
@@ -121,7 +124,7 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private boolean isReservationExistByLockerDetail(Long lockerDetailId) {
-        return reservationQueryPort.findByLockerDetailId(lockerDetailId).isEmpty();
+        return reservationQueryPort.findByLockerDetailId(lockerDetailId) .isEmpty();
     }
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {

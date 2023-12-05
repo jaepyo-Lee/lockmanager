@@ -4,6 +4,7 @@ import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.domain.User;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,17 +29,8 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort {
 
 
     @Override
-    public Page<AllUserInfoForAdminResponseDto> findAllOrderByStudentNumAsc(Major userMajor, Pageable pageable) {
-        List<AllUserInfoForAdminResponseDto> userInfos = jpaQueryFactory.select(Projections
-                        .constructor(AllUserInfoForAdminResponseDto.class,
-                                user.name, user.membership, user.status, user.studentNum, user.role,
-                                locker.name,
-                                lockerDetail.lockerNum
-                        )
-                ).from(user)
-                .leftJoin(user.reservation,reservation)
-                .leftJoin(reservation.lockerDetail,lockerDetail)
-                .leftJoin(lockerDetail.locker,locker)
+    public Page<User> findAllOrderByStudentNumAsc(Major userMajor, Pageable pageable) {
+        List<User> userInfos = jpaQueryFactory.selectFrom(user)
                 .orderBy(user.studentNum.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

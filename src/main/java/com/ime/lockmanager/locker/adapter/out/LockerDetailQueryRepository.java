@@ -1,7 +1,6 @@
 package com.ime.lockmanager.locker.adapter.out;
 
 import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
-import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,8 +23,8 @@ public class LockerDetailQueryRepository implements LockerDetailQueryPort {
     }
 
     @Override
-    public List<LockerDetail> findLockerDetailByLocker(Locker locker) {
-        return lockerDetailRepository.findLockerDetailByLocker(locker);
+    public List<LockerDetail> findLockerDetailByLocker(Long lockerId) {
+        return lockerDetailRepository.findByLockerId(lockerId);
     }
 
     @Override

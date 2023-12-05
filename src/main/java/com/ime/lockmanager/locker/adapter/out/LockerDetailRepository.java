@@ -18,5 +18,5 @@ public interface LockerDetailRepository extends JpaRepository<LockerDetail,Long>
     @Query("SELECT LD FROM LOCKER_DETAIL_TABLE LD ")
     List<LockerDetail> findLockerDetailByMajor(Major major);
 
-    List<LockerDetail> findLockerDetailByLocker(Locker locker);
+    List<LockerDetail> findByLockerId(Long lockerId);
 }

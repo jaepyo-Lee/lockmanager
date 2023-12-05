@@ -11,6 +11,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Getter
@@ -37,17 +40,15 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-    @OneToOne(mappedBy = "user",fetch = LAZY)
-    private Reservation reservation;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user",fetch = LAZY)
+    private List<Reservation> reservation=new ArrayList<>();
     private String grade;
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "major_detail_id")
     private MajorDetail majorDetail;
     private boolean auth;
-
-    public void setNullReservation(){
-        this.reservation = null;
-    }
 
     @Builder
     public User(String name, String studentNum, String status, Role role) {
