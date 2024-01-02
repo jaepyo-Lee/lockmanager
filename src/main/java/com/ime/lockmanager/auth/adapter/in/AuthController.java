@@ -19,7 +19,7 @@ import static com.ime.lockmanager.common.format.success.SuccessResponseStatus.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("${api.user.prefix}/auth")
 class AuthController {
     private final AuthUseCase authUseCase;
 

@@ -129,21 +129,23 @@ public class ReservationService implements ReservationUseCase {
         return reservationQueryPort.findByLockerDetailId(lockerDetailId).isEmpty();
     }
 
-    private boolean isReservationPossibleByLockerDetailId(Long lockerDetailId){
+    private boolean isReservationPossibleByLockerDetailId(Long lockerDetailId) {
         List<Reservation> allReservationByLockerDetailId = reservationQueryPort.findAllByLockerDetailId(lockerDetailId);
-        List<Reservation> reservations = allReservationByLockerDetailId.stream().filter(reservation -> reservation.getReservationStatus().equals(RESERVED)).collect(Collectors.toList());
-        if(reservations.isEmpty()){
+        List<Reservation> reservations = allReservationByLockerDetailId.stream()
+                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                .collect(Collectors.toList());
+        if (reservations.isEmpty()) {
             return true;
         }
         return false;
     }
 
-    private boolean isReservationPossibleByStudentNum(String studentNum){
+    private boolean isReservationPossibleByStudentNum(String studentNum) {
         List<Reservation> allReservationByLockerDetailId = reservationQueryPort.findAllByStudentNum(studentNum);
         List<Reservation> reservations = allReservationByLockerDetailId.stream()
                 .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
                 .collect(Collectors.toList());
-        if(reservations.isEmpty()){
+        if (reservations.isEmpty()) {
             return true;
         }
         return false;

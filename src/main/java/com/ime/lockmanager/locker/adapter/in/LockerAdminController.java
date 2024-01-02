@@ -6,7 +6,10 @@ import com.ime.lockmanager.locker.adapter.in.req.LockerSetTimeRequest;
 import com.ime.lockmanager.locker.adapter.in.req.ModifyLockerInfoReqeust;
 import com.ime.lockmanager.locker.adapter.in.res.LockerCreateResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
+import com.ime.lockmanager.locker.application.port.in.dto.LeftLockerInfo;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
+import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponse;
+import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +28,14 @@ import java.security.Principal;
 @RequestMapping("${api.admin.prefix}/locker")
 class LockerAdminController {
     private final LockerUseCase lockerUseCase;
+
+    @ApiOperation(
+            value = "남은 사물함 목록 조회 api"
+    )
+    @GetMapping("/left-list")
+    public SuccessResponse<LeftLockerResponse> getLeftLocker(@ApiIgnore Authentication authentication){
+        return new SuccessResponse(lockerUseCase.getLeftLocker(authentication.getName()).toResponse());
+    }
 
     @ApiOperation(
             value = "사물함 예약 기간 저장",
