@@ -11,4 +11,9 @@ public class Major {
     @GeneratedValue
     private Long id;
     private String representName;
+
+    public String changeRepresentName(String modifiedRepresentName) {
+        this.representName = modifiedRepresentName;
+        return representName;
+    }
 }

@@ -1,4 +1,4 @@
-package com.ime.lockmanager.major.adapter.out;
+package com.ime.lockmanager.major.adapter.out.majordetail;
 
 import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
 import com.ime.lockmanager.major.domain.MajorDetail;
