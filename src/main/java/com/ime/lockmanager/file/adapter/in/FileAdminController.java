@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RequestMapping("/admin/api/file")
+@RequestMapping("${api.admin.prefix}/file")
 @RestController
 public class FileAdminController {
     private final FileAdminUseCase fileAdminUseCase;
@@ -29,4 +29,14 @@ public class FileAdminController {
         fileAdminUseCase.ParseMembershipExcelForUpdateUserDuesInfo(membershipFile);
         return SuccessResponse.ok();
     }
+
+/*    @GetMapping("/dues/init")
+    public SuccessResponse getDuesInitExel(){
+
+    }
+
+    @GetMapping("/dues")
+    public SuccessResponse getDuesExcel(){
+        fileAdminUseCase.make
+    }*/
 }

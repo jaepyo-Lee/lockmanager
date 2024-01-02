@@ -16,6 +16,7 @@ import java.security.Principal;
 
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated
 @RestController
 @RequestMapping("/admin/api/list")
 class AdminListController {
@@ -23,11 +24,11 @@ class AdminListController {
     private final AdminListUseCase adminListUseCase;
 
     @ApiOperation(
-            value = "수정 정보 리스트 조회",
-            notes = "어드민 페이지에서 사용자의 정보를 수정하기위한 수정가능 목록들 조회 API(eg. 남은 사물함번호)"
+            value = "사용자 정보 조회 api",
+            notes = "관리자 페이지에서 학과의 전체 학생의 정보조회에 사용"
     )
     @GetMapping("")
-    public SuccessResponse getadminlist(@ApiIgnore Principal principal){
+    public SuccessResponse<AdminListResponse> getadminlist(@ApiIgnore Principal principal){
         log.info("{} : 사용자 리스트 조회(관리자)",principal.getName());
         return new SuccessResponse(AdminListResponse.fromResponseDto(adminListUseCase.getAdminList()));
     }
