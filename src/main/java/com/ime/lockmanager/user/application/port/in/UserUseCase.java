@@ -1,21 +1,22 @@
 package com.ime.lockmanager.user.application.port.in;
 
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
+import com.ime.lockmanager.user.application.port.in.req.DetermineApplyingRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
+import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
+import com.ime.lockmanager.user.application.port.in.res.CheckMembershipResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
-import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
 import com.ime.lockmanager.user.domain.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserUseCase {
-    UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
+    UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
 
-    Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, Pageable pageable);
+    Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum,int page);
 
     boolean checkAdmin(String studentNum);
 
@@ -26,4 +27,12 @@ public interface UserUseCase {
     User findByStudentNum(String studentNum);
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
+
+    String applyMembership(String studentNum);
+
+    AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page);
+
+    String determineApplying(DetermineApplyingRequestDto toRequestDto,boolean isApprove);
+
+    CheckMembershipResponseDto checkMembership(String studentNum);
 }

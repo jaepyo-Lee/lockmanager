@@ -27,6 +27,7 @@ class LockerController {
     private final LockerUseCase lockerUseCase;
 
 
+    @Deprecated
     @ApiOperation(
             value = "사물함 예약기간 조회",
             notes = "사물함의 예약기간을 조회하는 API"
@@ -47,6 +48,10 @@ class LockerController {
         return new SuccessResponse(now());
     }
 
+    @ApiOperation(
+            value = "사물함 정보조회",
+            notes = "사물함 이름, 기간, 각 사물함 칸의 예약여부정보"
+    )
     @GetMapping("")
     public SuccessResponse<List<AllLockersInMajorResponse>> findAllLockerInMajor(@ApiIgnore Authentication authentication) {
         return new SuccessResponse(lockerUseCase.findAllLockerInMajor(FindAllLockerInMajorRequestDto.builder()

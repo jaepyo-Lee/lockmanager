@@ -1,44 +1,40 @@
 package com.ime.lockmanager.user.application.service;
 
-import com.ime.lockmanager.common.format.exception.reservation.NotFoundReservationException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
-import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.reservation.domain.Reservation;
-import com.ime.lockmanager.reservation.domain.ReservationStatus;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
-import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoDto;
-import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
-import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
-import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
+import com.ime.lockmanager.user.application.port.in.req.*;
+import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
+import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentDto;
+import com.ime.lockmanager.user.application.port.in.res.CheckMembershipResponseDto;
+import com.ime.lockmanager.user.application.port.out.UserMembershipQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
-import com.ime.lockmanager.user.application.port.out.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
 import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
+import static com.ime.lockmanager.user.domain.MembershipState.APPROVE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,8 +44,61 @@ class UserService implements UserUseCase {
     private final UserQueryPort userQueryPort;
     private final ReservationUseCase reservationUseCase;
     private final UserToReservationQueryPort userToReservationQueryPort;
+    private final UserMembershipQueryPort userMembershipQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
-    private final LockerQueryPort lockerQueryPort;
+    private final int PAGE_SIZE = 30;
+
+    @Override
+    public CheckMembershipResponseDto checkMembership(String studentNum) {
+        User student = userQueryPort.findByStudentNum(studentNum)
+                .orElseThrow(NotFoundUserException::new);
+        return CheckMembershipResponseDto.builder()
+                .membershipState(student.getMembershipState())
+                .build();
+    }
+
+    @Override
+    public String determineApplying(DetermineApplyingRequestDto requestDto, boolean isApprove) {
+        User student = userQueryPort.findByStudentNum(requestDto.getStudentNum())
+                .orElseThrow(NotFoundUserException::new);
+        String msg;
+        if (isApprove) {
+            msg = student.approve();
+        } else {
+            msg = student.deny();
+        }
+        return msg;
+    }
+
+    @Override
+    public String applyMembership(String studentNum) {
+        User student = userQueryPort.findByStudentNum(studentNum)
+                .orElseThrow(NotFoundUserException::new);
+        if (student.getMembershipState().equals(APPROVE)) {
+            throw new IllegalStateException("이미 승인된 사용자 입니다.");
+        }
+        return student.applyMembership();
+    }
+
+    @Override
+    public AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page) {
+        User user = userQueryPort.findByStudentNumWithMajorDetailWithMajor(studentNum)
+                .orElseThrow(NotFoundUserException::new);
+        Major major = user.getMajorDetail().getMajor();
+        Page<User> membershipApplicants = userMembershipQueryPort
+                .findAllMembershipApplicantOrderByStudentNumAsc(major, PageRequest.of(page, PAGE_SIZE));
+        List<AllApplyingStudentDto> applicantInfos = membershipApplicants.stream()
+                .map(applicant -> AllApplyingStudentDto.builder()
+                        .studentName(applicant.getName())
+                        .studentNum(applicant.getStudentNum())
+                        .build())
+                .collect(Collectors.toList());
+        return AllApplyingStudentPageResponseDto.builder()
+                .currentPage(membershipApplicants.getNumber())
+                .totalPage(membershipApplicants.getTotalPages())
+                .applicant(applicantInfos).build();
+    }
+
 
     @Override
     public Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum) {
@@ -97,11 +146,11 @@ class UserService implements UserUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, Pageable pageable) {
+    public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, int page) {
         User adminUser = userQueryPort.findByStudentNum(adminUserStudentNum).orElseThrow(NotFoundUserException::new);
         Major adminMajor = adminUser.getMajorDetail().getMajor();
 
-        Page<User> allUser = userToReservationQueryPort.findAllOrderByStudentNumAsc(adminMajor, pageable);
+        Page<User> allUser = userToReservationQueryPort.findAllOrderByStudentNumAsc(adminMajor, PageRequest.of(page, PAGE_SIZE));
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {
@@ -109,7 +158,7 @@ class UserService implements UserUseCase {
                     .studentNum(user.getStudentNum())
                     .status(user.getStatus())
                     .role(user.getRole())
-                    .membership(user.isMembership())
+                    .membershipState(user.getMembershipState())
                     .name(user.getName())
                     .lockerName(user.getReservation().stream()
                             .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
@@ -135,7 +184,7 @@ class UserService implements UserUseCase {
 
     @Transactional(readOnly = true)
     @Override
-    public UserInfoResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
+    public UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
         User user = userQueryPort.findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
 
@@ -143,19 +192,19 @@ class UserService implements UserUseCase {
                 .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
                 .findFirst().orElse(null);
 
-        UserInfoResponseDto.UserInfoResponseDtoBuilder userInfoResponseDtoBuilder = UserInfoResponseDto.builder()
+        UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder userInfoQueryResponseDtoBuilder = UserInfoQueryResponseDto.builder()
                 .majorDetail(user.getMajorDetail().getName())
                 .studentNum(user.getStudentNum())
                 .status(user.getStatus())
-                .membership(user.isMembership())
+                .membershipState(user.getMembershipState())
                 .name(user.getName());
 
-        setReservationDetails(userInfoResponseDtoBuilder, findReservation);
+        setReservationDetails(userInfoQueryResponseDtoBuilder, findReservation);
 
-        return userInfoResponseDtoBuilder.build();
+        return userInfoQueryResponseDtoBuilder.build();
     }
 
-    private void setReservationDetails(UserInfoResponseDto.UserInfoResponseDtoBuilder builder, Reservation reservation) {
+    private void setReservationDetails(UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder builder, Reservation reservation) {
         if (reservation != null) {
             builder.lockerName(reservation.getLockerDetail().getLocker().getName())
                     .lockerNum(reservation.getLockerDetail().getLockerNum());
@@ -163,7 +212,6 @@ class UserService implements UserUseCase {
             builder.lockerNum(null).lockerName(null);
         }
     }
-
 
 
     @Transactional(readOnly = true)

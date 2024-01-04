@@ -1,5 +1,7 @@
 package com.ime.lockmanager.user.application.port.out.res;
 
+import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
+import com.ime.lockmanager.user.domain.MembershipState;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @Getter
-public class UserInfoResponseDto {
+public class UserInfoQueryResponseDto {
     private String name;
-    private boolean membership;
+    private MembershipState membershipState;
     private String status;
     private String studentNum;
 
@@ -17,9 +19,9 @@ public class UserInfoResponseDto {
     private String lockerName;
     private String majorDetail;
 
-    public UserInfoResponseDto(String name, boolean membership, String status, String studentNum, String lockerNum, String lockerName, String majorDetail) {
+    public UserInfoQueryResponseDto(String name, MembershipState membershipState, String status, String studentNum, String lockerNum, String lockerName, String majorDetail) {
         this.name = name;
-        this.membership = membership;
+        this.membershipState = membershipState;
         this.status = status;
         this.studentNum = studentNum;
         this.majorDetail = majorDetail;
@@ -32,11 +34,11 @@ public class UserInfoResponseDto {
         }
     }
 
-    public com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto to(){
-        return com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto.builder()
+    public UserInfoQueryResponseDto to(){
+        return UserInfoQueryResponseDto.builder()
                 .lockerNum(lockerNum)
-                .membership(membership)
-                .userName(name)
+                .membershipState(membershipState)
+                .name(name)
                 .status(status)
                 .studentNum(studentNum)
                 .majorDetail(majorDetail)
