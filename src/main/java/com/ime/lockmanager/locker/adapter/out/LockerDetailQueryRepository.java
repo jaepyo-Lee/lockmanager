@@ -11,24 +11,24 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class LockerDetailQueryRepository implements LockerDetailQueryPort {
-    private final LockerDetailRepository lockerDetailRepository;
+    private final LockerDetailJpaRepository lockerDetailJpaRepository;
     @Override
     public LockerDetail save(LockerDetail lockerDetail) {
-        return lockerDetailRepository.save(lockerDetail);
+        return lockerDetailJpaRepository.save(lockerDetail);
     }
 
     @Override
     public Optional<LockerDetail> findByIdWithLocker(Long lockerDetailId) {
-        return lockerDetailRepository.findByIdWithLocker(lockerDetailId);
+        return lockerDetailJpaRepository.findByIdWithLocker(lockerDetailId);
     }
 
     @Override
     public List<LockerDetail> findLockerDetailByLocker(Long lockerId) {
-        return lockerDetailRepository.findByLockerId(lockerId);
+        return lockerDetailJpaRepository.findByLockerId(lockerId);
     }
 
     @Override
     public Optional<LockerDetail> findById(Long lockerDetailId) {
-        return lockerDetailRepository.findById(lockerDetailId);
+        return lockerDetailJpaRepository.findById(lockerDetailId);
     }
 }
