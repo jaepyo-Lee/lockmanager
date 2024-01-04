@@ -36,6 +36,8 @@ class LockerController {
         return new SuccessResponse(LockerPeriodResponse.fromResponse(lockerUseCase.getLockerPeriod()));
     }
 
+
+    @Deprecated
     @ApiOperation(
             value = "현재시간 조회",
             notes = "서버의 현재시간을 조회하는 API(위치 및 URL변경될지도모름)"

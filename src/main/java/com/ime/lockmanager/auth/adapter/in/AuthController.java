@@ -28,7 +28,7 @@ class AuthController {
             notes = "세종대학교 학사정보시스템의 아이디와 비밀번호를 받아 로그인 하는 API"
     )
     @PostMapping("/login")
-    public SuccessResponse<LoginTokenResponse> login(@ModelAttribute LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
+    public SuccessResponse<LoginTokenResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         log.info("{} : 로그인", loginRequest.getId());
         return new SuccessResponse(authUseCase.login(loginRequest.toRequestDto()).toResponse(), SUCCESS_LOGIN);
