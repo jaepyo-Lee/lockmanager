@@ -15,19 +15,22 @@ public class LoginTokenResponseDto {
     private String accessToken;
     private String refreshToken;
     private Role role;
-    public static LoginTokenResponseDto of(String accessToken,String refreshToken,Role role){
+    private Long userId;
+    public static LoginTokenResponseDto of(String accessToken,String refreshToken,Role role,Long userId){
         return new LoginTokenResponseDto().builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(role)
+                .userId(userId)
                 .build();
     }
 
     public LoginTokenResponse toResponse(){
         return LoginTokenResponse.builder()
-                .accessToken(this.accessToken)
-                .refreshToken(this.refreshToken)
-                .role(this.role)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .role(role)
+                .userId(userId)
                 .build();
     }
 }
