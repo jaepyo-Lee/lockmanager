@@ -4,7 +4,6 @@ import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
-import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
+
+    @Override
+    public List<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long lockerDetailId) {
+        return reservationJpaRepository.findAllByUserIdAndLockerDetailId(studentNum,lockerDetailId);
+    }
 
     @Override
     public List<Reservation> findAllByStudentNum(String studentNum) {
