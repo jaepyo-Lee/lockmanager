@@ -6,11 +6,8 @@ import com.ime.lockmanager.locker.adapter.in.req.LockerSetTimeRequest;
 import com.ime.lockmanager.locker.adapter.in.req.ModifyLockerInfoReqeust;
 import com.ime.lockmanager.locker.adapter.in.res.LockerCreateResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
-import com.ime.lockmanager.locker.application.port.in.dto.LeftLockerInfo;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponse;
-import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
-import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +30,7 @@ class LockerAdminController {
             value = "남은 사물함 목록 조회 api"
     )
     @GetMapping("/left-list")
-    public SuccessResponse<LeftLockerResponse> getLeftLocker(@ApiIgnore Authentication authentication){
+    public SuccessResponse<LeftLockerResponse> getLeftLocker(@ApiIgnore Authentication authentication) {
         return new SuccessResponse(lockerUseCase.getLeftLocker(authentication.getName()).toResponse());
     }
 
@@ -54,12 +51,12 @@ class LockerAdminController {
     )
     @PostMapping()
     public SuccessResponse<LockerCreateResponse> createLocker(@ApiIgnore Authentication authentication,
-                                                              @RequestBody LockerCreateRequest lockerCreateRequest) {
+                                                              @Valid @RequestBody LockerCreateRequest lockerCreateRequest) {
         log.info("{} : 새로운 사물함 생성", authentication.getName());
 
         String createdLockerName = lockerUseCase.createLocker(
                         LockerCreateRequestDto
-                                .fromRequestDto(lockerCreateRequest), authentication.getName()
+                                .fromRequest(lockerCreateRequest), authentication.getName()
                 )
                 .getCreatedLockerName();
         return new SuccessResponse(
@@ -76,7 +73,7 @@ class LockerAdminController {
     @PutMapping("/{lockerId}")
     public SuccessResponse modifyLockerInfo(@ApiIgnore Authentication authentication,
                                             @PathVariable Long lockerId,
-                                            @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust){
+                                            @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust) {
         lockerUseCase.modifyLockerInfo(modifyLockerInfoReqeust.toReqeustDto(lockerId));
         return SuccessResponse.ok();
     }

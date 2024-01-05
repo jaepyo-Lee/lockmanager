@@ -6,6 +6,7 @@ import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
 import com.ime.lockmanager.user.domain.MembershipState;
 import com.ime.lockmanager.user.domain.User;
+import com.ime.lockmanager.user.domain.UserTier;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -32,7 +33,7 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, U
     @Override
     public Page<User> findAllMembershipApplicantOrderByStudentNumAsc(Major major, Pageable pageable) {
         List<User> applicant = jpaQueryFactory.selectFrom(user)
-                .where(user.membershipState.eq(APPLYING))
+                .where(user.userTier.eq(UserTier.APPLICANT))
                 .orderBy(user.studentNum.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -40,7 +41,7 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, U
                 .fetch();
         int total = jpaQueryFactory
                 .selectFrom(user)
-                .where(user.membershipState.eq(APPLYING))
+                .where(user.userTier.eq(UserTier.APPLICANT))
                 .where(user.majorDetail.major.eq(major))
                 .fetch().size();
         return new PageImpl<>(applicant, pageable, total);

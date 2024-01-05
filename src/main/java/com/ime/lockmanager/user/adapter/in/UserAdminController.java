@@ -4,8 +4,10 @@ import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.user.adapter.in.req.DetermineApplyingRequest;
 import com.ime.lockmanager.user.adapter.in.req.ModifiedUserInfoRequest;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminPageResponse;
+import com.ime.lockmanager.user.adapter.in.res.UserTierResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
+import com.ime.lockmanager.user.application.port.in.res.UserTierResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -68,9 +70,10 @@ class UserAdminController {
     }
 
     @PostMapping("/membership")
-    public SuccessResponse determineApplying(@ApiIgnore Authentication authentication,
-                                               @RequestBody DetermineApplyingRequest request,
-                                               @RequestParam boolean isApprove){
-        return SuccessResponse.ok(userUseCase.determineApplying(request.toRequestDto(),isApprove));
+    public SuccessResponse<UserTierResponse> determineApplying(@ApiIgnore Authentication authentication,
+                                             @RequestBody DetermineApplyingRequest request,
+                                             @RequestParam boolean isApprove) {
+        UserTierResponse response = userUseCase.determineApplying(request.toRequestDto(), isApprove).toResponse();
+        return new SuccessResponse(response);
     }
 }

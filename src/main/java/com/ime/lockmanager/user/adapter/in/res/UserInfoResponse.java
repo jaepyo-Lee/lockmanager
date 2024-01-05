@@ -1,7 +1,8 @@
 package com.ime.lockmanager.user.adapter.in.res;
 
 import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
-import com.ime.lockmanager.user.domain.MembershipState;
+import com.ime.lockmanager.user.domain.UserState;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,7 +12,8 @@ public class UserInfoResponse {
 
     private String userName;
     private String studentNum;
-    private MembershipState membership;
+    private UserTier userTier;
+    private UserState userState;
     private String reservedLockerNum;
     private String reservedLockerName;
     private String majorDetail;
@@ -22,7 +24,8 @@ public class UserInfoResponse {
                 .userName(userInfoQueryResponseDto.getName())
                 .majorDetail(userInfoQueryResponseDto.getMajorDetail())
                 .reservedLockerName(userInfoQueryResponseDto.getLockerName())
-                .membership(userInfoQueryResponseDto.getMembershipState())
+                .userTier(userInfoQueryResponseDto.getUserTier())
+                .userState(userInfoQueryResponseDto.getUserState())
                 .build();
     }
 }

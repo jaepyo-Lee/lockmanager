@@ -2,18 +2,16 @@ package com.ime.lockmanager.user.application.port.in.res;
 
 import com.ime.lockmanager.user.adapter.in.res.CheckMembershipResponse;
 import com.ime.lockmanager.user.domain.MembershipState;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.Builder;
-import lombok.Getter;
-
-import javax.print.DocFlavor;
 
 @Builder
 public class CheckMembershipResponseDto {
-    private MembershipState membershipState;
+    private UserTier userTier;
 
     public CheckMembershipResponse toResponse() {
         return CheckMembershipResponse.builder()
-                .membershipState(membershipState)
+                .userTier(userTier)
                 .build();
     }
 }

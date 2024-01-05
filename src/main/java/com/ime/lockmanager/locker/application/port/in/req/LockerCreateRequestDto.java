@@ -5,6 +5,8 @@ import com.ime.lockmanager.locker.adapter.in.req.LockerCreateRequest;
 import com.ime.lockmanager.locker.adapter.in.req.LockerDetailCreateRequest;
 import com.ime.lockmanager.locker.domain.locker.dto.LockerCreateDto;
 import com.ime.lockmanager.major.domain.Major;
+import com.ime.lockmanager.user.domain.UserState;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +25,8 @@ public class LockerCreateRequestDto {
     private String totalColumn;
     private String imageName;
     private String imageUrl;
+    private List<UserState> userStates;
+    private List<UserTier> userTiers;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startReservationTime;
@@ -31,7 +35,7 @@ public class LockerCreateRequestDto {
     private LocalDateTime endReservationTime;
     private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
 
-    public static LockerCreateRequestDto fromRequestDto(LockerCreateRequest lockerCreateRequest) {
+    public static LockerCreateRequestDto fromRequest(LockerCreateRequest lockerCreateRequest) {
         return LockerCreateRequestDto.of(lockerCreateRequest);
     }
 
@@ -45,6 +49,8 @@ public class LockerCreateRequestDto {
                 .lockerDetailCreateRequests(lockerCreateRequest.getLockerDetailCreateRequests())
                 .imageUrl(lockerCreateRequest.getImageUrl())
                 .imageName(lockerCreateRequest.getImageName())
+                .userTiers(lockerCreateRequest.getUserTiers())
+                .userStates(lockerCreateRequest.getUserStates())
                 .build();
     }
 
@@ -53,6 +59,8 @@ public class LockerCreateRequestDto {
                 .totalRow(this.getTotalRow())
                 .totalColumn(this.getTotalColumn())
                 .lockerName(this.getLockerName())
+                .userStates(this.userStates)
+                .userTiers(this.userTiers)
                 .startReservationTime(this.getStartReservationTime())
                 .endReservationTime(this.getEndReservationTime())
                 .major(major)

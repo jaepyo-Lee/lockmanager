@@ -4,7 +4,7 @@ public class UserJpaEntity {
     public static User of(User user){
         return User.builder()
                 .role(user.getRole())
-                .Id(user.getId())
+                .id(user.getId())
                 .name(user.getName())
                 .status(user.getStatus())
                 .membership(user.isMembership())

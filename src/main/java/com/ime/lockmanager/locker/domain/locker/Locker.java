@@ -55,13 +55,13 @@ public class Locker extends BaseTimeEntity {
     private String totalColumn;
 
     @ElementCollection(targetClass = UserState.class)
-    @JoinTable(name = "PERMIT_USER_STATE_TABLE",joinColumns = @JoinColumn(name = "locker_id"))
+    @JoinTable(name = "PERMIT_USER_STATE_TABLE", joinColumns = @JoinColumn(name = "locker_id"))
     @Column(name = "permitUserState")
     @Enumerated(EnumType.STRING)
     private Set<UserState> permitUserState = new HashSet<>();
 
     @ElementCollection(targetClass = UserTier.class)
-    @JoinTable(name = "PERMIT_USER_Tier_TABLE",joinColumns = @JoinColumn(name = "locker_id"))
+    @JoinTable(name = "PERMIT_USER_Tier_TABLE", joinColumns = @JoinColumn(name = "locker_id"))
     @Column(name = "permitUserTier")
     @Enumerated(EnumType.STRING)
     private Set<UserTier> permitUserTier = new HashSet<>();
@@ -69,7 +69,8 @@ public class Locker extends BaseTimeEntity {
     public void modifiedDateTime(Period period) {
         this.period = period;
     }
-    public void modifiedImageInfo(ImageInfo imageInfo){
+
+    public void modifiedImageInfo(ImageInfo imageInfo) {
         this.imageInfo = imageInfo;
     }
 
@@ -85,6 +86,8 @@ public class Locker extends BaseTimeEntity {
                         .imageName(lockercreateDto.getImageName())
                         .imageUrl(lockercreateDto.getImageUrl())
                         .build())
+                .permitUserState(Set.copyOf(lockercreateDto.getUserStates()))
+                .permitUserTier(Set.copyOf(lockercreateDto.getUserTiers()))
                 .build();
     }
 

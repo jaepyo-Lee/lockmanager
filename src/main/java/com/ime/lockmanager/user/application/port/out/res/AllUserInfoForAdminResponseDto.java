@@ -1,8 +1,8 @@
 package com.ime.lockmanager.user.application.port.out.res;
 
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminResponse;
-import com.ime.lockmanager.user.domain.MembershipState;
 import com.ime.lockmanager.user.domain.Role;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AllUserInfoForAdminResponseDto {
     private String name;
-    private MembershipState membershipState;
+    private UserTier userTier;
     private String status;
     private String studentNum;
     private String lockerName;
@@ -22,14 +22,14 @@ public class AllUserInfoForAdminResponseDto {
     private Role role;
 
     public AllUserInfoForAdminResponseDto(String name,
-                                          MembershipState membershipState,
+                                          UserTier userTier,
                                           String status,
                                           String studentNum,
                                           Role role,
                                           String lockerName,
                                           String lockerNum) {
         this.name = name;
-        this.membershipState = membershipState;
+        this.userTier = userTier;
         this.status = status;
         this.studentNum = studentNum;
         this.role = role;
@@ -41,7 +41,7 @@ public class AllUserInfoForAdminResponseDto {
         return UserInfoAdminResponse.builder()
                 .lockerName(lockerName)
                 .lockerNum(lockerNum)
-                .membershipState(membershipState)
+                .userTier(userTier)
                 .studentNum(studentNum)
                 .userName(name)
                 .role(role)

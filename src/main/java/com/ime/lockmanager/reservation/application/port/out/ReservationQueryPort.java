@@ -2,7 +2,6 @@ package com.ime.lockmanager.reservation.application.port.out;
 
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
-import com.ime.lockmanager.reservation.application.port.out.dto.FindReservationByLockerDetailIdDto;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.domain.User;
 
@@ -22,6 +21,7 @@ public interface ReservationQueryPort {
     void deleteByStudentNum(DeleteReservationByStudentNumDto deleteReservationByStudentNumDto);
 
     Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId);
+    List<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long lockerDetailId);
 
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 

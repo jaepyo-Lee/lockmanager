@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ime.lockmanager.user.domain.MembershipState.*;
+import static com.ime.lockmanager.user.domain.UserTier.NON_MEMBER;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 
@@ -25,7 +26,7 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private Long Id;
+    private Long id;
 
     @Column(name = "NAME")
     private String name;
@@ -35,10 +36,11 @@ public class User extends BaseTimeEntity {
     @Column(name = "STATUS")
     private String status;
 
-    @Column(name = "MEMBERSHIP_STATE")
-    @Builder.Default
     @Enumerated(STRING)
-    private MembershipState membershipState= NORMAL;
+    private UserState userState;
+
+    @Enumerated(STRING)
+    private UserTier userTier;
     @Enumerated(STRING)
     @Column(nullable = false)
     private Role role;
@@ -63,7 +65,7 @@ public class User extends BaseTimeEntity {
 
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
         this.auth = updateUserInfoDto.isAuth();
-        this.status = updateUserInfoDto.getStatus();
+        this.userState = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();
         this.majorDetail = updateUserInfoDto.getMajorDetail();
     }
@@ -76,18 +78,18 @@ public class User extends BaseTimeEntity {
         this.membership = isDue;
     }
 
-    public String applyMembership() {
-        membershipState = MembershipState.APPLYING;
-        return membershipState.getMsg();
+    public UserTier applyMembership() {
+        userTier = UserTier.APPLICANT;
+        return userTier;
     }
 
-    public String approve() {
-        this.membershipState = APPROVE;
-        return membershipState.getMsg();
+    public UserTier approve() {
+        userTier = UserTier.MEMBER;
+        return userTier;
     }
 
-    public String deny() {
-        this.membershipState = DENY;
-        return membershipState.getMsg();
+    public UserTier deny() {
+        userTier = NON_MEMBER;
+        return userTier;
     }
 }

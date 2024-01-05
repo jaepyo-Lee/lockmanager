@@ -6,6 +6,7 @@ import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestD
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.CheckMembershipResponseDto;
+import com.ime.lockmanager.user.application.port.in.res.UserTierResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
 import com.ime.lockmanager.user.domain.User;
@@ -28,11 +29,11 @@ public interface UserUseCase {
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 
-    String applyMembership(String studentNum);
+    UserTierResponseDto applyMembership(String studentNum);
 
     AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page);
 
-    String determineApplying(DetermineApplyingRequestDto toRequestDto,boolean isApprove);
+    UserTierResponseDto determineApplying(DetermineApplyingRequestDto toRequestDto, boolean isApprove);
 
     CheckMembershipResponseDto checkMembership(String studentNum);
 }
