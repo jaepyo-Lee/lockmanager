@@ -51,8 +51,8 @@ class UserController {
 
     @ApiOperation(value = "학생회비 납부 신청")
     @PostMapping("/membership")
-    public SuccessResponse applyMembership(@ApiIgnore Authentication authentication) {
-        return SuccessResponse.ok(userUseCase.applyMembership(authentication.getName()));
+    public SuccessResponse<UserInfoResponse> applyMembership(@ApiIgnore Authentication authentication) {
+        return new SuccessResponse(userUseCase.applyMembership(authentication.getName()).toResponse());
     }
 
     @ApiOperation(value = "학생회비 납부 조회")

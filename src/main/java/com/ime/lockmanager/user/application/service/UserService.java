@@ -12,6 +12,7 @@ import com.ime.lockmanager.user.application.port.in.req.*;
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentDto;
 import com.ime.lockmanager.user.application.port.in.res.CheckMembershipResponseDto;
+import com.ime.lockmanager.user.application.port.in.res.UserTierResponseDto;
 import com.ime.lockmanager.user.application.port.out.UserMembershipQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
@@ -20,6 +21,7 @@ import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDt
 import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +36,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
-import static com.ime.lockmanager.user.domain.MembershipState.APPROVE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,31 +54,35 @@ class UserService implements UserUseCase {
         User student = userQueryPort.findByStudentNum(studentNum)
                 .orElseThrow(NotFoundUserException::new);
         return CheckMembershipResponseDto.builder()
-                .membershipState(student.getMembershipState())
+                .userTier(student.getUserTier())
                 .build();
     }
 
     @Override
-    public String determineApplying(DetermineApplyingRequestDto requestDto, boolean isApprove) {
+    public UserTierResponseDto determineApplying(DetermineApplyingRequestDto requestDto, boolean isApprove) {
         User student = userQueryPort.findByStudentNum(requestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
-        String msg;
         if (isApprove) {
-            msg = student.approve();
-        } else {
-            msg = student.deny();
+            return UserTierResponseDto.builder()
+                    .userTier(student.approve())
+                    .build();
         }
-        return msg;
+        return UserTierResponseDto.builder()
+                .userTier(student.deny())
+                .build();
+
     }
 
     @Override
-    public String applyMembership(String studentNum) {
+    public UserTierResponseDto applyMembership(String studentNum) {
         User student = userQueryPort.findByStudentNum(studentNum)
                 .orElseThrow(NotFoundUserException::new);
-        if (student.getMembershipState().equals(APPROVE)) {
+        if (student.getUserTier().equals(UserTier.MEMBER)) {
             throw new IllegalStateException("이미 승인된 사용자 입니다.");
         }
-        return student.applyMembership();
+        return UserTierResponseDto.builder()
+                .userTier(student.applyMembership())
+                .build();
     }
 
     @Override
@@ -158,7 +163,7 @@ class UserService implements UserUseCase {
                     .studentNum(user.getStudentNum())
                     .status(user.getStatus())
                     .role(user.getRole())
-                    .membershipState(user.getMembershipState())
+                    .userTier(user.getUserTier())
                     .name(user.getName())
                     .lockerName(user.getReservation().stream()
                             .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
@@ -195,8 +200,8 @@ class UserService implements UserUseCase {
         UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder userInfoQueryResponseDtoBuilder = UserInfoQueryResponseDto.builder()
                 .majorDetail(user.getMajorDetail().getName())
                 .studentNum(user.getStudentNum())
-                .status(user.getStatus())
-                .membershipState(user.getMembershipState())
+                .userTier(user.getUserTier())
+                .userState(user.getUserState())
                 .name(user.getName());
 
         setReservationDetails(userInfoQueryResponseDtoBuilder, findReservation);

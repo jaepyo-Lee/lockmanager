@@ -1,27 +1,30 @@
 package com.ime.lockmanager.user.application.port.out.res;
 
-import com.ime.lockmanager.user.application.port.in.res.UserInfoResponseDto;
 import com.ime.lockmanager.user.domain.MembershipState;
+import com.ime.lockmanager.user.domain.UserState;
+import com.ime.lockmanager.user.domain.UserTier;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @NoArgsConstructor
 @Getter
 public class UserInfoQueryResponseDto {
     private String name;
-    private MembershipState membershipState;
+    private UserTier userTier;
+    private UserState userState;
     private String status;
     private String studentNum;
 
     private String lockerNum;
     private String lockerName;
     private String majorDetail;
-
-    public UserInfoQueryResponseDto(String name, MembershipState membershipState, String status, String studentNum, String lockerNum, String lockerName, String majorDetail) {
+    @Builder
+    public UserInfoQueryResponseDto(String name, UserTier userTier, String status, String studentNum, String lockerNum, String lockerName, String majorDetail,UserState userState) {
+        this.userState = userState;
         this.name = name;
-        this.membershipState = membershipState;
+        this.userTier = userTier;
         this.status = status;
         this.studentNum = studentNum;
         this.majorDetail = majorDetail;
@@ -33,16 +36,4 @@ public class UserInfoQueryResponseDto {
             this.lockerName = null;
         }
     }
-
-    public UserInfoQueryResponseDto to(){
-        return UserInfoQueryResponseDto.builder()
-                .lockerNum(lockerNum)
-                .membershipState(membershipState)
-                .name(name)
-                .status(status)
-                .studentNum(studentNum)
-                .majorDetail(majorDetail)
-                .build();
-    }
-
 }

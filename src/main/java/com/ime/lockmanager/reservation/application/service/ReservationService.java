@@ -99,20 +99,20 @@ public class ReservationService implements ReservationUseCase {
         Locker locker = lockerDetail.getLocker();
         if (locker.getPeriod() != null) {
             if (locker.isDeadlineValid()) {
-                if (notInvalidStatus.contains(user.getStatus())) {
-                    if (isReservationPossibleByLockerDetailId(lockerDetail.getId())) {
-                        if (!lockerDetail.getLockerDetailStatus().equals(LockerDetailStatus.BROKEN)) {
+                if (locker.getPermitUserState().contains(user.getUserState())
+                    /*notInvalidStatus.contains(user.getStatus())*/) { //사물함 locker와 학생의 재학상태를 비교하는 것으로 수정해야함
+                    if (locker.getPermitUserTier().contains(user.getUserTier())) {
+                        if (isReservationPossibleByLockerDetailId(lockerDetail.getId())) {
                             if (isReservationPossibleByStudentNum(user.getStudentNum())) {
                                 reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
                                 log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
                                 return LockerRegisterResponseDto
                                         .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
                             }
-                            throw new IllegalStateException("고장난 사물함입니다");
+                            throw new AlreadyReservedUserException();
                         }
                         throw new AlreadyReservedLockerException();
                     }
-                    throw new AlreadyReservedUserException();
                 }
                 throw new InvalidReservedStatusException();
             }

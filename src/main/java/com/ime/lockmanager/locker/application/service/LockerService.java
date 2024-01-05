@@ -156,10 +156,10 @@ class LockerService implements LockerUseCase {
 
     @Override
     public LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, String studentNum) {
-        User lockerCreater = userUseCase.findByStudentNum(studentNum);
+        User lockerCreator = userUseCase.findByStudentNum(studentNum);
         Locker createdLocker = Locker.createLocker(
                 lockerCreateRequestDto.toLockerCreateDto(
-                        lockerCreater.getMajorDetail().getMajor()
+                        lockerCreator.getMajorDetail().getMajor()
                 )
         );
         Locker saveLocker = lockerQueryPort.save(createdLocker);

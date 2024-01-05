@@ -14,12 +14,4 @@ import lombok.NoArgsConstructor;
 public class SejongMemberResponseDto {
     private String msg;
     private SejongMemberResponseResult result;
-
-    public UpdateUserInfoDto toUpdateUserInfoDto() {
-        return UpdateUserInfoDto.builder()
-                .auth(true)
-                .grade(this.result.getBody().getGrade())
-                .status(this.result.getBody().getStatus())
-                .build();
-    }
 }

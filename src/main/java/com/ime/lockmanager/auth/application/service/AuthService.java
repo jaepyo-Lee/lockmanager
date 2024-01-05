@@ -18,6 +18,8 @@ import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.major.application.port.in.MajorDetailUseCase;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.domain.User;
+import com.ime.lockmanager.user.domain.UserState;
+import com.ime.lockmanager.user.domain.UserTier;
 import com.ime.lockmanager.user.domain.dto.UpdateUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -56,6 +58,7 @@ class AuthService implements AuthUseCase {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
                 authToUserQueryPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
+                                .userTier(UserTier.NON_MEMBER)
                                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
                                 .majorDetail(majorDetail)
                                 .name(sejongMemberResponseDto.getResult().getBody().getName())
@@ -66,9 +69,10 @@ class AuthService implements AuthUseCase {
     }
 
     private void updateUserInfo(SejongMemberResponseDto sejongMemberResponseDto, MajorDetail majorDetail, User user) {
+        UserState matchUserState = UserState.match(sejongMemberResponseDto.getResult().getBody().getStatus());
         user.updateUserInfo(UpdateUserInfoDto.builder()
                 .auth(true)
-                .status(sejongMemberResponseDto.getResult().getBody().getStatus())
+                .status(matchUserState)
                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
                 .majorDetail(majorDetail)
                 .build());
@@ -85,9 +89,12 @@ class AuthService implements AuthUseCase {
 
 
     private User createUserByLoginInfo(LoginInfoDto loginInfoDto) {
+        UserState matchUserState = UserState.match(loginInfoDto.getStatus());
+
         return User.builder()
+                .userTier(loginInfoDto.getUserTier())
                 .name(loginInfoDto.getName())
-                .status(loginInfoDto.getStatus())
+                .userState(matchUserState)
                 .studentNum(loginInfoDto.getStudentNum())
                 .role(ROLE_USER)
                 .auth(true)
