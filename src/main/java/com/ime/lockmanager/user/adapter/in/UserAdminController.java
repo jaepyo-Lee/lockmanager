@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
@@ -46,13 +47,11 @@ class UserAdminController {
     }
 
     @ApiOperation(
-            value = "사용자 정보 수정",
-            notes = "수정된 사용자의 정보를 받아 실제 dB에 업데이트해주는 API(관리자용)," +
-                    "엔티티 변경에 따라 수정필요함"
+            value = "수정된 사용자의 정보를 받아 실제 dB에 업데이트해주는 API(관리자용)"
     )
     @PatchMapping("")
     public SuccessResponse modifiedUserInfo(@ApiIgnore Principal principal,
-                                            @RequestBody ModifiedUserInfoRequest modifiedUserInfoRequest) throws Exception {
+                                            @Valid @RequestBody ModifiedUserInfoRequest modifiedUserInfoRequest) throws Exception {
         log.info("{} : 사용자 정보 수정(관리자)", principal.getName());
         userUseCase.modifiedUserInfo(modifiedUserInfoRequest.toRequestDto());
         return SuccessResponse.ok();

@@ -73,23 +73,16 @@ public class ReservationService implements ReservationUseCase {
         User user = userQueryPort.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
 //                .findByStudentNum(requestDto.getStudentNum())
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(requestDto.getLockerDetailId())
-                .orElseThrow(NotFoundLockerException::new);
-        log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
-
-        if (notInvalidStatus.contains(user.getStatus())) {
-            if (isReservationExistByUserStudentNum(user.getStudentNum())) {
-                if (isReservationExistByLockerDetail(lockerDetail.getId())) {
-                    reservationQueryPort.registerLocker(user, lockerDetail);
+                .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
+        log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
+        Locker locker = lockerDetail.getLocker();
+        commonConditionForReserve(user, lockerDetail, locker);
+        reservationQueryPort.registerLocker(user, lockerDetail);
 //                    log.info("예약 수정 완료 : [학번 {}, 사물함 번호 {}]", requestDto.getStudentNum(), requestDto.getLockerDetailId());
-                    return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
-                            user.getStudentNum(),
-                            lockerDetail.getLocker().getName());
-                }
-                throw new AlreadyReservedLockerException();
-            }
-            throw new AlreadyReservedUserException();
-        }
-        throw new InvalidReservedStatusException();
+        return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
+                user.getStudentNum(),
+                lockerDetail.getLocker().getName());
+
     }
 
 
@@ -101,9 +94,22 @@ public class ReservationService implements ReservationUseCase {
                 .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
         log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
+        distinctConditionForReserveToUser(locker);
+        commonConditionForReserve(user, lockerDetail, locker);
+        reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
+        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
+        return LockerRegisterResponseDto
+                .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
+
+    }
+
+    private static void distinctConditionForReserveToUser(Locker locker) {
         if (!locker.isDeadlineValid()) {
             throw new IsNotReserveTimeException();
         }
+    }
+
+    private void commonConditionForReserve(User user, LockerDetail lockerDetail, Locker locker) {
         if (!locker.getPermitUserState().contains(user.getUserState())) {
             throw new InvalidReservedStatusException();
         }
@@ -116,11 +122,6 @@ public class ReservationService implements ReservationUseCase {
         if (!isReservationPossibleByStudentNum(user.getStudentNum())) {
             throw new AlreadyReservedUserException();
         }
-        reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
-        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
-        return LockerRegisterResponseDto
-                .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
-
     }
 
 
@@ -156,10 +157,11 @@ public class ReservationService implements ReservationUseCase {
 
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
-
         log.info("{} : 사물함 취소", cancelLockerDto.getUserId());
         User user = userQueryPort.findById(cancelLockerDto.getUserId()).orElseThrow(NotFoundUserException::new);
 //        findByStudentNum(cancelLockerDto.getStudentNum()).orElseThrow(NotFoundUserException::new);
+
+
         List<Reservation> allReservations = reservationQueryPort
                 .findAllByUserIdAndLockerDetailId(user.getId(),
                         cancelLockerDto.getLockerDetailId());

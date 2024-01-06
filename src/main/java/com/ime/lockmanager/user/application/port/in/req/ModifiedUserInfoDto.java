@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class ModifiedUserInfoDto {
     private String studentNum;
-    private Role role;
-    private boolean membership;
+    private Boolean admin;
+    private Boolean membership;
     private Long lockerDetailId;
 }

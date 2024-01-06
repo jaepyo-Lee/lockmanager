@@ -3,7 +3,6 @@ package com.ime.lockmanager.user.domain;
 import com.ime.lockmanager.common.domain.BaseTimeEntity;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.reservation.domain.Reservation;
-import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import com.ime.lockmanager.user.domain.dto.UpdateUserInfoDto;
 import lombok.*;
 
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ime.lockmanager.user.domain.MembershipState.*;
+import static com.ime.lockmanager.user.domain.Role.ROLE_ADMIN;
+import static com.ime.lockmanager.user.domain.Role.ROLE_USER;
 import static com.ime.lockmanager.user.domain.UserTier.NON_MEMBER;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -63,16 +64,19 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
+    public void changeAdmin(boolean isAdmin){
+        if(isAdmin){
+            this.role = ROLE_ADMIN;
+        }else{
+            this.role = ROLE_USER;
+        }
+    }
+
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
         this.auth = updateUserInfoDto.isAuth();
         this.userState = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();
         this.majorDetail = updateUserInfoDto.getMajorDetail();
-    }
-
-    public void modifiedUserInfo(UserModifiedInfoDto dto){
-        this.role = dto.getRole();
-        this.membership = dto.isMembership();
     }
     public void updateDueInfo(boolean isDue){
         this.membership = isDue;

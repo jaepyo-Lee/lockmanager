@@ -1,7 +1,5 @@
 package com.ime.lockmanager.user.application.port.in.req;
 
-import com.ime.lockmanager.user.adapter.in.req.ModifiedUserInfo;
-import com.ime.lockmanager.user.domain.Role;
 import lombok.Builder;
 import lombok.Getter;
 
