@@ -39,7 +39,7 @@ class AuthController {
             notes = "access token 만료시 refresh token을 이용하여 access token을 재발급받는 API"
     )
     @PostMapping("/reissue")
-    public SuccessResponse<ReissueTokenResponseDto> reissue(Principal principal, @RequestHeader(value = "RefreshToken") String refreshToken) {
+    public SuccessResponse<ReissueTokenResponseDto> reissue(Principal principal, @RequestHeader(value = "refreshToken") String refreshToken) {
         log.info("{} : 토큰 재발급", principal.getName());
         return new SuccessResponse(authUseCase.reissue(refreshToken), SUCCESTT_REISSUE_TOKEN);
     }
@@ -49,7 +49,7 @@ class AuthController {
             notes = "로그아웃 API"
     )
     @PostMapping("/logout")
-    public SuccessResponse logout(@ApiIgnore Principal principal, @RequestHeader(value = "AccessToken") String accessToken) {
+    public SuccessResponse logout(@ApiIgnore Principal principal, @RequestHeader(value = "accessToken") String accessToken) {
         log.info("{} : 로그아웃", principal.getName());
         authUseCase.logout(accessToken);
         return new SuccessResponse(SUCCESS_LOGOUT);

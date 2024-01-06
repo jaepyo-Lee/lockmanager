@@ -51,7 +51,7 @@ class AuthService implements AuthUseCase {
         updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
-        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(), user.getRole());
+        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(), user.getRole(), user.getId());
     }
 
     private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {

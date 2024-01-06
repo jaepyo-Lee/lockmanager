@@ -11,6 +11,7 @@ import com.ime.lockmanager.common.format.exception.account.NotFoundAccountExcept
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class AccountService implements AccountUsecase {
+    private final UserQueryPort userQueryPort;
     private final UserUseCase userUseCase;
     private final AccountQueryPort accountQueryPort;
 
     @Transactional(readOnly = true)
     @Override
-    public AccountInfoResponseDto findAccountInfo(String studentNum) {
-        User user = userUseCase.findByStudentNumWithMajorDetailWithMajor(studentNum)
-                .orElseThrow(NotFoundUserException::new);
+    public AccountInfoResponseDto findAccountInfo(Long userId) {
+        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userId).orElseThrow(NotFoundUserException::new);
+//                userUseCase. findByStudentNumWithMajorDetailWithMajor(studentNum)
         Major major = user.getMajorDetail().getMajor();
         Account account = accountQueryPort.findByMajor(major)
                 .orElseThrow(NotFoundAccountException::new); //예외처리해야함
@@ -42,12 +44,13 @@ public class AccountService implements AccountUsecase {
 
 
     @Override
-    public SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(String studentNum,
+    public SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(Long userId,
                                                                   SaveOrModifyAccountRequestDto saveOrModifyAccountRequestDto) {
 
         Account saveOrModifiedAccount = null;
-        User user = userUseCase.findByStudentNumWithMajorDetailWithMajor(studentNum)
+        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userId)
                 .orElseThrow(NotFoundUserException::new);
+//        userUseCase findByStudentNumWithMajorDetailWithMajor(studentNum)
         Major major = user.getMajorDetail().getMajor();
         Optional<Account> findAccount = accountQueryPort.findByMajor(major);
 

@@ -2,6 +2,9 @@ package com.ime.lockmanager.locker.application.service;
 
 import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
+import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
+import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
+import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoInMajorDto;
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.dto.LeftLockerInfo;
@@ -9,7 +12,6 @@ import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRe
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
-import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
@@ -21,21 +23,17 @@ import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
-import com.ime.lockmanager.user.domain.UserState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus.NON_RESERVED;
-import static com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus.RESERVED;
 
 
 @Slf4j
@@ -46,6 +44,7 @@ class LockerService implements LockerUseCase {
     private final LockerQueryPort lockerQueryPort;
     private final LockerDetailUseCase lockerDetailUseCase;
     private final UserUseCase userUseCase;
+    private final UserQueryPort userQueryPort;
 
     //남은 사물함 목록
     @Override
@@ -97,28 +96,43 @@ class LockerService implements LockerUseCase {
     }
 
     @Override
-    public List<AllLockersInMajorResponseDto> findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
-        User user = userUseCase.findByStudentNum(requestDto.getStudentNum());
+    public LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
+        User user = userQueryPort.findByIdWithMajorDetailWithMajor(requestDto.getUserId())
+                .orElseThrow(NotFoundUserException::new);
+//        userUseCase.findByStudentNum(requestDto.getStudentNum());
         Major major = user.getMajorDetail().getMajor();
         List<Locker> lockerByUserMajor = lockerQueryPort.findLockerByUserMajor(major);
-        return lockerByUserMajor.stream().map(locker ->
-                AllLockersInMajorResponseDto.builder()
-                        .lockerName(locker.getName())
-                        .lockerDetailInfoList(
-                                lockerDetailUseCase.findLockerDetailByLocker(locker).stream()
-                                        .map(lockerDetail ->
-                                                LockerDetailInfo.builder()
-                                                        .lockerDetailStatus(lockerDetail.getLockerDetailStatus())
-                                                        .locker_num(lockerDetail.getLockerNum())
-                                                        .row_num(lockerDetail.getRow_num())
-                                                        .column_num(lockerDetail.getColumn_num())
-                                                        .build()).collect(Collectors.toList())
-                        )
-                        .startReservationTime(locker.getPeriod().getStartDateTime())
-                        .endReservationTime(locker.getPeriod().getEndDateTime())
-                        .build()
+        return LockersInfoInMajorResponse.builder().lockersInfo(lockerByUserMajor.stream().map(locker -> LockersInfoDto.builder()
+                .lockerDetail(getLockerDetailInfos(locker))
+                .locker(getLockersInfoInMajorDto(locker))
+                .build()
+        ).collect(Collectors.toList())).build();
+    }
 
-        ).collect(Collectors.toList());
+    private List<LockerDetailInfo> getLockerDetailInfos(Locker locker) {
+        return lockerDetailUseCase.findLockerDetailByLocker(locker).stream()
+                .map(
+                        lockerDetail ->
+                                LockerDetailInfo.builder()
+                                        .locker_num(lockerDetail.getLockerNum())
+                                        .lockerDetailStatus(lockerDetail.getLockerDetailStatus())
+                                        .column_num(lockerDetail.getColumn_num())
+                                        .row_num(lockerDetail.getRow_num())
+                                        .build()
+
+                ).collect(Collectors.toList());
+    }
+
+    private static LockersInfoInMajorDto getLockersInfoInMajorDto(Locker locker) {
+        return LockersInfoInMajorDto.builder()
+                .endReservationTime(locker.getPeriod().getEndDateTime())
+                .startReservationTime(locker.getPeriod().getStartDateTime())
+                .lockerName(locker.getName())
+                .totalColumn(locker.getTotalColumn())
+                .totalRow(locker.getTotalRow())
+                .permitTiers(locker.getPermitUserTier())
+                .permitStates(locker.getPermitUserState())
+                .build();
     }
 
     @Override

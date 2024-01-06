@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 public class LoginTokenResponse {
     private Role role;
+    private Long userId;
     private String accessToken;
     private String refreshToken;
 }

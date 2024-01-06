@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserInfoRequestDto {
-    private String studentNum;
+    private Long userId;
 }

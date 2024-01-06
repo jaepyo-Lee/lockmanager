@@ -2,6 +2,7 @@ package com.ime.lockmanager.reservation.application.service;
 
 import com.ime.lockmanager.common.format.exception.locker.*;
 import com.ime.lockmanager.common.format.exception.reservation.NotFoundReservationException;
+import com.ime.lockmanager.common.format.exception.reservation.NotMatchUserTierAndLockerException;
 import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserException;
 import com.ime.lockmanager.common.format.exception.user.InvalidReservedStatusException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
@@ -45,8 +46,7 @@ public class ReservationService implements ReservationUseCase {
     private final static List<String> notInvalidStatus = new ArrayList<>(List.of("휴햑", "재학"));
 
     @Override
-    public void resetReservation(Long lockerId, Principal principal) {
-        log.info("{} : 모든 사물함 초기화", principal.getName());
+    public void resetReservation(Long lockerId) {
         List<LockerDetail> lockerDetailsByLocker = lockerDetailQueryPort.findLockerDetailByLocker(lockerId);
         List<Reservation> reservationsByLockerDetails = reservationQueryPort.findAllByLockerDetails(lockerDetailsByLocker);
         reservationsByLockerDetails.stream()
@@ -63,19 +63,24 @@ public class ReservationService implements ReservationUseCase {
         return build;
     }
 
+    /*
+    로직다시짜야할듯
+    그냥 로그만 남겨지도록 수정하는 형식으로 진행해도 될듯
+    고민
+     */
     @Override
-    public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception {
-        log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
-        User user = userQueryPort.findByStudentNum(lockerRegisterRequestDto.getStudentNum())
-                .orElseThrow(NotFoundUserException::new);
-
-        LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(lockerRegisterRequestDto.getLockerDetailId())
+    public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto requestDto) throws Exception {
+        User user = userQueryPort.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
+//                .findByStudentNum(requestDto.getStudentNum())
+        LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(requestDto.getLockerDetailId())
                 .orElseThrow(NotFoundLockerException::new);
+        log.info("(관리자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
+
         if (notInvalidStatus.contains(user.getStatus())) {
             if (isReservationExistByUserStudentNum(user.getStudentNum())) {
                 if (isReservationExistByLockerDetail(lockerDetail.getId())) {
                     reservationQueryPort.registerLocker(user, lockerDetail);
-                    log.info("예약 수정 완료 : [학번 {}, 사물함 번호 {}]", lockerRegisterRequestDto.getStudentNum(), lockerRegisterRequestDto.getLockerDetailId());
+//                    log.info("예약 수정 완료 : [학번 {}, 사물함 번호 {}]", requestDto.getStudentNum(), requestDto.getLockerDetailId());
                     return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
                             user.getStudentNum(),
                             lockerDetail.getLocker().getName());
@@ -90,11 +95,11 @@ public class ReservationService implements ReservationUseCase {
 
     @Override
     public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
-        log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
-        User user = userQueryPort.findByStudentNum(dto.getStudentNum())
-                .orElseThrow(NotFoundUserException::new);
+        User user = userQueryPort.findById(dto.getUserId()).orElseThrow(NotFoundUserException::new);
+//        StudentNum(dto.getStudentNum()).orElseThrow(NotFoundUserException::new);
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
+        log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
         if (!locker.isDeadlineValid()) {
             throw new IsNotReserveTimeException();
@@ -103,7 +108,7 @@ public class ReservationService implements ReservationUseCase {
             throw new InvalidReservedStatusException();
         }
         if (!locker.getPermitUserTier().contains(user.getUserTier())) {
-            throw new AlreadyReservedLockerException();
+            throw new NotMatchUserTierAndLockerException();
         }
         if (!isReservationPossibleByLockerDetailId(lockerDetail.getId())) {
             throw new AlreadyReservedLockerException();
@@ -112,7 +117,7 @@ public class ReservationService implements ReservationUseCase {
             throw new AlreadyReservedUserException();
         }
         reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
-        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", dto.getStudentNum(), dto.getLockerDetailId());
+        log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         return LockerRegisterResponseDto
                 .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
 
@@ -152,8 +157,9 @@ public class ReservationService implements ReservationUseCase {
 
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
 
-        log.info("{} : 사물함 취소", cancelLockerDto.getStudentNum());
-        User user = userQueryPort.findByStudentNum(cancelLockerDto.getStudentNum()).orElseThrow(NotFoundUserException::new);
+        log.info("{} : 사물함 취소", cancelLockerDto.getUserId());
+        User user = userQueryPort.findById(cancelLockerDto.getUserId()).orElseThrow(NotFoundUserException::new);
+//        findByStudentNum(cancelLockerDto.getStudentNum()).orElseThrow(NotFoundUserException::new);
         List<Reservation> allReservations = reservationQueryPort
                 .findAllByUserIdAndLockerDetailId(user.getId(),
                         cancelLockerDto.getLockerDetailId());
@@ -164,7 +170,7 @@ public class ReservationService implements ReservationUseCase {
             throw new IllegalStateException("데이터 정합에 문제가 있습니다");
         }
         Reservation reservation = collect.stream().findFirst().orElseThrow(NotFoundReservationException::new);
-        reservation.cancle();
+        reservation.cancel();
 
 //        reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder()
 //                .studentNum(cancelLockerDto.getStudentNum())

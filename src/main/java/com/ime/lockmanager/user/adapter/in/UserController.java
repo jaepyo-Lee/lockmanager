@@ -27,12 +27,12 @@ class UserController {
             value = "사용자 정보 조회",
             notes = "마이페이지접속시 사용자 정보조회 API"
     )
-    @GetMapping("/info")
-    public SuccessResponse<UserInfoResponse> findUserInfo(@ApiIgnore Principal principal) throws Exception {
+    @GetMapping("/{userId}")
+    public SuccessResponse<UserInfoResponse> findUserInfo(@ApiIgnore Principal principal,@PathVariable Long userId) throws Exception {
         log.info("{} : 정보조회", principal.getName());
         UserInfoQueryResponseDto userInfo = userUseCase.findUserInfoByStudentNum(
                 UserInfoRequestDto.builder()
-                        .studentNum(principal.getName())
+                        .userId(userId)
                         .build());
         return new SuccessResponse(UserInfoResponse.fromResponseDto(
                 userInfo

@@ -18,4 +18,6 @@ public interface UserQueryPort {
 
     User save(User user);
 
+    Optional<User> findById(Long userId);
+    Optional<User> findByIdWithMajorDetailWithMajor(Long userId);
 }
