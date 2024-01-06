@@ -93,6 +93,9 @@ class LockerService implements LockerUseCase {
             locker.getPermitUserTier().clear();
             reqeustDto.getUserTiers().stream().forEach(userTier -> locker.getPermitUserTier().add(userTier));
         }
+        if(reqeustDto.getLockerName()!=null){
+            locker.rename(reqeustDto.getLockerName());
+        }
     }
 
     @Override

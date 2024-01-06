@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Getter
 public class ModifyLockerInfoReqeustDto {
+    private String lockerName;
     private Long lockerId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

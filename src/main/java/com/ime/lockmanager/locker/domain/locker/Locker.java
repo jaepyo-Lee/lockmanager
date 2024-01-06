@@ -95,4 +95,7 @@ public class Locker extends BaseTimeEntity {
         return this.period.getEndDateTime().isAfter(now()) &&
                 this.period.getStartDateTime().isBefore(now());
     }
+    public void rename(String rename){
+        this.name = rename;
+    }
 }
