@@ -73,7 +73,7 @@ class LockerAdminController {
     @PatchMapping("/{lockerId}")
     public SuccessResponse modifyLockerInfo(@ApiIgnore Authentication authentication,
                                             @PathVariable Long lockerId,
-                                            @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust) {
+                                            @Valid @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust) {
         lockerUseCase.modifyLockerInfo(modifyLockerInfoReqeust.toReqeustDto(lockerId));
         return SuccessResponse.ok();
     }
