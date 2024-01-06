@@ -5,8 +5,8 @@ import com.ime.lockmanager.account.application.port.in.res.AccountInfoResponseDt
 import com.ime.lockmanager.account.application.port.in.res.SaveOrModifyAccountResponseDto;
 
 public interface AccountUsecase {
-    AccountInfoResponseDto findAccountInfo(String studentNum);
+    AccountInfoResponseDto findAccountInfo(Long userId);
 
-    SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(String studentNum, SaveOrModifyAccountRequestDto saveOrModifyAccountRequestDto);
+    SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(Long userId, SaveOrModifyAccountRequestDto saveOrModifyAccountRequestDto);
 
 }

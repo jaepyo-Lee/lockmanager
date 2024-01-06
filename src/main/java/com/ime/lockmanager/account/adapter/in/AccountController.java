@@ -12,14 +12,15 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.user.prefix}/account")
+@RequestMapping("${api.user.prefix}")
 public class AccountController {
     private final AccountUsecase accountUsecase;
 
     @ApiOperation(value = "계좌 조회 api",
             notes = "[일반용] 계좌 정보를 조회하는 api 입니다.")
-    @GetMapping("")
-    public SuccessResponse<AccountInfoResponse> findAccountInfo(@ApiIgnore Authentication authentication) {
-        return new SuccessResponse(accountUsecase.findAccountInfo(authentication.getName()).toResponse());
+    @GetMapping("/users/{userId}/majors/accounts")
+    public SuccessResponse<AccountInfoResponse> findAccountInfo(@ApiIgnore Authentication authentication,
+                                                                @PathVariable Long userId) {
+        return new SuccessResponse(accountUsecase.findAccountInfo(userId).toResponse());
     }
 }

@@ -22,7 +22,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.admin.prefix}/locker")
+@RequestMapping("${api.admin.prefix}/lockers")
 class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 
@@ -70,7 +70,7 @@ class LockerAdminController {
             value = "사물함 정보 수정",
             notes = "사물함의 여러 정보를 수정하는 api"
     )
-    @PutMapping("/{lockerId}")
+    @PatchMapping("/{lockerId}")
     public SuccessResponse modifyLockerInfo(@ApiIgnore Authentication authentication,
                                             @PathVariable Long lockerId,
                                             @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust) {

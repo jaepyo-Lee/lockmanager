@@ -5,6 +5,7 @@ import com.ime.lockmanager.major.adapter.in.major.req.ModifyMajorNameReqeust;
 import com.ime.lockmanager.major.adapter.in.major.res.ModifyMajorNameResponse;
 import com.ime.lockmanager.major.application.port.in.MajorUseCase;
 import com.ime.lockmanager.major.application.port.in.res.ModifyMajorNameResponseDto;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,10 @@ import springfox.documentation.annotations.ApiIgnore;
 public class MajorAdminController {
     private final MajorUseCase majorUseCase;
 
+    @ApiOperation(value = "대표학과명 변경API[관리자]")
     @PutMapping("/name")
     public SuccessResponse<ModifyMajorNameResponse> modifyMajorName(@ApiIgnore Authentication authentication,
                                                                     @RequestBody ModifyMajorNameReqeust modifyMajorNameReqeust) {
-
         return new SuccessResponse(
                 ModifyMajorNameResponse.fromResponseDto(
                         majorUseCase.modifyMajorName(

@@ -1,4 +1,4 @@
-package com.ime.lockmanager.user.adapter.in;
+package com.ime.lockmanager.user.adapter.in.res;
 
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentDto;
 import lombok.Builder;

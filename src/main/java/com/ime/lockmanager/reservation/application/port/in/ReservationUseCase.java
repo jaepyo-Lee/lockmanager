@@ -13,7 +13,7 @@ public interface ReservationUseCase {
 
     ReservationOfLockerResponseDto findReservedLockers();
 
-    void resetReservation(Long lockerId,Principal principal);
+    void resetReservation(Long lockerId);
 
     void cancelLockerByStudentNum(UserCancelLockerRequestDto build);
 

@@ -4,6 +4,7 @@ import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.locker.adapter.in.res.AllLockersInMajorResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerPeriodResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
+import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
@@ -21,40 +22,20 @@ import static java.time.LocalDateTime.now;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.user.prefix}/locker")
+@RequestMapping("${api.user.prefix}")
 class LockerController {
 
     private final LockerUseCase lockerUseCase;
-
-
-    @Deprecated
-    @ApiOperation(
-            value = "사물함 예약기간 조회",
-            notes = "사물함의 예약기간을 조회하는 API"
-    )
-    @GetMapping("/period")
-    public SuccessResponse getPeriod() {
-        return new SuccessResponse(LockerPeriodResponse.fromResponse(lockerUseCase.getLockerPeriod()));
-    }
-
-
-    @Deprecated
-    @ApiOperation(
-            value = "현재시간 조회",
-            notes = "서버의 현재시간을 조회하는 API(위치 및 URL변경될지도모름)"
-    )
-    @GetMapping("/livetime")
-    public SuccessResponse getLiveTime() {
-        return new SuccessResponse(now());
-    }
 
     @ApiOperation(
             value = "사물함 정보조회",
             notes = "사물함 이름, 기간, 각 사물함 칸의 예약여부정보"
     )
-    @GetMapping("")
-    public SuccessResponse<List<AllLockersInMajorResponse>> findAllLockerInMajor(@ApiIgnore Authentication authentication) {
+    @GetMapping("/users/{userId}/majors/lockers")
+    public SuccessResponse<LockersInfoInMajorResponse> findAllLockerInMajor(@ApiIgnore Authentication authentication,
+                                                                            @PathVariable Long userId) {
         return new SuccessResponse(lockerUseCase.findAllLockerInMajor(FindAllLockerInMajorRequestDto.builder()
-                .studentNum(authentication.getName()).build()));
+                .userId(userId).build()));
+
     }
 }

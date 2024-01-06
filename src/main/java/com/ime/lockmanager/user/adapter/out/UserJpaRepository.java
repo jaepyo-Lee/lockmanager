@@ -35,4 +35,6 @@ public interface UserJpaRepository extends JpaRepository<User,Long>{
     @Query("select U from USER_TABLE as U join fetch U.majorDetail as MD join fetch MD.major where U.studentNum = :studentNum")
     Optional<User> findByStudentNumWithMajorDetailWithMajor(@Param("studentNum") String studentNum);
 
+    @Query("select U from USER_TABLE as U join fetch U.majorDetail as MD join fetch MD.major where U.id = :userId")
+    Optional<User> findByIdWithMajorDetailWithMajor(@Param("userId") Long userId);
 }

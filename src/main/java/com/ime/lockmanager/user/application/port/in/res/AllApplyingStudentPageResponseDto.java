@@ -1,8 +1,7 @@
 package com.ime.lockmanager.user.application.port.in.res;
 
-import com.ime.lockmanager.user.adapter.in.AllApplyingStudentPageResponse;
+import com.ime.lockmanager.user.adapter.in.res.AllApplyingStudentPageResponse;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.List;
 

@@ -3,7 +3,6 @@ package com.ime.lockmanager.reservation.adapter.in;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
-import com.ime.lockmanager.reservation.adapter.in.req.LockerRegisterRequest;
 import com.ime.lockmanager.locker.adapter.in.res.LockerRegisterResponse;
 import com.ime.lockmanager.reservation.adapter.in.res.CancelLockerDetailResponse;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
@@ -20,7 +19,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.user.prefix}")
+@RequestMapping("${api.user.prefix}/users/{userId}")
 public class ReservationController {
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final ReservationUseCase reservationUseCase;
@@ -29,12 +28,13 @@ public class ReservationController {
             value = "사물함 취소",
             notes = "현재 사용자의 예약된 사물함을 취소하는 API"
     )
-    @DeleteMapping("/lockerDetail/{lockerDetailId}")
+    @PatchMapping("/lockerDetail/{lockerDetailId}/reservations")
     public SuccessResponse<CancelLockerDetailResponse> cancelLocker(@ApiIgnore Principal principal,
+                                                                    @PathVariable Long userId,
                                                                     @PathVariable Long lockerDetailId) {
         log.info("{} : 사물함 취소", principal.getName());
         reservationUseCase.cancelLockerByStudentNum(
-                UserCancelLockerRequestDto.of(principal.getName(), lockerDetailId)
+                UserCancelLockerRequestDto.of(userId, lockerDetailId)
         );
         return new SuccessResponse(CancelLockerDetailResponse.builder()
                 .canceledLockerDetailNum(lockerDetailId)
@@ -46,14 +46,15 @@ public class ReservationController {
             value = "사물함 예약",
             notes = "사용자가 사물함을 선택할시 해당 사물함을 예약하는 API"
     )
-    @PostMapping("/lockerDetail/{lockerDetailId}/register")
+    @PostMapping("/lockerDetail/{lockerDetailId}/reservations")
     public SuccessResponse<LockerRegisterResponse> registerLocker(@ApiIgnore Principal principal,
+                                                                  @PathVariable Long userId,
                                                                   @PathVariable Long lockerDetailId) throws Exception {
         log.info("{} : 시믈함 예약진행", principal.getName());
         LockerRegisterResponse lockerRegisterResponse =
                 LockerRegisterResponse.fromResponse(
                         redissonLockReservationFacade.registerForUser(
-                                LockerRegisterRequestDto.of(principal.getName(), lockerDetailId))
+                                LockerRegisterRequestDto.of(userId, lockerDetailId))
                 );
         log.info("{} : {}의 {}번 예약완료",
                 lockerRegisterResponse.getStudentNum(),
@@ -63,6 +64,7 @@ public class ReservationController {
     }
 
     //예약된 사물함 가져오기
+    @Deprecated
     @ApiOperation(
             value = "예약된 사물함 조회",
             notes = "예약된 사물함을 조회하는 API(화면 표시용 api)"

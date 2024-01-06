@@ -3,23 +3,20 @@ package com.ime.lockmanager.user.adapter.in;
 import com.ime.lockmanager.common.format.success.SuccessResponse;
 import com.ime.lockmanager.user.adapter.in.req.DetermineApplyingRequest;
 import com.ime.lockmanager.user.adapter.in.req.ModifiedUserInfoRequest;
+import com.ime.lockmanager.user.adapter.in.res.AllApplyingStudentPageResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminPageResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserTierResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
-import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
-import com.ime.lockmanager.user.application.port.in.res.UserTierResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,7 +58,7 @@ class UserAdminController {
         return SuccessResponse.ok();
     }
 
-    @GetMapping("/membership")
+    @GetMapping("/tier/apply")
     public SuccessResponse<AllApplyingStudentPageResponse> findAllApplyingStudent(@ApiIgnore Authentication authentication,
                                                                                   @RequestParam int page) {
         AllApplyingStudentPageResponse response = userUseCase.findAllApplying(authentication.getName(), page)
@@ -69,7 +66,7 @@ class UserAdminController {
         return new SuccessResponse(response);
     }
 
-    @PostMapping("/membership")
+    @PostMapping("/tier/apply")
     public SuccessResponse<UserTierResponse> determineApplying(@ApiIgnore Authentication authentication,
                                              @RequestBody DetermineApplyingRequest request,
                                              @RequestParam boolean isApprove) {

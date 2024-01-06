@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 import static java.time.LocalDateTime.now;
@@ -44,7 +43,7 @@ public class Reservation extends BaseTimeEntity {
     public void changeReservationStatus(ReservationStatus reservationStatus) {
         this.reservationStatus = reservationStatus;
     }
-    public void cancle(){
+    public void cancel(){
         this.reservationStatus = ReservationStatus.CANCEL;
     }
 }

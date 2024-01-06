@@ -110,24 +110,27 @@ class UserService implements UserUseCase {
         return userQueryPort.findByStudentNumWithMajorDetailWithMajor(studentNum);
     }
 
+    /*
+    관리자용 취소후 예약 로직이기 때문에 로직 수정 필요
+     */
     @Override
     public void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception {
         for (ModifiedUserInfoDto modifiedUserInfo : requestDto.getModifiedUserInfoList()) {
-            User requestUser = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
+            User user = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
             if (modifiedUserInfo.getLockerDetailId() == null) { // 요청된 사물함 정보가 없을때
-                requestUser.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
+                user.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
             } else {
                 if (reservationUseCase.isReservationExistByStudentNum(modifiedUserInfo.getStudentNum())) { //예약이 되어있다면, 해당 사물함 취소후 재등록
                     reservationUseCase.cancelLockerByStudentNum(UserCancelLockerRequestDto.builder()
-                            .studentNum(modifiedUserInfo.getStudentNum())
+                            .userId(user.getId())
                             .build());
                 }
                 redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
-                        .studentNum(modifiedUserInfo.getStudentNum())
+                        .userId(user.getId())
                         .lockerDetailId(modifiedUserInfo.getLockerDetailId())
                         .build());
-                requestUser.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
+                user.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
             }
         }
     }
@@ -190,9 +193,9 @@ class UserService implements UserUseCase {
     @Transactional(readOnly = true)
     @Override
     public UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
-        User user = userQueryPort.findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
+        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userRequestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
-
+//        findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
         Reservation findReservation = user.getReservation().stream()
                 .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
                 .findFirst().orElse(null);

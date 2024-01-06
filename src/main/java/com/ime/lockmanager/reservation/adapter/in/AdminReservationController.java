@@ -20,13 +20,14 @@ import java.security.Principal;
 public class AdminReservationController {
     private final ReservationUseCase reservationUseCase;
     @ApiOperation(
-            value = "사물함 정보 전체 삭제",
-            notes = "사물함 초기화(eg. 학기초 및 롤백)의 경우 예약된 모든 사물함을 초기화하는 API"
+            value = "사물함 예약 전체취소",
+            notes = "사물함 초기화(eg. 학기초 및 롤백)의 경우 예약된 모든 사물함을 초기화하는 API, " +
+                    "사물함 데이터를 남기기위해 삭제하는것이 아닌 ENUM수정으로 취소 표현"
     )
-    @PostMapping("/locker/{lockerId}/reservation")
+    @PostMapping("/locker/{lockerId}/reservations")
     public SuccessResponse resetLocker(@PathVariable Long lockerId, @ApiIgnore Principal principal){
         log.info("{} : 사물함 예약 정보 전체 초기화",principal.getName());
-        reservationUseCase.resetReservation(lockerId,principal);
+        reservationUseCase.resetReservation(lockerId);
         return SuccessResponse.ok("초기화가 완료되었습니다.");
     }
 }

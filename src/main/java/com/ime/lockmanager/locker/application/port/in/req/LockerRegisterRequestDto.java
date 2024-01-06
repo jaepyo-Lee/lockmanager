@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class LockerRegisterRequestDto {
-    private String studentNum;
+    private Long userId;
     private Long lockerDetailId;
 
-    public static LockerRegisterRequestDto of(String studentNum,Long lockerDetailId){
+    public static LockerRegisterRequestDto of(Long userId,Long lockerDetailId){
         return LockerRegisterRequestDto.builder()
-                .studentNum(studentNum)
+                .userId(userId)
                 .lockerDetailId(lockerDetailId)
                 .build();
     }
