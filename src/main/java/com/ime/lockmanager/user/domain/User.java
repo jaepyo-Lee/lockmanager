@@ -71,15 +71,14 @@ public class User extends BaseTimeEntity {
             this.role = ROLE_USER;
         }
     }
-
+    public void updateTier(UserTier tier){
+        this.userTier = tier;
+    }
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
         this.auth = updateUserInfoDto.isAuth();
         this.userState = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();
         this.majorDetail = updateUserInfoDto.getMajorDetail();
-    }
-    public void updateDueInfo(boolean isDue){
-        this.membership = isDue;
     }
 
     public UserTier applyMembership() {

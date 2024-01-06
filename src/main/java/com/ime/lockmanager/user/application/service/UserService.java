@@ -118,20 +118,19 @@ class UserService implements UserUseCase {
         for (ModifiedUserInfoDto modifiedUserInfo : requestDto.getModifiedUserInfoList()) {
             User user = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
-            if(modifiedUserInfo.getLockerDetailId()!=null){
+            if (modifiedUserInfo.getLockerDetailId() != null) {
                 redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
                         .userId(user.getId())
                         .lockerDetailId(modifiedUserInfo.getLockerDetailId())
                         .build());
             }
-            if(modifiedUserInfo.getAdmin()!=null){
+            if (modifiedUserInfo.getAdmin() != null) {
                 user.changeAdmin(modifiedUserInfo.getAdmin().booleanValue());
             }
-            if(modifiedUserInfo.getMembership()!=null){
-                if(modifiedUserInfo.getMembership().booleanValue()==Boolean.TRUE){//납부자로 변경하고싶을때
+            if (modifiedUserInfo.getMembership() != null) {
+                if (modifiedUserInfo.getMembership().booleanValue() == Boolean.TRUE) {//납부자로 변경하고싶을때
                     user.approve();
-                }
-                else{
+                } else {
                     user.deny();
                 }
             }
@@ -140,18 +139,19 @@ class UserService implements UserUseCase {
 
     @Override
     public void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception {
-        User byStudentNum = userQueryPort.findByStudentNum(updateUserDueInfoDto.getStudentNum())
-                .orElseGet(() -> userQueryPort.save(User.builder()
-                        .name(updateUserDueInfoDto.getName())
-                        .studentNum(updateUserDueInfoDto.getStudentNum())
-                        .membership(updateUserDueInfoDto.isDue())
-                        .role(Role.ROLE_USER)
-                        .auth(false)
-                        .build()));
-        if (byStudentNum.isAuth()) {
-            if (updateUserDueInfoDto.isDue() != byStudentNum.isMembership()) {
-                byStudentNum.updateDueInfo(updateUserDueInfoDto.isDue());
-            }
+        User user = userQueryPort.findByStudentNum(updateUserDueInfoDto.getStudentNum())
+                .orElseGet(() -> userQueryPort.save(
+                        User.builder()
+                                .name(updateUserDueInfoDto.getName())
+                                .studentNum(updateUserDueInfoDto.getStudentNum())
+                                .userTier(UserTier.judge(updateUserDueInfoDto.isDue()))
+                                .role(Role.ROLE_USER)
+                                .majorDetail(updateUserDueInfoDto.getMajorDetail())
+                                .auth(false)
+                                .build())
+                );
+        if (user.isAuth()) {
+            user.updateTier(UserTier.judge(updateUserDueInfoDto.isDue()));
         }
     }
 

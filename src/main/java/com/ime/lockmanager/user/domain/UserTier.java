@@ -11,4 +11,10 @@ public enum UserTier {
     APPLICANT("신청자","승인이 진행중입니다. 조금만 기다려주시면 감사하겠습니다.");
     private String krTier;
     private String msg;
+    public static UserTier judge(boolean tier){
+        if(tier){
+            return MEMBER;
+        }
+        return NON_MEMBER;
+    }
 }
