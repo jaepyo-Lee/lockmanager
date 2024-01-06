@@ -18,7 +18,6 @@ import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
-import com.ime.lockmanager.user.application.service.dto.UserModifiedInfoDto;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
 import com.ime.lockmanager.user.domain.UserTier;
@@ -42,6 +41,7 @@ import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 @Transactional
 @Service
 class UserService implements UserUseCase {
+    private final RedissonLockReservationFacade reservationFacade;
     private final UserQueryPort userQueryPort;
     private final ReservationUseCase reservationUseCase;
     private final UserToReservationQueryPort userToReservationQueryPort;
@@ -118,19 +118,22 @@ class UserService implements UserUseCase {
         for (ModifiedUserInfoDto modifiedUserInfo : requestDto.getModifiedUserInfoList()) {
             User user = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
-            if (modifiedUserInfo.getLockerDetailId() == null) { // 요청된 사물함 정보가 없을때
-                user.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
-            } else {
-                if (reservationUseCase.isReservationExistByStudentNum(modifiedUserInfo.getStudentNum())) { //예약이 되어있다면, 해당 사물함 취소후 재등록
-                    reservationUseCase.cancelLockerByStudentNum(UserCancelLockerRequestDto.builder()
-                            .userId(user.getId())
-                            .build());
-                }
+            if(modifiedUserInfo.getLockerDetailId()!=null){
                 redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
                         .userId(user.getId())
                         .lockerDetailId(modifiedUserInfo.getLockerDetailId())
                         .build());
-                user.modifiedUserInfo(UserModifiedInfoDto.fromModifiedUserInfoDto(modifiedUserInfo));
+            }
+            if(modifiedUserInfo.getAdmin()!=null){
+                user.changeAdmin(modifiedUserInfo.getAdmin().booleanValue());
+            }
+            if(modifiedUserInfo.getMembership()!=null){
+                if(modifiedUserInfo.getMembership().booleanValue()==Boolean.TRUE){//납부자로 변경하고싶을때
+                    user.approve();
+                }
+                else{
+                    user.deny();
+                }
             }
         }
     }

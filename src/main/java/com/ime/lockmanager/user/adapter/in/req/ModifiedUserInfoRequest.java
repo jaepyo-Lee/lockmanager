@@ -4,11 +4,16 @@ import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestD
 import com.ime.lockmanager.user.domain.Role;
 import lombok.Getter;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 public class ModifiedUserInfoRequest {
+
+    @Valid
+    @Size(min = 1)
     private List<ModifiedUserInfo> modifiedUserInfoList;
 
     public ModifiedUserInfoRequestDto toRequestDto() {
