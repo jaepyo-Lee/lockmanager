@@ -12,6 +12,9 @@ import java.util.Set;
 @Getter
 @Builder
 public class LockersInfoInMajorDto {
+
+    @Schema(description = "사물함Id")
+    private Long lockerId;
     @Schema(description = "사물함을 예약할수 있는 학생회비 납부조건")
     private Set<UserTier> permitTiers;
     @Schema(description = "사물함을 예약할수 있는 학생의 재학조건")

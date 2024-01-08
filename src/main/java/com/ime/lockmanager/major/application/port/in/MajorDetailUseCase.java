@@ -6,7 +6,7 @@ import com.ime.lockmanager.major.domain.MajorDetail;
 import java.util.Optional;
 
 public interface MajorDetailUseCase {
-    Optional<MajorDetail> findMajorDetailByName(String majorDetailName);
+    Optional<MajorDetail> findByNameWithMajor(String majorDetailName);
 
     String createMajorDetail(String userStudentNum,CreateMajorDetailRequestDto createMajorDetailRequestDto);
 }

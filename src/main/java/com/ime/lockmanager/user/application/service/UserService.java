@@ -50,8 +50,8 @@ class UserService implements UserUseCase {
     private final int PAGE_SIZE = 30;
 
     @Override
-    public CheckMembershipResponseDto checkMembership(String studentNum) {
-        User student = userQueryPort.findByStudentNum(studentNum)
+    public CheckMembershipResponseDto checkMembership(Long userId) {
+        User student = userQueryPort.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
         return CheckMembershipResponseDto.builder()
                 .userTier(student.getUserTier())
@@ -74,8 +74,8 @@ class UserService implements UserUseCase {
     }
 
     @Override
-    public UserTierResponseDto applyMembership(String studentNum) {
-        User student = userQueryPort.findByStudentNum(studentNum)
+    public UserTierResponseDto applyMembership(Long userId) {
+        User student = userQueryPort.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
         if (student.getUserTier().equals(UserTier.MEMBER)) {
             throw new IllegalStateException("이미 승인된 사용자 입니다.");
@@ -158,14 +158,16 @@ class UserService implements UserUseCase {
     @Override
     @Transactional(readOnly = true)
     public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, int page) {
-        User adminUser = userQueryPort.findByStudentNum(adminUserStudentNum).orElseThrow(NotFoundUserException::new);
+        User adminUser = userQueryPort.findByStudentNum(adminUserStudentNum)
+                .orElseThrow(NotFoundUserException::new);
         Major adminMajor = adminUser.getMajorDetail().getMajor();
-
-        Page<User> allUser = userToReservationQueryPort.findAllOrderByStudentNumAsc(adminMajor, PageRequest.of(page, PAGE_SIZE));
+        Page<User> allUser = userToReservationQueryPort
+                .findAllOrderByStudentNumAsc(adminMajor, PageRequest.of(page, PAGE_SIZE));
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {
             AllUserInfoForAdminResponseDto build = AllUserInfoForAdminResponseDto.builder()
+                    .userId(user.getId())
                     .studentNum(user.getStudentNum())
                     .status(user.getStatus())
                     .role(user.getRole())
@@ -224,18 +226,6 @@ class UserService implements UserUseCase {
         }
     }
 
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean checkAdmin(String studentNum) {
-        User byStudentNum = userQueryPort.findByStudentNum(studentNum)
-                .orElseThrow(NotFoundUserException::new);
-        if (byStudentNum.getRole() == Role.ROLE_ADMIN) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     @Override
     public User findByStudentNum(String studentNum) {

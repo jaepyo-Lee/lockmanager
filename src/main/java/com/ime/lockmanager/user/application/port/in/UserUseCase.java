@@ -19,8 +19,6 @@ public interface UserUseCase {
 
     Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum,int page);
 
-    boolean checkAdmin(String studentNum);
-
     void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception;
 
     void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
@@ -29,11 +27,11 @@ public interface UserUseCase {
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 
-    UserTierResponseDto applyMembership(String studentNum);
+    UserTierResponseDto applyMembership(Long userId);
 
     AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page);
 
     UserTierResponseDto determineApplying(DetermineApplyingRequestDto toRequestDto, boolean isApprove);
 
-    CheckMembershipResponseDto checkMembership(String studentNum);
+    CheckMembershipResponseDto checkMembership(Long userId);
 }

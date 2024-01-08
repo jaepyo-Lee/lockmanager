@@ -16,8 +16,10 @@ public class LoginTokenResponseDto {
     private String refreshToken;
     private Role role;
     private Long userId;
-    public static LoginTokenResponseDto of(String accessToken,String refreshToken,Role role,Long userId){
+    private Long majorId;
+    public static LoginTokenResponseDto of(String accessToken,String refreshToken,Role role,Long userId,Long majorId){
         return new LoginTokenResponseDto().builder()
+                .majorId(majorId)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(role)
@@ -31,6 +33,7 @@ public class LoginTokenResponseDto {
                 .refreshToken(refreshToken)
                 .role(role)
                 .userId(userId)
+                .majorId(majorId)
                 .build();
     }
 }

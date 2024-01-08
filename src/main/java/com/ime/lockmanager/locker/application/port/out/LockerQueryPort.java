@@ -18,6 +18,7 @@ public interface LockerQueryPort {
     Locker save(Locker locker);
 
     List<Locker> findLockerByUserMajor(Major major);
+    List<Locker> findByMajorId(Long majorId);
 
 
     Locker findByName(String lockerName);

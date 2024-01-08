@@ -16,6 +16,11 @@ public class LockerQueryRepository implements LockerQueryPort {
     private final LockerJpaRepository lockerJpaRepository;
 
     @Override
+    public List<Locker> findByMajorId(Long majorId) {
+        return lockerJpaRepository.findByMajorId(majorId);
+    }
+
+    @Override
     public Locker save(Locker locker) {
         return lockerJpaRepository.save(locker);
     }
