@@ -24,7 +24,6 @@ import java.util.Optional;
 @Service
 public class AccountService implements AccountUsecase {
     private final UserQueryPort userQueryPort;
-    private final UserUseCase userUseCase;
     private final AccountQueryPort accountQueryPort;
 
     @Transactional(readOnly = true)

@@ -11,21 +11,16 @@ import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDt
 import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.major.domain.Major;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface LockerUseCase {
 
-    LeftLockerResponseDto getLeftLocker(String studentNum);
+    LeftLockerResponseDto getLeftLocker(Long majorId);
 
-    void setLockerPeriod(LockerSetTimeRequestDto requestDto);
-
-    LockerPeriodResponseDto getLockerPeriod();
-
-    List<Locker> findLockerByUserMajor(Major major);
-
-    LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, String studentNum);
+    LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, Long majorId) throws IOException;
 
     LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto build);
 
-    void modifyLockerInfo(ModifyLockerInfoReqeustDto toReqeustDto);
+    void modifyLockerInfo(ModifyLockerInfoReqeustDto toReqeustDto) throws IOException;
 }

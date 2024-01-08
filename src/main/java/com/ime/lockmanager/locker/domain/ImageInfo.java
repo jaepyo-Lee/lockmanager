@@ -16,4 +16,14 @@ public class ImageInfo {
 
     private String imageUrl;
     private String imageName;
+
+    public static ImageInfo of(String imageName, String imageUrl) {
+        if(imageUrl!=null &&imageName!=null){
+            return ImageInfo.builder()
+                    .imageUrl(imageUrl)
+                    .imageName(imageName)
+                    .build();
+        }
+        return null;
+    }
 }

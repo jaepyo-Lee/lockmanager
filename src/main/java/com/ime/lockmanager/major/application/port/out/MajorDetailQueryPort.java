@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MajorDetailQueryPort {
-    Optional<MajorDetail> findMajorDetailByName(String majorName);
+    Optional<MajorDetail> findByNameWithMajor(String majorName);
 
     List<MajorDetail> findAll();
 

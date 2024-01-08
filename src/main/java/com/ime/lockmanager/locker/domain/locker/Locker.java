@@ -49,8 +49,7 @@ public class Locker extends BaseTimeEntity {
     private Reservation reservation;
     //===================//
 
-    @Embedded
-    private ImageInfo imageInfo;
+    private String imageUrl;
     private String totalRow;
     private String totalColumn;
 
@@ -70,8 +69,8 @@ public class Locker extends BaseTimeEntity {
         this.period = period;
     }
 
-    public void modifiedImageInfo(ImageInfo imageInfo) {
-        this.imageInfo = imageInfo;
+    public void modifiedImageInfo(String newImageUrl) {
+        this.imageUrl=newImageUrl;
     }
 
 
@@ -82,10 +81,7 @@ public class Locker extends BaseTimeEntity {
                 .major(lockercreateDto.getMajor())
                 .totalColumn(lockercreateDto.getTotalColumn())
                 .totalRow(lockercreateDto.getTotalRow())
-                .imageInfo(ImageInfo.builder()
-                        .imageName(lockercreateDto.getImageName())
-                        .imageUrl(lockercreateDto.getImageUrl())
-                        .build())
+                .imageUrl(lockercreateDto.getImageUrl())
                 .permitUserState(Set.copyOf(lockercreateDto.getUserStates()))
                 .permitUserTier(Set.copyOf(lockercreateDto.getUserTiers()))
                 .build();

@@ -13,8 +13,8 @@ import java.util.Optional;
 public class MajorDetailQueryRepository implements MajorDetailQueryPort {
     private final MajorDetailRepository majorDetailRepository;
     @Override
-    public Optional<MajorDetail> findMajorDetailByName(String majorName) {
-        return majorDetailRepository.findMajorDetailByName(majorName);
+    public Optional<MajorDetail> findByNameWithMajor(String majorName) {
+        return majorDetailRepository.findByNameWithMajor(majorName);
     }
 
     @Override

@@ -17,9 +17,11 @@ public class AllUserInfoForAdminResponseDto {
     private UserTier userTier;
     private String status;
     private String studentNum;
+    private Role role;
+    private Long userId;
+
     private String lockerName;
     private String lockerNum;
-    private Role role;
 
     public AllUserInfoForAdminResponseDto(String name,
                                           UserTier userTier,
@@ -39,11 +41,12 @@ public class AllUserInfoForAdminResponseDto {
 
     public UserInfoAdminResponse toResponse() {
         return UserInfoAdminResponse.builder()
+                .userId(userId)
                 .lockerName(lockerName)
                 .lockerNum(lockerNum)
                 .userTier(userTier)
                 .studentNum(studentNum)
-                .userName(name)
+                .studentName(name)
                 .role(role)
                 .status(status)
                 .build();

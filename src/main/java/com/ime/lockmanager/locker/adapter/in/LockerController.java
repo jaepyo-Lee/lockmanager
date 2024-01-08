@@ -1,24 +1,14 @@
 package com.ime.lockmanager.locker.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.locker.adapter.in.res.AllLockersInMajorResponse;
-import com.ime.lockmanager.locker.adapter.in.res.LockerPeriodResponse;
-import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
 import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
-import com.ime.lockmanager.locker.application.port.in.res.AllLockersInMajorResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.List;
-
-import static java.time.LocalDateTime.now;
-
 
 @RequiredArgsConstructor
 @RestController
