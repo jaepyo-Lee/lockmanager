@@ -39,26 +39,19 @@ class UserController {
         ));
     }
 
-    @Deprecated
-    @ApiOperation(
-            value = "사용자 권한 조회",
-            notes = "사용자의 권한 조회 API"
-    )
-    @GetMapping("/role")
-    public SuccessResponse getUserRole(Principal principal) {
-        return new SuccessResponse(userUseCase.checkAdmin(principal.getName()));
-    }
 
     @ApiOperation(value = "학생회비 납부 신청")
-    @PostMapping("/membership")
-    public SuccessResponse<UserInfoResponse> applyMembership(@ApiIgnore Authentication authentication) {
-        return new SuccessResponse(userUseCase.applyMembership(authentication.getName()).toResponse());
+    @PostMapping("/{userId}/membership")
+    public SuccessResponse<UserInfoResponse> applyMembership(@ApiIgnore Authentication authentication,
+                                                             @PathVariable Long userId) {
+        return new SuccessResponse(userUseCase.applyMembership(userId).toResponse());
     }
 
     @ApiOperation(value = "학생회비 납부 조회")
-    @GetMapping("/membership")
-    public SuccessResponse<CheckMembershipResponse> checkMembership(@ApiIgnore Authentication authentication) {
-        CheckMembershipResponse checkMembershipResponse = userUseCase.checkMembership(authentication.getName())
+    @GetMapping("/{userId}/membership")
+    public SuccessResponse<CheckMembershipResponse> checkMembership(@ApiIgnore Authentication authentication,
+                                                                    @PathVariable Long userId) {
+        CheckMembershipResponse checkMembershipResponse = userUseCase.checkMembership(userId)
                 .toResponse();
         return new SuccessResponse(checkMembershipResponse);
     }

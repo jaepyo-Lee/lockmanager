@@ -22,7 +22,7 @@ public class UserInfoResponseDto {
         return UserInfoAdminResponse.builder()
                 .lockerNum(lockerNum)
                 .userTier(userTier)
-                .userName(userName)
+                .studentName(userName)
                 .role(role)
                 .status(status)
                 .studentNum(studentNum)

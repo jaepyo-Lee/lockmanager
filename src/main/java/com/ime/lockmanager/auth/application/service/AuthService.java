@@ -46,12 +46,12 @@ class AuthService implements AuthUseCase {
     @Override
     public LoginTokenResponseDto login(LoginRequestDto loginRequestDto) {
         SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
-        MajorDetail majorDetail = findMajorDetailByName(getMajorName(sejongMemberResponseDto));
+        MajorDetail majorDetail = findByNameWithMajor(getMajorName(sejongMemberResponseDto));
         User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
         updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
-        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(), user.getRole(), user.getId());
+        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(), user.getRole(), user.getId(),majorDetail.getMajor().getId());
     }
 
     private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
@@ -82,8 +82,8 @@ class AuthService implements AuthUseCase {
         return sejongMemberResponseDto.getResult().getBody().getMajor();
     }
 
-    private MajorDetail findMajorDetailByName(String majorName) {
-        return majorDetailUseCase.findMajorDetailByName(majorName)
+    private MajorDetail findByNameWithMajor(String majorName) {
+        return majorDetailUseCase.findByNameWithMajor(majorName)
                 .orElseThrow(() -> new IllegalStateException("등록되지 않은 학과입니다. 학생회에 문의해주세요!"));
     }
 

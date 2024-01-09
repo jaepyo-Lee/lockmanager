@@ -20,7 +20,6 @@ public class LockerCreateDto {
     private String totalRow;
     private String totalColumn;
     private String imageUrl;
-    private String imageName;
     private List<UserState> userStates;
     private List<UserTier> userTiers;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")

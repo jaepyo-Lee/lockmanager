@@ -13,50 +13,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.admin.prefix}/lockers")
+@RequestMapping("${api.admin.prefix}")
 class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 
     @ApiOperation(
             value = "남은 사물함 목록 조회 api"
     )
-    @GetMapping("/left-list")
-    public SuccessResponse<LeftLockerResponse> getLeftLocker(@ApiIgnore Authentication authentication) {
-        return new SuccessResponse(lockerUseCase.getLeftLocker(authentication.getName()).toResponse());
-    }
-
-    @ApiOperation(
-            value = "사물함 예약 기간 저장",
-            notes = "사물함의 예약기간을 저장하기 위한 API, 사용안함"
-    )
-    @PostMapping("/time")
-    public SuccessResponse setPeriod(@ApiIgnore Principal principal, HttpServletRequest req, @RequestBody LockerSetTimeRequest timeRequest) {
-        log.info("{} : 시간설정(관리자)", principal.getName());
-        lockerUseCase.setLockerPeriod(timeRequest.toRequestDto());
-        return SuccessResponse.ok("시간설정완료");
+    @GetMapping("/majors/{majorId}/lockers/left-list")
+    public SuccessResponse<LeftLockerResponse> getLeftLocker(@ApiIgnore Authentication authentication,
+                                                             @PathVariable Long majorId) {
+        return new SuccessResponse(lockerUseCase.getLeftLocker(majorId).toResponse());
     }
 
     @ApiOperation(
             value = "새로운 사물함 생성",
             notes = "새로운 사물함을 생성하는 API"
     )
-    @PostMapping()
+    @PostMapping("/majors/{majorId}/lockers")
     public SuccessResponse<LockerCreateResponse> createLocker(@ApiIgnore Authentication authentication,
-                                                              @Valid @RequestBody LockerCreateRequest lockerCreateRequest) {
+                                                              @RequestPart(required = false) MultipartFile image,
+                                                              @PathVariable Long majorId,
+                                                              @Valid @RequestPart LockerCreateRequest lockerCreateRequest) throws IOException {
         log.info("{} : 새로운 사물함 생성", authentication.getName());
-
         String createdLockerName = lockerUseCase.createLocker(
                         LockerCreateRequestDto
-                                .fromRequest(lockerCreateRequest), authentication.getName()
+                                .fromRequest(lockerCreateRequest, image), majorId
                 )
                 .getCreatedLockerName();
         return new SuccessResponse(
@@ -70,11 +63,12 @@ class LockerAdminController {
             value = "사물함 정보 수정",
             notes = "사물함의 여러 정보를 수정하는 api"
     )
-    @PatchMapping("/{lockerId}")
+    @PatchMapping("/lockers/{lockerId}")
     public SuccessResponse modifyLockerInfo(@ApiIgnore Authentication authentication,
                                             @PathVariable Long lockerId,
-                                            @Valid @RequestBody ModifyLockerInfoReqeust modifyLockerInfoReqeust) {
-        lockerUseCase.modifyLockerInfo(modifyLockerInfoReqeust.toReqeustDto(lockerId));
+                                            @RequestPart(required = false) MultipartFile image,
+                                            @Valid @RequestPart ModifyLockerInfoReqeust modifyLockerInfoReqeust) throws IOException {
+        lockerUseCase.modifyLockerInfo(modifyLockerInfoReqeust.toReqeustDto(lockerId,image));
         return SuccessResponse.ok();
     }
 }

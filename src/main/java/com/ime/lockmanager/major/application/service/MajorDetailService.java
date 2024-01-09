@@ -22,8 +22,8 @@ public class MajorDetailService implements MajorDetailUseCase {
     private final UserUseCase userUseCase;
 
     @Override
-    public Optional<MajorDetail> findMajorDetailByName(String majorDetailName) {
-        return majorDetailQueryPort.findMajorDetailByName(majorDetailName);
+    public Optional<MajorDetail> findByNameWithMajor(String majorDetailName) {
+        return majorDetailQueryPort.findByNameWithMajor(majorDetailName);
     }
 
     @Override

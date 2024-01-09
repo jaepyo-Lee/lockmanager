@@ -4,7 +4,7 @@ import com.ime.lockmanager.common.format.exception.file.InValidCheckingException
 import com.ime.lockmanager.common.format.exception.file.NotValidExcelFormatException;
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
-import com.ime.lockmanager.file.application.port.in.usecase.FileAdminUseCase;
+import com.ime.lockmanager.file.application.port.in.usecase.MembershipFileAdminUseCase;
 import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -29,7 +29,7 @@ import java.io.InputStream;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class FileAdminAdminService implements FileAdminUseCase {
+public class MembershipFileAdminService implements MembershipFileAdminUseCase {
     private final UserUseCase userUseCase;
     private final UserQueryPort userQueryPort;
     private final MajorDetailQueryPort majorDetailQueryPort;
@@ -61,7 +61,7 @@ public class FileAdminAdminService implements FileAdminUseCase {
     }
 
     private MajorDetail getMajorDetailByMajorName(String majorName) {
-        return majorDetailQueryPort.findMajorDetailByName(majorName)
+        return majorDetailQueryPort.findByNameWithMajor(majorName)
                 .orElseThrow(NotFoundMajorDetailException::new);
     }
 

@@ -6,6 +6,7 @@ import com.ime.lockmanager.user.domain.UserState;
 import com.ime.lockmanager.user.domain.UserTier;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,19 +20,17 @@ public class ModifyLockerInfoReqeust {
     private LocalDateTime endTime;
     private List<UserState> userStates;
     private List<UserTier> userTiers;
-    private String imageUrl;
-    private String imageName;
 
-    public ModifyLockerInfoReqeustDto toReqeustDto(Long lockerId) {
+    public ModifyLockerInfoReqeustDto toReqeustDto(Long lockerId, MultipartFile image) {
         return ModifyLockerInfoReqeustDto.builder()
                 .lockerName(lockerName)
                 .lockerId(lockerId)
                 .startTime(startTime)
                 .endTime(endTime)
-                .imageName(imageName)
-                .imageUrl(imageUrl)
+                .image(image)
                 .userStates(userStates)
                 .userTiers(userTiers)
                 .build();
     }
+
 }
