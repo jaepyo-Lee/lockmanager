@@ -85,9 +85,8 @@ public class ReservationService implements ReservationUseCase {
     @Override
     public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
         User user = userQueryPort.findById(dto.getUserId()).orElseThrow(NotFoundUserException::new);
-//        StudentNum(dto.getStudentNum()).orElseThrow(NotFoundUserException::new);
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
-                .orElseThrow(() -> new NullPointerException("없는 사물함입니다."));
+                .orElseThrow(InvalidLockerDetailException::new);
         log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
         distinctConditionForReserveToUser(locker);
@@ -104,7 +103,6 @@ public class ReservationService implements ReservationUseCase {
         log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         return LockerRegisterResponseDto
                 .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
-
     }
 
     private static void distinctConditionForReserveToUser(Locker locker) {
