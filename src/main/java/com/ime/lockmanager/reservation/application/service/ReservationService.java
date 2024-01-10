@@ -6,6 +6,7 @@ import com.ime.lockmanager.common.format.exception.reservation.NotMatchUserTierA
 import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserException;
 import com.ime.lockmanager.common.format.exception.user.InvalidReservedStatusException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
+import com.ime.lockmanager.common.sse.SseEmitterService;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
@@ -25,12 +26,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ime.lockmanager.common.sse.SseEmitterService.sendEvent;
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 
 
@@ -63,11 +64,6 @@ public class ReservationService implements ReservationUseCase {
         return build;
     }
 
-    /*
-    로직다시짜야할듯
-    그냥 로그만 남겨지도록 수정하는 형식으로 진행해도 될듯
-    고민
-     */
     @Override
     public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto requestDto) throws Exception {
         User user = userQueryPort.findById(requestDto.getUserId()).orElseThrow(NotFoundUserException::new);
@@ -96,7 +92,15 @@ public class ReservationService implements ReservationUseCase {
         Locker locker = lockerDetail.getLocker();
         distinctConditionForReserveToUser(locker);
         commonConditionForReserve(user, lockerDetail, locker);
-        reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
+        Long registerLockerId = reservationQueryPort.registerLocker(UserJpaEntity.of(user), lockerDetail);
+        Set<SseEmitter> sseEmitters = SseEmitterService.getEmitterMap()
+                .getOrDefault("LOCKER_" + dto.getMajorId().toString(), new HashSet<>());
+        SseEmitter.SseEventBuilder reservedLockerEventBuilder = SseEmitter.event()
+                .name("reservedLocker")
+                .data(registerLockerId)
+                .reconnectTime(3000L);
+        sseEmitters.stream().forEach(sseEmitter -> sendEvent(sseEmitter, reservedLockerEventBuilder));
+
         log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         return LockerRegisterResponseDto
                 .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
@@ -123,16 +127,6 @@ public class ReservationService implements ReservationUseCase {
             throw new AlreadyReservedUserException();
         }
     }
-
-
-    private boolean isReservationExistByUserStudentNum(String userStudentNum) {
-        return reservationQueryPort.findReservationByStudentNum(userStudentNum).isEmpty();
-    }
-
-    private boolean isReservationExistByLockerDetail(Long lockerDetailId) {
-        return reservationQueryPort.findByLockerDetailId(lockerDetailId).isEmpty();
-    }
-
     private boolean isReservationPossibleByLockerDetailId(Long lockerDetailId) {
         List<Reservation> allReservationByLockerDetailId = reservationQueryPort.findAllByLockerDetailId(lockerDetailId);
         List<Reservation> reservations = allReservationByLockerDetailId.stream()
@@ -159,9 +153,6 @@ public class ReservationService implements ReservationUseCase {
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
         log.info("{} : 사물함 취소", cancelLockerDto.getUserId());
         User user = userQueryPort.findById(cancelLockerDto.getUserId()).orElseThrow(NotFoundUserException::new);
-//        findByStudentNum(cancelLockerDto.getStudentNum()).orElseThrow(NotFoundUserException::new);
-
-
         List<Reservation> allReservations = reservationQueryPort
                 .findAllByUserIdAndLockerDetailId(user.getId(),
                         cancelLockerDto.getLockerDetailId());
@@ -173,10 +164,6 @@ public class ReservationService implements ReservationUseCase {
         }
         Reservation reservation = collect.stream().findFirst().orElseThrow(NotFoundReservationException::new);
         reservation.cancel();
-
-//        reservationQueryPort.deleteByStudentNum(DeleteReservationByStudentNumDto.builder()
-//                .studentNum(cancelLockerDto.getStudentNum())
-//                .build());
     }
 
     public boolean isReservationExistByStudentNum(String studentNum) {//무언가 있다면

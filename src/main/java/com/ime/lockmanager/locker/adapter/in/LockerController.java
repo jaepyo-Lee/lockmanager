@@ -8,7 +8,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import springfox.documentation.annotations.ApiIgnore;
+
+import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
 
 @RequiredArgsConstructor

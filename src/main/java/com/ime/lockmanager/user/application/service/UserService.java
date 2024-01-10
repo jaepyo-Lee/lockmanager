@@ -166,33 +166,11 @@ class UserService implements UserUseCase {
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {
-            AllUserInfoForAdminResponseDto build = AllUserInfoForAdminResponseDto.builder()
-                    .userId(user.getId())
-                    .studentNum(user.getStudentNum())
-                    .status(user.getStatus())
-                    .role(user.getRole())
-                    .userTier(user.getUserTier())
-                    .name(user.getName())
-                    .lockerName(user.getReservation().stream()
-                            .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
-                            .findFirst()
-                            .map(reservation -> reservation.getLockerDetail().getLocker().getName())
-                            .orElse(null)
-                    )
-                    .lockerNum(
-                            user.getReservation().stream()
-                                    .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
-                                    .findFirst()
-                                    .map(reservation -> reservation.getLockerDetail().getLockerNum())
-                                    .orElse(null)
-                    ).build();
-            userPageList.add(build);
+            AllUserInfoForAdminResponseDto userInfo = AllUserInfoForAdminResponseDto.of(user);
+            userPageList.add(userInfo);
         }
         PageImpl<AllUserInfoForAdminResponseDto> userPage = new PageImpl<>(userPageList, pageRequest, userPageList.size());
-
-
         return userPage;
-
     }
 
     @Transactional(readOnly = true)

@@ -29,7 +29,8 @@ public class LockerDetail extends BaseTimeEntity {
     @JoinColumn(name = "locker_id")
     private Locker locker;
 
-    public void changeReserveStatus(LockerDetailStatus lockerDetailStatus){
+    public Long changeReserveStatus(LockerDetailStatus lockerDetailStatus){
         this.lockerDetailStatus = lockerDetailStatus;
+        return id;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ReservationQueryPort {
 
     Optional<Reservation> findByLockerDetailId(Long lockerDetailId);
-    void registerLocker(User userJpaEntity, LockerDetail lockerDetail);
+    Long registerLocker(User userJpaEntity, LockerDetail lockerDetail);
 
     Optional<Reservation> findReservationByStudentNum(String studentNum);
     void deleteAll();
