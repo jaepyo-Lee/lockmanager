@@ -41,7 +41,8 @@ class UserAdminController {
             , defaultValue = "0")
     @GetMapping("")
     public SuccessResponse<UserInfoAdminPageResponse> adminInfo(@ApiIgnore Authentication authentication,
-                                                                @RequestParam(name = "page", defaultValue = "0") int page) {
+                                                                @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                @RequestParam(name = "serach") String search) {
         Page<AllUserInfoForAdminResponseDto> allUserInfo = userUseCase.findAllUserInfo(authentication.getName(), page);
         return new SuccessResponse(
                 UserInfoAdminPageResponse.builder()

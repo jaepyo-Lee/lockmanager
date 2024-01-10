@@ -28,7 +28,7 @@ public class ReservationController {
             value = "사물함 취소",
             notes = "현재 사용자의 예약된 사물함을 취소하는 API"
     )
-    @PatchMapping("/lockerDetail/{lockerDetailId}/reservations")
+    @PatchMapping("/majors/{majorId}/lockerDetail/{lockerDetailId}/reservations")
     public SuccessResponse<CancelLockerDetailResponse> cancelLocker(@ApiIgnore Principal principal,
                                                                     @PathVariable Long userId,
                                                                     @PathVariable Long lockerDetailId) {
@@ -46,31 +46,21 @@ public class ReservationController {
             value = "사물함 예약",
             notes = "사용자가 사물함을 선택할시 해당 사물함을 예약하는 API"
     )
-    @PostMapping("/lockerDetail/{lockerDetailId}/reservations")
-    public SuccessResponse<LockerRegisterResponse> registerLocker(@ApiIgnore Principal principal,
+    @PostMapping("/majors/{majorId}/lockerDetail/{lockerDetailId}/reservations")
+    public SuccessResponse<LockerRegisterResponse> registerLocker(
                                                                   @PathVariable Long userId,
-                                                                  @PathVariable Long lockerDetailId) throws Exception {
-        log.info("{} : 시믈함 예약진행", principal.getName());
+                                                                  @PathVariable Long lockerDetailId,
+                                                                  @PathVariable Long majorId) throws Exception {
+//        log.info("{} : 시믈함 예약진행", principal.getName());
         LockerRegisterResponse lockerRegisterResponse =
                 LockerRegisterResponse.fromResponse(
                         redissonLockReservationFacade.registerForUser(
-                                LockerRegisterRequestDto.of(userId, lockerDetailId))
+                                LockerRegisterRequestDto.of(majorId,userId, lockerDetailId))
                 );
         log.info("{} : {}의 {}번 예약완료",
                 lockerRegisterResponse.getStudentNum(),
                 lockerRegisterResponse.getLockerName(),
                 lockerRegisterResponse.getLockerDetailNum());
         return new SuccessResponse(lockerRegisterResponse);
-    }
-
-    //예약된 사물함 가져오기
-    @Deprecated
-    @ApiOperation(
-            value = "예약된 사물함 조회",
-            notes = "예약된 사물함을 조회하는 API(화면 표시용 api)"
-    )
-    @GetMapping("/reserved")
-    public SuccessResponse findReservedLocker() {
-        return new SuccessResponse(LockerReserveResponse.fromResponse(reservationUseCase.findReservedLockers()));
     }
 }

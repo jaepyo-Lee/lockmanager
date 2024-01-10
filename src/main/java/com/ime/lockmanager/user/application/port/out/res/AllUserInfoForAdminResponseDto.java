@@ -2,11 +2,14 @@ package com.ime.lockmanager.user.application.port.out.res;
 
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminResponse;
 import com.ime.lockmanager.user.domain.Role;
+import com.ime.lockmanager.user.domain.User;
 import com.ime.lockmanager.user.domain.UserTier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 
 @Getter
 @NoArgsConstructor
@@ -50,5 +53,28 @@ public class AllUserInfoForAdminResponseDto {
                 .role(role)
                 .status(status)
                 .build();
+    }
+
+    public static AllUserInfoForAdminResponseDto of(User user){
+        return AllUserInfoForAdminResponseDto.builder()
+                .userId(user.getId())
+                .studentNum(user.getStudentNum())
+                .status(user.getStatus())
+                .role(user.getRole())
+                .userTier(user.getUserTier())
+                .name(user.getName())
+                .lockerName(user.getReservation().stream()
+                        .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                        .findFirst()
+                        .map(reservation -> reservation.getLockerDetail().getLocker().getName())
+                        .orElse(null)
+                )
+                .lockerNum(
+                        user.getReservation().stream()
+                                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
+                                .findFirst()
+                                .map(reservation -> reservation.getLockerDetail().getLockerNum())
+                                .orElse(null)
+                ).build();
     }
 }

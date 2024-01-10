@@ -14,13 +14,13 @@ import java.util.Set;
 public class LockersInfoInMajorDto {
 
     @Schema(description = "사물함Id")
-    private Long lockerId;
+    private Long id;
     @Schema(description = "사물함을 예약할수 있는 학생회비 납부조건")
     private Set<UserTier> permitTiers;
     @Schema(description = "사물함을 예약할수 있는 학생의 재학조건")
     private Set<UserState> permitStates;
     @Schema(description = "사물함 이름")
-    private String lockerName;
+    private String name;
     @Schema(description = "예약 시작시간")
     private LocalDateTime startReservationTime;
     @Schema(description = "예약 마감시간")

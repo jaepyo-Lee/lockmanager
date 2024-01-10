@@ -58,14 +58,14 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public void registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
+    public Long registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
         reservationJpaRepository.save(
                 Reservation.builder()
                         .lockerDetail(lockerDetail)
                         .user(userJpaEntity)
                         .build()
         );
-        lockerDetail.changeReserveStatus(LockerDetailStatus.RESERVED);
+        return lockerDetail.changeReserveStatus(LockerDetailStatus.RESERVED);
     }
 
     @Override
