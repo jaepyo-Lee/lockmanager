@@ -7,6 +7,7 @@ import com.ime.lockmanager.common.format.exception.user.AlreadyReservedUserExcep
 import com.ime.lockmanager.common.format.exception.user.InvalidReservedStatusException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.common.sse.SseEmitterService;
+import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerRegisterResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
@@ -95,7 +96,7 @@ public class ReservationService implements ReservationUseCase {
         Set<SseEmitter> sseEmitters = SseEmitterService.getEmitterMap()
                 .getOrDefault("LOCKER_" + dto.getMajorId().toString(), new HashSet<>());
         SseEmitter.SseEventBuilder reservedLockerEventBuilder = SseEmitter.event()
-                .name("reservedLocker")
+                .name("reservedLockerDetailId")
                 .data(registerLockerId)
                 .reconnectTime(3000L);
         sseEmitters.stream().forEach(sseEmitter -> sendEvent(sseEmitter, reservedLockerEventBuilder));
