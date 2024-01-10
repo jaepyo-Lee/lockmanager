@@ -12,21 +12,16 @@ import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
 import com.ime.lockmanager.locker.application.port.in.dto.LeftLockerInfo;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
-import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
 import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
-import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
-import com.ime.lockmanager.locker.domain.ImageInfo;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
-import com.ime.lockmanager.major.application.port.in.MajorUseCase;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
-import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -129,20 +124,20 @@ class LockerService implements LockerUseCase {
                         lockerDetail ->
                                 LockerDetailInfo.builder()
                                         .locker_num(lockerDetail.getLockerNum())
-                                        .lockerDetailStatus(lockerDetail.getLockerDetailStatus())
+                                        .status(lockerDetail.getLockerDetailStatus())
                                         .column_num(lockerDetail.getColumn_num())
                                         .row_num(lockerDetail.getRow_num())
+                                        .id(lockerDetail.getId())
                                         .build()
-
                 ).collect(Collectors.toList());
     }
 
     private static LockersInfoInMajorDto getLockersInfoInMajorDto(Locker locker) {
         return LockersInfoInMajorDto.builder()
-                .lockerId(locker.getId())
+                .id(locker.getId())
                 .endReservationTime(locker.getPeriod().getEndDateTime())
                 .startReservationTime(locker.getPeriod().getStartDateTime())
-                .lockerName(locker.getName())
+                .name(locker.getName())
                 .totalColumn(locker.getTotalColumn())
                 .totalRow(locker.getTotalRow())
                 .permitTiers(locker.getPermitUserTier())
