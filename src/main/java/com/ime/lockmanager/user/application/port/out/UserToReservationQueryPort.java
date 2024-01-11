@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserToReservationQueryPort {
     UserInfoQueryResponseDto findUserInfoWithLockerNumByStudentNum(String studentNum);
-    Page<User> findAllOrderByStudentNumAsc(Major major, Pageable pageable);
+    Page<User> findAllByMajorASC(Major major,String search, Pageable pageable);
 }

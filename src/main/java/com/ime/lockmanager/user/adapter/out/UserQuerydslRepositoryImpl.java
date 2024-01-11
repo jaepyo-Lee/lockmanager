@@ -20,6 +20,7 @@ import java.util.List;
 
 import static com.ime.lockmanager.locker.domain.locker.QLocker.locker;
 import static com.ime.lockmanager.locker.domain.lockerdetail.QLockerDetail.lockerDetail;
+import static com.ime.lockmanager.major.domain.QMajorDetail.majorDetail;
 import static com.ime.lockmanager.reservation.domain.QReservation.reservation;
 import static com.ime.lockmanager.user.domain.MembershipState.APPLYING;
 import static com.ime.lockmanager.user.domain.QUser.user;
@@ -48,12 +49,19 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, U
     }
 
     @Override
-    public Page<User> findAllOrderByStudentNumAsc(Major userMajor, Pageable pageable) {
+    public Page<User> findAllByMajorASC(Major userMajor,String search, Pageable pageable) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(search != null) {
+            builder.and(user.name.eq(search).or(user.studentNum.eq(search)));
+        }
+
         List<User> userInfos = jpaQueryFactory.selectFrom(user)
                 .orderBy(user.studentNum.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(user.majorDetail.major.eq(userMajor))
+                .where(builder)
                 .fetch();
         int total = jpaQueryFactory
                 .selectFrom(user)
