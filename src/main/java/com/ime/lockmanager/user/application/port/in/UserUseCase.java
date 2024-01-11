@@ -2,6 +2,7 @@ package com.ime.lockmanager.user.application.port.in;
 
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
 import com.ime.lockmanager.user.application.port.in.req.DetermineApplyingRequestDto;
+import com.ime.lockmanager.user.application.port.in.req.FindAllUserRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.ModifiedUserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.req.UserInfoRequestDto;
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageResponseDto;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public interface UserUseCase {
     UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
 
-    Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum,int page);
+    Page<AllUserInfoForAdminResponseDto> findAllUserInfo(FindAllUserRequestDto requestDto);
 
     void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception;
 

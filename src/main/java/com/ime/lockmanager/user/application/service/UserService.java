@@ -1,7 +1,9 @@
 package com.ime.lockmanager.user.application.service;
 
+import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
+import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
@@ -47,6 +49,7 @@ class UserService implements UserUseCase {
     private final UserToReservationQueryPort userToReservationQueryPort;
     private final UserMembershipQueryPort userMembershipQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
+    private final MajorQueryPort majorQueryPort;
     private final int PAGE_SIZE = 30;
 
     @Override
@@ -157,12 +160,11 @@ class UserService implements UserUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(String adminUserStudentNum, int page) {
-        User adminUser = userQueryPort.findByStudentNum(adminUserStudentNum)
-                .orElseThrow(NotFoundUserException::new);
-        Major adminMajor = adminUser.getMajorDetail().getMajor();
+    public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(FindAllUserRequestDto requestDto) {
+        Major major = majorQueryPort.findById(requestDto.getMajorId())
+                .orElseThrow(NotFoundMajorDetailException::new);//예외 따로 처리해야함
         Page<User> allUser = userToReservationQueryPort
-                .findAllOrderByStudentNumAsc(adminMajor, PageRequest.of(page, PAGE_SIZE));
+                .findAllByMajorASC(major,requestDto.getSearch(), PageRequest.of(requestDto.getPage(), PAGE_SIZE));
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {

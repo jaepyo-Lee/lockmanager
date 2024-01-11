@@ -7,6 +7,7 @@ import com.ime.lockmanager.user.adapter.in.res.AllApplyingStudentPageResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminPageResponse;
 import com.ime.lockmanager.user.adapter.in.res.UserTierResponse;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
+import com.ime.lockmanager.user.application.port.in.req.FindAllUserRequestDto;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.admin.prefix}/users")
+@RequestMapping("${api.admin.prefix}")
 class UserAdminController {
 
     private final UserUseCase userUseCase;
@@ -39,11 +40,13 @@ class UserAdminController {
             , required = true
             , dataType = "int"
             , defaultValue = "0")
-    @GetMapping("")
+    @GetMapping("/majors/{majorId}/users")
     public SuccessResponse<UserInfoAdminPageResponse> adminInfo(@ApiIgnore Authentication authentication,
+                                                                @PathVariable Long majorId,
                                                                 @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                @RequestParam(name = "serach") String search) {
-        Page<AllUserInfoForAdminResponseDto> allUserInfo = userUseCase.findAllUserInfo(authentication.getName(), page);
+                                                                @RequestParam(name = "search",required = false) String search) {
+        Page<AllUserInfoForAdminResponseDto> allUserInfo = userUseCase.findAllUserInfo(FindAllUserRequestDto
+                .of(majorId, search, page));
         return new SuccessResponse(
                 UserInfoAdminPageResponse.builder()
                         .adminResponse(allUserInfo.stream()
@@ -60,7 +63,7 @@ class UserAdminController {
     @ApiOperation(
             value = "수정된 사용자의 정보를 받아 실제 dB에 업데이트해주는 API(관리자용)"
     )
-    @PatchMapping("")
+    @PatchMapping("/users")
     public SuccessResponse modifiedUserInfo(@ApiIgnore Principal principal,
                                             @Valid @RequestBody ModifiedUserInfoRequest modifiedUserInfoRequest)
             throws Exception {
@@ -76,7 +79,7 @@ class UserAdminController {
             , dataType = "int"
             , defaultValue = "0")
     @ApiOperation(value = "학생회비 납부 신청자 조회")
-    @GetMapping("/tier/apply")
+    @GetMapping("/users/tier/apply")
     public SuccessResponse<AllApplyingStudentPageResponse> findAllApplyingStudent(@ApiIgnore Authentication authentication,
                                                                                   @RequestParam(name = "page",
                                                                                           defaultValue = "0") int page) {
@@ -91,7 +94,7 @@ class UserAdminController {
             , value = "학생회비 납부 승인 또는 거절하기 위한 boolean값"
             , required = true
             , dataType = "boolean")
-    @PostMapping("/tier/apply")
+    @PostMapping("/users/tier/apply")
     public SuccessResponse<UserTierResponse> determineApplying(@ApiIgnore Authentication authentication,
                                                                @Valid @RequestBody DetermineApplyingRequest request,
                                                                @RequestParam(name = "isApprove") boolean isApprove) {
