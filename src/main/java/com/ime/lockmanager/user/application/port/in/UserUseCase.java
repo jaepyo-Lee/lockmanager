@@ -16,15 +16,18 @@ import org.springframework.data.domain.Page;
 import java.util.Optional;
 
 public interface UserUseCase {
+    /**
+     *
+     * @param userRequestDto
+     * @return
+     */
     UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
-
     Page<AllUserInfoForAdminResponseDto> findAllUserInfo(FindAllUserRequestDto requestDto);
+
 
     void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception;
 
     void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
-
-    User findByStudentNum(String studentNum);
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 
