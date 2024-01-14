@@ -3,9 +3,9 @@ package com.ime.lockmanager.user.application.service;
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
-import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -43,9 +43,7 @@ import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 @Transactional
 @Service
 class UserService implements UserUseCase {
-    private final RedissonLockReservationFacade reservationFacade;
     private final UserQueryPort userQueryPort;
-    private final ReservationUseCase reservationUseCase;
     private final UserToReservationQueryPort userToReservationQueryPort;
     private final UserMembershipQueryPort userMembershipQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
@@ -164,7 +162,7 @@ class UserService implements UserUseCase {
         Major major = majorQueryPort.findById(requestDto.getMajorId())
                 .orElseThrow(NotFoundMajorDetailException::new);//예외 따로 처리해야함
         Page<User> allUser = userToReservationQueryPort
-                .findAllByMajorASC(major,requestDto.getSearch(), PageRequest.of(requestDto.getPage(), PAGE_SIZE));
+                .findAllByMajorASC(major, requestDto.getSearch(), PageRequest.of(requestDto.getPage(), PAGE_SIZE));
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {
@@ -184,7 +182,6 @@ class UserService implements UserUseCase {
         Reservation findReservation = user.getReservation().stream()
                 .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
                 .findFirst().orElse(null);
-
         UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder userInfoQueryResponseDtoBuilder = UserInfoQueryResponseDto.builder()
                 .majorDetail(user.getMajorDetail().getName())
                 .studentNum(user.getStudentNum())
@@ -199,16 +196,15 @@ class UserService implements UserUseCase {
 
     private void setReservationDetails(UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder builder, Reservation reservation) {
         if (reservation != null) {
-            builder.lockerName(reservation.getLockerDetail().getLocker().getName())
-                    .lockerNum(reservation.getLockerDetail().getLockerNum());
+            LockerDetail lockerDetail = reservation.getLockerDetail();
+            builder.lockerName(lockerDetail.getLocker().getName())
+                    .lockerDetailNum(lockerDetail.getLockerNum()).lockerDetailId(lockerDetail.getId());
+
         } else {
-            builder.lockerNum(null).lockerName(null);
+            builder
+                    .lockerDetailNum(null)
+                    .lockerName(null)
+                    .lockerDetailId(null);
         }
-    }
-
-
-    @Override
-    public User findByStudentNum(String studentNum) {
-        return userQueryPort.findByStudentNum(studentNum).orElseThrow(NotFoundUserException::new);
     }
 }
