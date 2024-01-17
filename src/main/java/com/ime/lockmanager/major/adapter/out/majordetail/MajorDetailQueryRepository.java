@@ -12,6 +12,12 @@ import java.util.Optional;
 @Repository
 public class MajorDetailQueryRepository implements MajorDetailQueryPort {
     private final MajorDetailRepository majorDetailRepository;
+
+    @Override
+    public void deleteAll() {
+        majorDetailRepository.deleteAll();
+    }
+
     @Override
     public Optional<MajorDetail> findByNameWithMajor(String majorName) {
         return majorDetailRepository.findByNameWithMajor(majorName);

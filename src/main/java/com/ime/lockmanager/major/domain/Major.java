@@ -25,7 +25,7 @@ public class Major extends BaseTimeEntity {
                 .build();
     }
 
-    public String changeRepresentName(String modifiedRepresentName) {
+    public String changeName(String modifiedRepresentName) {
         this.name = modifiedRepresentName;
         return name;
     }
