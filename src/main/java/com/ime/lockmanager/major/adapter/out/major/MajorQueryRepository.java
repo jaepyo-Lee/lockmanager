@@ -15,4 +15,14 @@ public class MajorQueryRepository implements MajorQueryPort {
     public Optional<Major> findById(Long majorId) {
         return majorRepository.findById(majorId);
     }
+
+    @Override
+    public Major save(Major major) {
+        return majorRepository.save(major);
+    }
+
+    @Override
+    public Optional<Major> findByName(String name) {
+        return majorRepository.findByName(name);
+    }
 }

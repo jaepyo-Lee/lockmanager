@@ -7,9 +7,10 @@ import lombok.Getter;
 public class CreateMajorDetailRequest {
     private String majorDetailName;
 
-    public CreateMajorDetailRequestDto toRequestDto(){
+    public CreateMajorDetailRequestDto toRequestDto(Long majorId){
         return CreateMajorDetailRequestDto.builder()
                 .majorDetailName(majorDetailName)
+                .majorId(majorId)
                 .build();
     }
 }

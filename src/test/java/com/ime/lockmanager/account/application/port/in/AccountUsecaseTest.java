@@ -19,7 +19,6 @@ class AccountUsecaseTest {
     @Test
     void findAccountInfo() {
         //given
-        final AccountUsecase accountUsecase=new AccountService();
         //when
 
         //then
