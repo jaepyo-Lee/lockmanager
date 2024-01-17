@@ -19,7 +19,6 @@ public class MajorDetail {
     @Id
     @GeneratedValue
     private Long id;
-
     private String name;
 
     @ManyToOne(fetch = LAZY)

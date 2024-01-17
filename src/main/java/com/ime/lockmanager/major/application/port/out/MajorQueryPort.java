@@ -6,4 +6,8 @@ import java.util.Optional;
 
 public interface MajorQueryPort {
     Optional<Major> findById(Long majorId);
+
+    Major save(Major major);
+
+    Optional<Major> findByName(String name);
 }

@@ -11,4 +11,6 @@ public interface MajorDetailQueryPort {
     List<MajorDetail> findAll();
 
     MajorDetail save(MajorDetail majorDetail);
+
+    List<MajorDetail> findAllByMajorId(Long majorId);
 }
