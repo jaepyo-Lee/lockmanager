@@ -29,4 +29,6 @@ public class LockersInfoInMajorDto {
     private String totalRow;
     @Schema(description = "사물함 전체 열")
     private String totalColumn;
+    @Schema(description = "사물함 이미지")
+    private String image;
 }

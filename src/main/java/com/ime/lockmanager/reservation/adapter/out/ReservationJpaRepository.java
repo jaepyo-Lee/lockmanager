@@ -4,6 +4,7 @@ import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 
     @Query("select R from RESERVATION_TABLE as R where R.lockerDetail.id=:lockerDetailId")
-    List<Reservation> findAllByLockerDetailId(Long lockerDetailId);
+    List<Reservation> findAllByLockerDetailId(@Param(value = "lockerDetailId") Long lockerDetailId);
 
     List<Reservation> findAllByUserStudentNum(String studentNum);
 }
