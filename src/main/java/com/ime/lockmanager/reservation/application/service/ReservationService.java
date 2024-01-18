@@ -152,6 +152,8 @@ public class ReservationService implements ReservationUseCase {
     public void cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
         log.info("{} : 사물함 취소", cancelLockerDto.getUserId());
         User user = userQueryPort.findById(cancelLockerDto.getUserId()).orElseThrow(NotFoundUserException::new);
+        LockerDetail lockerDetail = lockerDetailQueryPort.findById(cancelLockerDto.getLockerDetailId())
+                .orElseThrow(NotFoundLockerException::new);//예외수정해야함
         List<Reservation> allReservations = reservationQueryPort
                 .findAllByUserIdAndLockerDetailId(user.getId(),
                         cancelLockerDto.getLockerDetailId());
@@ -163,6 +165,7 @@ public class ReservationService implements ReservationUseCase {
         }
         Reservation reservation = collect.stream().findFirst().orElseThrow(NotFoundReservationException::new);
         reservation.cancel();
+        lockerDetail.cancel();
     }
 
     public boolean isReservationExistByStudentNum(String studentNum) {//무언가 있다면

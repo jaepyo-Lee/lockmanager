@@ -1,7 +1,6 @@
 package com.ime.lockmanager.reservation.adapter.out;
 
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
-import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.domain.Reservation;
@@ -65,7 +64,7 @@ public class ReservationQueryRepository implements ReservationQueryPort {
                         .user(userJpaEntity)
                         .build()
         );
-        return lockerDetail.changeReserveStatus(LockerDetailStatus.RESERVED);
+        return lockerDetail.reserve();
     }
 
     @Override
