@@ -2,6 +2,8 @@ package com.ime.lockmanager.user.application.port.out.res;
 
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.reservation.domain.Reservation;
+import com.ime.lockmanager.user.adapter.in.res.ReservationInfo;
+import com.ime.lockmanager.user.adapter.in.res.UserInfo;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminResponse;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
@@ -48,21 +50,24 @@ public class AllUserInfoForAdminResponseDto {
 
     public UserInfoAdminResponse toResponse() {
         return UserInfoAdminResponse.builder()
-                .userId(userId)
-                .lockerName(lockerName)
-                .lockerNum(lockerNum)
-                .userTier(userTier)
-                .studentNum(studentNum)
-                .studentName(name)
-                .role(role)
-                .status(status)
+                .userInfo(UserInfo.builder()
+                        .userId(userId)
+                        .userTier(userTier)
+                        .studentNum(studentNum)
+                        .studentName(name)
+                        .role(role)
+                        .status(status)
+                        .build())
+                .reservationInfo(ReservationInfo.builder()
+                        .lockerName(lockerName)
+                        .lockerNum(lockerNum)
+                        .build())
                 .build();
     }
 
     public static AllUserInfoForAdminResponseDto of(User user, Optional<Reservation> reservation) {
-        String lockerNum = reservation.orElse(null).getLockerDetail().getLockerNum();
-        String lockerName = reservation.orElse(null).getLockerDetail().getLocker().getName();
-
+        String lockerNum = reservation.map(r -> r.getLockerDetail().getLockerNum()).orElse(null);
+        String lockerName = reservation.map(r -> r.getLockerDetail().getLocker().getName()).orElse(null);
         return AllUserInfoForAdminResponseDto.builder()
                 .userId(user.getId())
                 .studentNum(user.getStudentNum())
