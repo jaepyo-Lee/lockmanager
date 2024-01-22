@@ -18,9 +18,9 @@ public class AccountController {
 
     @ApiOperation(value = "계좌 조회 api",
             notes = "[일반용] 계좌 정보를 조회하는 api 입니다.")
-    @GetMapping("/users/{userId}/majors/accounts")
+    @GetMapping("/majors/{majorId}/accounts")
     public SuccessResponse<AccountInfoResponse> findAccountInfo(@ApiIgnore Authentication authentication,
-                                                                @PathVariable Long userId) {
-        return new SuccessResponse(accountUsecase.findAccountInfo(userId).toResponse());
+                                                                @PathVariable Long majorId) {
+        return new SuccessResponse(accountUsecase.findAccountInfo(majorId).toResponse());
     }
 }

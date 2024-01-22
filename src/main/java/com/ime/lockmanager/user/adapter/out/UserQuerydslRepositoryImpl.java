@@ -69,30 +69,4 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, U
                 .fetch().size();
         return new PageImpl<>(userInfos, pageable, total);
     }
-
-    @Override
-    public UserInfoQueryResponseDto findUserInfoWithLockerNumByStudentNum(String studentNum) {
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (studentNum != null) {
-            builder.and(user.studentNum.eq(studentNum));
-        }
-
-        UserInfoQueryResponseDto userInfoQueryResponseDto = jpaQueryFactory
-                .select(Projections
-                        .constructor(
-                                UserInfoQueryResponseDto.class,
-                                user.name, user.membership, user.status,
-                                user.studentNum, lockerDetail.lockerNum, locker.name, user.majorDetail.name
-                        )
-                )
-                .from(user)
-                .leftJoin(user.reservation, reservation)
-                .leftJoin(reservation.lockerDetail, lockerDetail)
-                .leftJoin(lockerDetail.locker, locker)
-                .where(builder)
-                .fetchOne();
-        System.out.println(userInfoQueryResponseDto.toString());
-        return userInfoQueryResponseDto;
-    }
 }

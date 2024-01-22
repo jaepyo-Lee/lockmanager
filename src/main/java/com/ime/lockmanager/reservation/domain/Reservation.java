@@ -24,26 +24,12 @@ public class Reservation extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "locker_id")
-    private Locker locker;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_detail_id")
     private LockerDetail lockerDetail;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private ReservationStatus reservationStatus = RESERVED;
-
-    public void changeReservationStatus(ReservationStatus reservationStatus) {
-        this.reservationStatus = reservationStatus;
-    }
-    public void cancel(){
-        this.reservationStatus = ReservationStatus.CANCEL;
-    }
 }

@@ -22,7 +22,8 @@ public class AdminReservationController {
     @ApiOperation(
             value = "사물함 예약 전체취소",
             notes = "사물함 초기화(eg. 학기초 및 롤백)의 경우 예약된 모든 사물함을 초기화하는 API, " +
-                    "사물함 데이터를 남기기위해 삭제하는것이 아닌 ENUM수정으로 취소 표현"
+                    "사물함 데이터를 남기기위해 삭제하는것이 아닌 ENUM수정으로 취소 표현" +
+                    "예약 마감날짜에 자동 초기화로 수정 예정 사용하지 말기"
     )
     @PostMapping("/locker/{lockerId}/reservations")
     public SuccessResponse resetLocker(@PathVariable Long lockerId, @ApiIgnore Principal principal){

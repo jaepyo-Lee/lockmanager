@@ -11,8 +11,6 @@ public interface LockerQueryPort {
 
     List<Locker> findAll();
 
-    List<Long> findNotReservedLockerId();
-
     void deleteAll();
 
     Locker save(Locker locker);
@@ -20,6 +18,4 @@ public interface LockerQueryPort {
     List<Locker> findLockerByUserMajor(Major major);
     List<Locker> findByMajorId(Long majorId);
 
-
-    Locker findByName(String lockerName);
 }

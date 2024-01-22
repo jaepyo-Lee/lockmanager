@@ -13,6 +13,11 @@ import java.util.Optional;
 public class AccountQueryRepository implements AccountQueryPort {
     private final AccountRepository accountRepository;
     @Override
+    public Optional<Account> findByMajorId(Long majorId) {
+        return accountRepository.findByMajorId(majorId);
+    }
+
+    @Override
     public Optional<Account> findByMajor(Major major) {
         return accountRepository.findByMajor(major);
     }

@@ -11,11 +11,9 @@ public interface ReservationUseCase {
     LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
     LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
 
-    ReservationOfLockerResponseDto findReservedLockers();
 
     void resetReservation(Long lockerId);
 
     void cancelLockerByStudentNum(UserCancelLockerRequestDto build);
 
-    boolean isReservationExistByStudentNum(String studentNum);
 }

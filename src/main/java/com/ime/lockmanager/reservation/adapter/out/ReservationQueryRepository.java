@@ -18,18 +18,18 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
-    public List<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long lockerDetailId) {
-        return reservationJpaRepository.findAllByUserIdAndLockerDetailId(studentNum,lockerDetailId);
+    public void deleteById(Long id) {
+        reservationJpaRepository.deleteById(id);
     }
 
     @Override
-    public List<Reservation> findAllByStudentNum(String studentNum) {
-        return reservationJpaRepository.findAllByUserStudentNum(studentNum);
+    public Optional<Reservation> findByUserId(Long userId) {
+        return reservationJpaRepository.findByUserId(userId);
     }
 
     @Override
-    public List<Reservation> findAllByLockerDetailId(Long lockerDetailId) {
-        return reservationJpaRepository.findAllByLockerDetailId(lockerDetailId);
+    public Optional<Reservation> findAllByUserIdAndLockerDetailId(Long userId, Long lockerDetailId) {
+        return reservationJpaRepository.findAllByUserIdAndLockerDetailId(userId, lockerDetailId);
     }
 
     @Override
@@ -38,23 +38,8 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     }
 
     @Override
-    public Optional<Reservation> findByStudentNumAndLockerDetailId(String studentNum, Long lockerDetailId) {
-        return reservationJpaRepository.findByUserStudentNumAndLockerDetailId(studentNum, lockerDetailId);
-    }
-
-    @Override
-    public void deleteByStudentNum(DeleteReservationByStudentNumDto deleteReservationByStudentNumDto) {
-        reservationJpaRepository.deleteByUserStudentNum(deleteReservationByStudentNumDto.getStudentNum());
-    }
-
-    @Override
     public Optional<Reservation> findReservationByStudentNum(String studentNum) {
         return reservationJpaRepository.findByUserStudentNum(studentNum);
-    }
-
-    @Override
-    public List<Long> findReservedLockers() {
-        return reservationJpaRepository.findAllIds();
     }
 
     @Override

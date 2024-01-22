@@ -43,11 +43,6 @@ public class Locker extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "major_id")
     private Major major;
-    //===================//
-    @Schema(name = "사물함의 예약현황")
-    @OneToOne(mappedBy = "locker", fetch = LAZY)
-    private Reservation reservation;
-    //===================//
 
     private String imageUrl;
     private String totalRow;

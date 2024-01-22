@@ -12,17 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationJpaRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long LockerDetailId);
+    Optional<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long LockerDetailId);
 
     Optional<Reservation> findByUserStudentNumAndLockerDetailId(String studentNum, Long LockerDetailId);
 
     Optional<Reservation> findByUserStudentNum(String studentNum);
 
-    Reservation findByLockerId(Long lockerId);
-
-    @Query("select R.locker.id from RESERVATION_TABLE as R")
-    List<Long> findAllIds();
-
+    Optional<Reservation> findByUserId(Long userId);
 
     void deleteByUserStudentNum(String studentNum);
 
@@ -31,8 +27,4 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
     @Query("select R from RESERVATION_TABLE as R where R.lockerDetail in (:lockerDetailsByLocker)")
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 
-    @Query("select R from RESERVATION_TABLE as R where R.lockerDetail.id=:lockerDetailId")
-    List<Reservation> findAllByLockerDetailId(@Param(value = "lockerDetailId") Long lockerDetailId);
-
-    List<Reservation> findAllByUserStudentNum(String studentNum);
 }
