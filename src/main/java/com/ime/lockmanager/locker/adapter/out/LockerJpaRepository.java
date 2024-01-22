@@ -16,9 +16,6 @@ public interface LockerJpaRepository extends JpaRepository<Locker,Long> {
     @Override
     List<Locker> findAll();
 
-    @Query("select L.id From LOCKER_TABLE L left join L.reservation as R where R.id=null")
-    List<Long> findNotReservationLocker();
-
 
     @Query("select L from LOCKER_TABLE as L join fetch L.major as M where M=:major")
     List<Locker> findLockerByUserMajor(@Param("major")Major major);

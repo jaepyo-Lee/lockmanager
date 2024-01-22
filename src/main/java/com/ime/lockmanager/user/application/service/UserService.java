@@ -1,11 +1,13 @@
 package com.ime.lockmanager.user.application.service;
 
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
+import com.ime.lockmanager.common.format.exception.reservation.NotFoundReservationException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
+import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
@@ -48,6 +50,7 @@ class UserService implements UserUseCase {
     private final UserMembershipQueryPort userMembershipQueryPort;
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final MajorQueryPort majorQueryPort;
+    private final ReservationQueryPort reservationQueryPort;
     private final int PAGE_SIZE = 30;
 
     @Override
@@ -166,7 +169,8 @@ class UserService implements UserUseCase {
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
         for (User user : allUser) {
-            AllUserInfoForAdminResponseDto userInfo = AllUserInfoForAdminResponseDto.of(user);
+            Optional<Reservation> reservation = reservationQueryPort.findByUserId(user.getId());
+            AllUserInfoForAdminResponseDto userInfo = AllUserInfoForAdminResponseDto.of(user,reservation);
             userPageList.add(userInfo);
         }
         PageImpl<AllUserInfoForAdminResponseDto> userPage = new PageImpl<>(userPageList, pageRequest, userPageList.size());
@@ -179,9 +183,7 @@ class UserService implements UserUseCase {
         User user = userQueryPort.findByIdWithMajorDetailWithMajor(userRequestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
 //        findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
-        Reservation findReservation = user.getReservation().stream()
-                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
-                .findFirst().orElse(null);
+        Optional<Reservation> reservation = reservationQueryPort.findByUserId(user.getId());
         UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder userInfoQueryResponseDtoBuilder = UserInfoQueryResponseDto.builder()
                 .majorDetail(user.getMajorDetail().getName())
                 .studentNum(user.getStudentNum())
@@ -189,13 +191,15 @@ class UserService implements UserUseCase {
                 .userState(user.getUserState())
                 .name(user.getName());
 
-        setReservationDetails(userInfoQueryResponseDtoBuilder, findReservation);
+        setReservationDetails(userInfoQueryResponseDtoBuilder, reservation);
 
         return userInfoQueryResponseDtoBuilder.build();
     }
 
-    private void setReservationDetails(UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder builder, Reservation reservation) {
-        if (reservation != null) {
+    private void setReservationDetails(UserInfoQueryResponseDto.UserInfoQueryResponseDtoBuilder builder,
+                                       Optional<Reservation> findReservation) {
+        if (findReservation.isPresent()) {
+            Reservation reservation = findReservation.get();
             LockerDetail lockerDetail = reservation.getLockerDetail();
             builder.lockerName(lockerDetail.getLocker().getName())
                     .lockerDetailNum(lockerDetail.getLockerNum()).lockerDetailId(lockerDetail.getId());

@@ -8,7 +8,9 @@ import com.ime.lockmanager.account.application.port.out.AccountQueryPort;
 import com.ime.lockmanager.account.domain.Account;
 import com.ime.lockmanager.account.domain.dto.ModifyAccountDto;
 import com.ime.lockmanager.common.format.exception.account.NotFoundAccountException;
+import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
+import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
@@ -23,16 +25,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class AccountService implements AccountUsecase {
-    private final UserQueryPort userQueryPort;
+    private final MajorQueryPort majorQueryPort;
     private final AccountQueryPort accountQueryPort;
 
     @Transactional(readOnly = true)
     @Override
-    public AccountInfoResponseDto findAccountInfo(Long userId) {
-        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userId).orElseThrow(NotFoundUserException::new);
-//                userUseCase. findByStudentNumWithMajorDetailWithMajor(studentNum)
-        Major major = user.getMajorDetail().getMajor();
-        Account account = accountQueryPort.findByMajor(major)
+    public AccountInfoResponseDto findAccountInfo(Long majorId) {
+        Account account = accountQueryPort.findByMajorId(majorId)
                 .orElseThrow(NotFoundAccountException::new); //예외처리해야함
         return AccountInfoResponseDto.builder()
                 .accountNum(account.getNumber())
@@ -43,14 +42,11 @@ public class AccountService implements AccountUsecase {
 
 
     @Override
-    public SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(Long userId,
+    public SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(Long majorId,
                                                                   SaveOrModifyAccountRequestDto saveOrModifyAccountRequestDto) {
 
         Account saveOrModifiedAccount = null;
-        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userId)
-                .orElseThrow(NotFoundUserException::new);
-//        userUseCase findByStudentNumWithMajorDetailWithMajor(studentNum)
-        Major major = user.getMajorDetail().getMajor();
+        Major major = majorQueryPort.findById(majorId).orElseThrow(NotFoundMajorDetailException::new);//예외 수정해야함
         Optional<Account> findAccount = accountQueryPort.findByMajor(major);
 
 

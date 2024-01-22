@@ -1,5 +1,7 @@
 package com.ime.lockmanager.user.application.port.out.res;
 
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
+import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.adapter.in.res.UserInfoAdminResponse;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
@@ -8,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
 
@@ -55,7 +59,10 @@ public class AllUserInfoForAdminResponseDto {
                 .build();
     }
 
-    public static AllUserInfoForAdminResponseDto of(User user){
+    public static AllUserInfoForAdminResponseDto of(User user, Optional<Reservation> reservation) {
+        String lockerNum = reservation.orElse(null).getLockerDetail().getLockerNum();
+        String lockerName = reservation.orElse(null).getLockerDetail().getLocker().getName();
+
         return AllUserInfoForAdminResponseDto.builder()
                 .userId(user.getId())
                 .studentNum(user.getStudentNum())
@@ -63,18 +70,8 @@ public class AllUserInfoForAdminResponseDto {
                 .role(user.getRole())
                 .userTier(user.getUserTier())
                 .name(user.getName())
-                .lockerName(user.getReservation().stream()
-                        .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
-                        .findFirst()
-                        .map(reservation -> reservation.getLockerDetail().getLocker().getName())
-                        .orElse(null)
-                )
-                .lockerNum(
-                        user.getReservation().stream()
-                                .filter(reservation -> reservation.getReservationStatus().equals(RESERVED))
-                                .findFirst()
-                                .map(reservation -> reservation.getLockerDetail().getLockerNum())
-                                .orElse(null)
-                ).build();
+                .lockerName(lockerName)
+                .lockerNum(lockerNum)
+                .build();
     }
 }

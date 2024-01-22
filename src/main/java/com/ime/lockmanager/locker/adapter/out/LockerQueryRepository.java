@@ -40,19 +40,10 @@ public class LockerQueryRepository implements LockerQueryPort {
         return lockerJpaRepository.findAll();
     }
 
-    @Override
-    public List<Long> findNotReservedLockerId() {
-        List<Long> notReservationLockerId = lockerJpaRepository.findNotReservationLocker();
-        return notReservationLockerId;
-    }
 
     @Override
     public List<Locker> findLockerByUserMajor(Major major) {
         return lockerJpaRepository.findLockerByUserMajor(major);
     }
 
-    @Override
-    public Locker findByName(String lockerName) {
-        return lockerJpaRepository.findByName(lockerName);
-    }
 }

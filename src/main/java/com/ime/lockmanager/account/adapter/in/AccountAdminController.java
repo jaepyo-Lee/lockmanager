@@ -20,11 +20,11 @@ public class AccountAdminController {
 
     @ApiOperation(value = "계좌를 저장 및 수정 api",
             notes = "[관리자용] 계좌가 존재하지 않는다면 저장하고, 존재한다면 수정하는 api입니다.")
-    @PostMapping("/users/{userId}/majors/accounts")
+    @PostMapping("/majors/{majorId}/accounts")
     public SuccessResponse<SaveOrModifyAccountResponseDto> saveOrModifyAccountInfo(@ApiIgnore Authentication authentication,
-                                                                                   @PathVariable Long userId,
+                                                                                   @PathVariable Long majorId,
                                                                                    @Valid @RequestBody ModifyAccountRequest modifyAccountRequest) {
         return new SuccessResponse<>(accountUsecase.saveOrModifyAccountInfo(
-                userId, modifyAccountRequest.toRequestDto()));
+                majorId, modifyAccountRequest.toRequestDto()));
     }
 }

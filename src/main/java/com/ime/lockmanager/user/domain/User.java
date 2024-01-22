@@ -46,10 +46,6 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
     private boolean membership;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user",fetch = LAZY)
-    private List<Reservation> reservation=new ArrayList<>();
     private String grade;
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "major_detail_id")

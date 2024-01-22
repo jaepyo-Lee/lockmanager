@@ -25,14 +25,6 @@ public interface UserJpaRepository extends JpaRepository<User,Long>{
     @Override
     Page<User> findAll(Pageable pageable);
 
-    @Query("select u.studentNum,u.name,u.membership from USER_TABLE u left join u.reservation ORDER BY u.studentNum ASC")
-    Page<UserInfoQueryResponseDto> findAllOrderByStudentNumAsc(Pageable pageable);
-
-    /*@Query("select " +
-            "new com.ime.lockmanager.user.application.port.out.res.UserInfoWithLockerIdResponseDto(U.studentNum,U.name,U.membership,R.locker.id) " +
-            "from  USER_TABLE as U join U.reservation AS R ON U.Id=R.user.Id where U.studentNum=:studentNum")
-    List<UserInfoWithLockerIdResponseDto> findUserInfoWithReservationByStudentNum(@Param("studentNum") String studentNum);*/
-
     @Query("select U from USER_TABLE as U join fetch U.majorDetail as MD join fetch MD.major where U.studentNum = :studentNum")
     Optional<User> findByStudentNumWithMajorDetailWithMajor(@Param("studentNum") String studentNum);
 
