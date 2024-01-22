@@ -45,7 +45,6 @@ public class User extends BaseTimeEntity {
     @Enumerated(STRING)
     @Column(nullable = false)
     private Role role;
-    private boolean membership;
     private String grade;
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "major_detail_id")
