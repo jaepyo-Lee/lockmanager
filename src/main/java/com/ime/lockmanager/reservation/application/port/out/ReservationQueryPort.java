@@ -14,8 +14,6 @@ public interface ReservationQueryPort {
 
     Long registerLocker(User userJpaEntity, LockerDetail lockerDetail);
 
-    Optional<Reservation> findReservationByStudentNum(String studentNum);
-
     void deleteAll();
 
     Optional<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long lockerDetailId);

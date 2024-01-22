@@ -1,7 +1,6 @@
 package com.ime.lockmanager.reservation.adapter.out;
 
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
-import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus;
 import com.ime.lockmanager.reservation.adapter.out.dto.DeleteReservationByStudentNumDto;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.domain.Reservation;
@@ -36,12 +35,6 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     public List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker) {
         return reservationJpaRepository.findAllByLockerDetails(lockerDetailsByLocker);
     }
-
-    @Override
-    public Optional<Reservation> findReservationByStudentNum(String studentNum) {
-        return reservationJpaRepository.findByUserStudentNum(studentNum);
-    }
-
     @Override
     public Long registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
         reservationJpaRepository.save(
@@ -50,7 +43,7 @@ public class ReservationQueryRepository implements ReservationQueryPort {
                         .user(userJpaEntity)
                         .build()
         );
-        return lockerDetail.changeReserveStatus(LockerDetailStatus.RESERVED);
+        return lockerDetail.reserve();
     }
 
     @Override

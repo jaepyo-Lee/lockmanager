@@ -137,10 +137,6 @@ public class ReservationService implements ReservationUseCase {
                 .findAllByUserIdAndLockerDetailId(user.getId(),
                         cancelLockerDto.getLockerDetailId()).orElseThrow(NotFoundReservationException::new);
         reservationQueryPort.deleteById(reservation.getId());
-    }
 
-    public boolean isReservationExistByStudentNum(String studentNum) {//무언가 있다면
-        return !reservationQueryPort.findReservationByStudentNum(studentNum)
-                .isEmpty();
     }
 }
