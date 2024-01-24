@@ -7,6 +7,7 @@ import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestD
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
+import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.reservation.domain.Reservation;
@@ -51,6 +52,7 @@ class UserService implements UserUseCase {
     private final RedissonLockReservationFacade redissonLockReservationFacade;
     private final MajorQueryPort majorQueryPort;
     private final ReservationQueryPort reservationQueryPort;
+    private final ReservationUseCase reservationUseCase;
     private final int PAGE_SIZE = 30;
 
     @Override
@@ -123,10 +125,12 @@ class UserService implements UserUseCase {
             User user = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
             if (modifiedUserInfo.getLockerDetailId() != null) {
-                redissonLockReservationFacade.registerForAdmin(LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
-                        .userId(user.getId())
-                        .lockerDetailId(modifiedUserInfo.getLockerDetailId())
-                        .build());
+                reservationUseCase.registerForAdmin(
+                        LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
+                                .userId(user.getId())
+                                .lockerDetailId(modifiedUserInfo.getLockerDetailId())
+                                .build()
+                );
             }
             if (modifiedUserInfo.getAdmin() != null) {
                 user.changeAdmin(modifiedUserInfo.getAdmin().booleanValue());

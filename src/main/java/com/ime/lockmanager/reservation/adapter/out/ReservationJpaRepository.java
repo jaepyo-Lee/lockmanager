@@ -12,7 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationJpaRepository extends JpaRepository<Reservation, Long> {
-    Optional<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long LockerDetailId);
+    @Query("select R from RESERVATION_TABLE AS R join fetch R.lockerDetail " +
+            "where R.user.id=:userId and R.lockerDetail.id=:lockerDetailId")
+    Optional<Reservation> findAllByUserIdAndLockerDetailId(@Param(value = "userId") Long userId,
+                                                           @Param(value = "lockerDetailId") Long lockerDetailId);
 
     Optional<Reservation> findByUserStudentNumAndLockerDetailId(String studentNum, Long LockerDetailId);
 

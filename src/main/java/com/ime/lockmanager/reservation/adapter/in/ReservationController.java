@@ -48,15 +48,13 @@ public class ReservationController {
     )
     @PostMapping("/majors/{majorId}/lockerDetail/{lockerDetailId}/reservations")
     public SuccessResponse<LockerRegisterResponse> registerLocker(
-                                                                  @PathVariable Long userId,
-                                                                  @PathVariable Long lockerDetailId,
-                                                                  @PathVariable Long majorId) throws Exception {
+            @PathVariable Long userId,
+            @PathVariable Long lockerDetailId,
+            @PathVariable Long majorId) throws Exception {
 //        log.info("{} : 시믈함 예약진행", principal.getName());
-        LockerRegisterResponse lockerRegisterResponse =
-                LockerRegisterResponse.fromResponse(
-                        redissonLockReservationFacade.registerForUser(
-                                LockerRegisterRequestDto.of(majorId,userId, lockerDetailId))
-                );
+        LockerRegisterResponse lockerRegisterResponse = LockerRegisterResponse.fromResponse(
+                reservationUseCase.registerForUser(LockerRegisterRequestDto.of(majorId, userId, lockerDetailId))
+        );
         log.info("{} : {}의 {}번 예약완료",
                 lockerRegisterResponse.getStudentNum(),
                 lockerRegisterResponse.getLockerName(),

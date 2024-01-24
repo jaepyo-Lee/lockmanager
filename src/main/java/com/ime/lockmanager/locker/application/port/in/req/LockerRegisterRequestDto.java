@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class LockerRegisterRequestDto {
+
     private Long userId;
     private Long majorId;
     private Long lockerDetailId;
