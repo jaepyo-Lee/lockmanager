@@ -33,7 +33,8 @@ public class LockerDetail extends BaseTimeEntity {
         this.lockerDetailStatus = LockerDetailStatus.RESERVED;
         return id;
     }
-    public void cancel(){
+    public Long cancel(){
         this.lockerDetailStatus = LockerDetailStatus.NON_RESERVED;
+        return this.id;
     }
 }

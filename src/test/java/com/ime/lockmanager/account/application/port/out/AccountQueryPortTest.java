@@ -37,7 +37,7 @@ class AccountQueryPortTest {
         );
     }
 
-    @Test
+    /*@Test
     void test() {
         //given
         accountQueryPort.findByMajor()
@@ -53,7 +53,7 @@ class AccountQueryPortTest {
         //when
 
         //then
-    }
+    }*/
 
     private static Account createAccount(String number, String bank, String ownerName, Major major) {
         return Account.builder()

@@ -40,7 +40,7 @@ public class MembershipFileAdminService implements MembershipFileAdminUseCase {
             Workbook workbook = getWorkbook(inputStream, membershipFile.getOriginalFilename());
 
             User user = getUserById(userId);
-            MajorDetail majorDetail = getMajorDetailByMajorName(user.getMajorDetail().getMajor().getName());
+            MajorDetail majorDetail = user.getMajorDetail();
 
             processExcelData(workbook, majorDetail, user);
         }
