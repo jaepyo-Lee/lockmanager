@@ -6,6 +6,7 @@ import com.ime.lockmanager.common.format.exception.webclient.WebClientAuthServer
 import com.ime.lockmanager.common.webclient.sejong.service.dto.req.SejongMemberRequestDto;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -19,11 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class SejongLoginService {
-    private static List<String> MAJOR_LIST = new ArrayList<>(List.of("스마트기기공학전공", "무인이동체공학전공", "지능기전공학과", "지능기전공학부"));
-
+    @Value("${sejong.login_server}")
+    private String SEJONG_LOGIN_SERVER;
     public SejongMemberResponseDto callSejongMemberDetailApi(SejongMemberRequestDto requestDto) {
         return WebClient.builder()
-                .baseUrl("https://auth.imsejong.com/auth")
+                .baseUrl(SEJONG_LOGIN_SERVER)
                 .build()
                 .post()
                 .uri(uriBuilder -> uriBuilder.queryParam("method", "ClassicSession").build())

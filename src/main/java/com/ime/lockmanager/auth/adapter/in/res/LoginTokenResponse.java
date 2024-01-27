@@ -10,6 +10,7 @@ public class LoginTokenResponse {
     private Role role;
     private Long userId;
     private Long majorId;
+    private String majorName;
     private String accessToken;
     private String refreshToken;
 }

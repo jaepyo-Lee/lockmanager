@@ -16,6 +16,7 @@ import com.ime.lockmanager.common.jwt.TokenSet;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.major.application.port.in.MajorDetailUseCase;
+import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.domain.User;
 import com.ime.lockmanager.user.domain.UserState;
@@ -47,11 +48,17 @@ class AuthService implements AuthUseCase {
     public LoginTokenResponseDto login(LoginRequestDto loginRequestDto) {
         SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
         MajorDetail majorDetail = findByNameWithMajor(getMajorName(sejongMemberResponseDto));
+        Major major = majorDetail.getMajor();
         User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
         updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
         authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
-        return LoginTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken(), user.getRole(), user.getId(),majorDetail.getMajor().getId());
+        return LoginTokenResponseDto.of(tokenSet.getAccessToken(),
+                tokenSet.getRefreshToken(),
+                user.getRole(),
+                user.getId(),
+                major.getId(),
+                major.getName());
     }
 
     private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
