@@ -9,7 +9,7 @@ import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoInMajorDto;
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
-import com.ime.lockmanager.locker.application.port.in.dto.LeftLockerInfo;
+import com.ime.lockmanager.locker.application.port.in.dto.CreatedLockerInfo;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
@@ -49,24 +49,22 @@ class LockerService implements LockerUseCase {
 
     //남은 사물함 목록
     @Override
-    public LeftLockerResponseDto getLeftLocker(Long majorId) {
-//        User user = userUseCase.findByStudentNumWithMajorDetailWithMajor(studentNum)
-//                .orElseThrow(NotFoundUserException::new);
-//        Major major = user.getMajorDetail().getMajor();
-        List<LeftLockerInfo> leftLockerInfos = lockerQueryPort.findByMajorId(majorId).stream()
-                .map(locker -> {
-                    List<String> nonReservedLockerNums = lockerDetailUseCase.findLockerDetailByLocker(locker).stream()
-                            .filter(lockerDetail -> lockerDetail.getLockerDetailStatus().equals(NON_RESERVED))
-                            .map(LockerDetail::getLockerNum)
-                            .collect(Collectors.toList());
-                    return LeftLockerInfo.builder()
-                            .leftLockerName(locker.getName())
-                            .leftLockerNum(nonReservedLockerNums)
-                            .build();
-                })
+    public LeftLockerResponseDto getCreatedLockers(Long majorId) {
+        List<CreatedLockerInfo> createdLockerInfos = lockerQueryPort.findByMajorId(majorId).stream()
+                .map(locker -> CreatedLockerInfo.builder()
+                        .id(locker.getId())
+                        .startReservationTime(locker.getPeriod().getStartDateTime())
+                        .endReservationTime(locker.getPeriod().getEndDateTime())
+                        .totalColumn(locker.getTotalColumn())
+                        .totalRow(locker.getTotalRow())
+                        .permitStates(locker.getPermitUserState())
+                        .image(locker.getImageUrl())
+                        .name(locker.getName())
+                        .permitTiers(locker.getPermitUserTier())
+                        .build())
                 .collect(Collectors.toList());
         return LeftLockerResponseDto.builder()
-                .leftLockerInfo(leftLockerInfos)
+                .createdLockerInfo(createdLockerInfos)
                 .build();
     }
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public interface LockerUseCase {
 
-    LeftLockerResponseDto getLeftLocker(Long majorId);
+    LeftLockerResponseDto getCreatedLockers(Long majorId);
 
     LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, Long majorId) throws IOException;
 
