@@ -26,7 +26,7 @@ class LockerAdminController {
     private final LockerUseCase lockerUseCase;
 
     @ApiOperation(
-            value = "남은 사물함 목록 조회 api"
+            value = "[관리자페이지] 생성된 사물함 정보조회 api"
     )
     @GetMapping("/majors/{majorId}/lockers")
     public SuccessResponse<CreatedLockersInfoResponse> getCreatedLockers(@ApiIgnore Authentication authentication,

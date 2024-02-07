@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Builder
 @Getter
-@Schema(description = "남은 사물함 정보 응답DTO")
+@Schema(description = "생성된 사물함 정보 응답DTO")
 public class CreatedLockerInfo {
     @Schema(description = "사물함Id")
     private Long id;

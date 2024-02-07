@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "남은 사물함 목록 응답DTO")
+@Schema(description = "생성된 사물함 목록 응답DTO")
 public class CreatedLockersInfoResponse {
     private List<CreatedLockerInfo> createdLockerInfo;
 
