@@ -41,6 +41,10 @@ public class LockerCreateRequest {
     @NotNull(message = "학생회비 납부에 따른 사물함 이용제약을 설정해주세요.")
     private List<UserTier> userTiers;
 
-    @Schema(description = "생성할 사물함의 각 칸 정보")
-    private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
+    /*@Schema(description = "생성할 사물함의 각 칸 정보")
+    private List<LockerDetailCreateRequest> lockerDetailCreateRequests;*/
+
+    @Schema(description = "사물함 번호 증가방향")
+    @NotNull(message = "사물함 번호의 증가방향을 설정해주세요")
+    private NumberIncreaseDirection numberIncreaseDirection;
 }

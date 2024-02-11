@@ -18,6 +18,4 @@ public class LockerDetailCreateDto {
     private String rowNum;
 
     private String columnNum;
-
-    private LockerDetailStatus lockerDetailStatus;
 }
