@@ -4,6 +4,7 @@ import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerExceptio
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.file.application.service.ImageFileAdminService;
+import com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection;
 import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoInMajorDto;
@@ -19,6 +20,7 @@ import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
+import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailCreateDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
@@ -33,6 +35,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.DOWN;
+import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.RIGHT;
 import static com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus.NON_RESERVED;
 
 
@@ -167,9 +171,37 @@ class LockerService implements LockerUseCase {
     }
 
     private void createLockerDetail(LockerCreateRequestDto lockerCreateRequestDto, Locker saveLocker) {
-        lockerCreateRequestDto.getLockerDetailCreateRequests().stream().map(lockerDetailCreateRequest ->
-                lockerDetailUseCase.saveLockerDetail(lockerDetailCreateRequest.toCreateDto(saveLocker))
-        ).collect(Collectors.toList());
+        int num = 0;
+        String column = lockerCreateRequestDto.getTotalColumn();
+        String row = lockerCreateRequestDto.getTotalRow();
+
+        int totalColumns = Integer.valueOf(column);
+        int totalRows = Integer.valueOf(row);
+
+        if (lockerCreateRequestDto.getNumberIncreaseDirection().equals(RIGHT)) {
+            generateLockerDetails(saveLocker, num, totalColumns, totalRows);
+        } else {
+            generateLockerDetails(saveLocker, num, totalRows, totalColumns);
+        }
+    }
+
+    private void generateLockerDetails(Locker saveLocker, int num, int loop1Limit, int loop2Limit) {
+        for (int i = 1; i <= loop1Limit; i++) {
+            for (int j = 1; j <= loop2Limit; j++) {
+                saveLockerDetail(++num, i, j, saveLocker);
+            }
+        }
+    }
+
+    private void saveLockerDetail(int num, int rowNum, int columnNum, Locker saveLocker) {
+        lockerDetailUseCase.saveLockerDetail(
+                LockerDetailCreateDto.builder()
+                        .lockerNum(Integer.toString(num))
+                        .rowNum(Integer.toString(rowNum))
+                        .columnNum(Integer.toString(columnNum))
+                        .locker(saveLocker)
+                        .build()
+        );
     }
 
 }

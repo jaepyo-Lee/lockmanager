@@ -3,6 +3,7 @@ package com.ime.lockmanager.locker.application.port.in.req;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ime.lockmanager.locker.adapter.in.req.LockerCreateRequest;
 import com.ime.lockmanager.locker.adapter.in.req.LockerDetailCreateRequest;
+import com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection;
 import com.ime.lockmanager.locker.domain.ImageInfo;
 import com.ime.lockmanager.locker.domain.locker.dto.LockerCreateDto;
 import com.ime.lockmanager.major.domain.Major;
@@ -34,23 +35,19 @@ public class LockerCreateRequestDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endReservationTime;
-    private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
-
+    //    private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
+    private NumberIncreaseDirection numberIncreaseDirection;
     public static LockerCreateRequestDto fromRequest(LockerCreateRequest lockerCreateRequest,MultipartFile image) {
-        return LockerCreateRequestDto.of(lockerCreateRequest,image);
-    }
-
-    private static LockerCreateRequestDto of(LockerCreateRequest lockerCreateRequest,MultipartFile image) {
         return LockerCreateRequestDto.builder()
                 .lockerName(lockerCreateRequest.getLockerName())
                 .totalRow(lockerCreateRequest.getTotalRow())
                 .totalColumn(lockerCreateRequest.getTotalColumn())
                 .startReservationTime(lockerCreateRequest.getStartReservationTime())
                 .endReservationTime(lockerCreateRequest.getEndReservationTime())
-                .lockerDetailCreateRequests(lockerCreateRequest.getLockerDetailCreateRequests())
                 .image(image)
                 .userTiers(lockerCreateRequest.getUserTiers())
                 .userStates(lockerCreateRequest.getUserStates())
+                .numberIncreaseDirection(lockerCreateRequest.getNumberIncreaseDirection())
                 .build();
     }
 
