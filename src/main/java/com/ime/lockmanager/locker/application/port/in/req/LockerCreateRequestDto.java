@@ -46,8 +46,8 @@ public class LockerCreateRequestDto {
                 .endReservationTime(lockerCreateRequest.getEndReservationTime())
                 .image(image)
                 .userTiers(lockerCreateRequest.getUserTiers())
-                .userStates(lockerCreateRequest.getUserStates())
                 .numberIncreaseDirection(lockerCreateRequest.getNumberIncreaseDirection())
+                .userStates(List.of(UserState.ATTEND))
                 .build();
     }
 

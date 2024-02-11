@@ -34,9 +34,9 @@ public class LockerCreateRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "사물함 예약 마감 시간을 설정해주세요.")
     private LocalDateTime endReservationTime;
-    @Schema(description = "생성할 사물함 재학 여부에 따른 허용조건")
+    /*@Schema(description = "생성할 사물함 재학 여부에 따른 허용조건")
     @NotNull(message = "사용자 재학상태에 따른 사물함 이용제약을 설정해주세요.")
-    private List<UserState> userStates;
+    private List<UserState> userStates;*/
     @Schema(description = "생성할 사물함 학생회비 납부 여부에 따른 허용조건")
     @NotNull(message = "학생회비 납부에 따른 사물함 이용제약을 설정해주세요.")
     private List<UserTier> userTiers;

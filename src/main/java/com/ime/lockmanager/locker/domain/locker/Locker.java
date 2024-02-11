@@ -78,6 +78,7 @@ public class Locker extends BaseTimeEntity {
                 .totalRow(lockercreateDto.getTotalRow())
                 .imageUrl(lockercreateDto.getImageUrl())
                 .permitUserTier(Set.copyOf(lockercreateDto.getUserTiers()))
+                .permitUserState(Set.copyOf(lockercreateDto.getUserStates()))
                 .build();
     }
 

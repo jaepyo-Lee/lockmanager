@@ -178,30 +178,32 @@ class LockerService implements LockerUseCase {
         int totalColumns = Integer.valueOf(column);
         int totalRows = Integer.valueOf(row);
 
-        if (lockerCreateRequestDto.getNumberIncreaseDirection().equals(RIGHT)) {
-            generateLockerDetails(saveLocker, num, totalColumns, totalRows);
+        if (lockerCreateRequestDto.getNumberIncreaseDirection().equals(DOWN)) {
+            for (int i = 1; i <= totalColumns; i++) {
+                for (int j = 1; j <= totalRows; j++) {
+                    lockerDetailUseCase.saveLockerDetail(
+                            LockerDetailCreateDto.builder()
+                                    .lockerNum(Integer.toString(++num))
+                                    .rowNum(Integer.toString(j))
+                                    .columnNum(Integer.toString(i))
+                                    .locker(saveLocker)
+                                    .build()
+                    );
+                }
+            }
         } else {
-            generateLockerDetails(saveLocker, num, totalRows, totalColumns);
-        }
-    }
-
-    private void generateLockerDetails(Locker saveLocker, int num, int loop1Limit, int loop2Limit) {
-        for (int i = 1; i <= loop1Limit; i++) {
-            for (int j = 1; j <= loop2Limit; j++) {
-                saveLockerDetail(++num, i, j, saveLocker);
+            for (int i = 1; i <= totalRows; i++) {
+                for (int j = 1; j <= totalColumns; j++) {
+                    lockerDetailUseCase.saveLockerDetail(
+                            LockerDetailCreateDto.builder()
+                                    .lockerNum(Integer.toString(++num))
+                                    .rowNum(Integer.toString(i))
+                                    .columnNum(Integer.toString(j))
+                                    .locker(saveLocker)
+                                    .build()
+                    );
+                }
             }
         }
     }
-
-    private void saveLockerDetail(int num, int rowNum, int columnNum, Locker saveLocker) {
-        lockerDetailUseCase.saveLockerDetail(
-                LockerDetailCreateDto.builder()
-                        .lockerNum(Integer.toString(num))
-                        .rowNum(Integer.toString(rowNum))
-                        .columnNum(Integer.toString(columnNum))
-                        .locker(saveLocker)
-                        .build()
-        );
-    }
-
 }

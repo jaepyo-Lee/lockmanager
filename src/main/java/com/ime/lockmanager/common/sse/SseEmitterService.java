@@ -24,12 +24,19 @@ public class SseEmitterService {
         SseEmitter sseEmitter = createEmitter();
 
         sendEvent(sseEmitter,createInitSseBuilder());    // (3)
+
         Set<SseEmitter> sseEmitters = emitterMap.getOrDefault(lockerSSE, new HashSet<>());    // (4)
-        sseEmitters.add(sseEmitter);
-        emitterMap.put(lockerSSE,sseEmitters);
+
         sseEmitter.onCompletion(() -> {    // (5)
             sseEmitters.remove(sseEmitter);
         });
+        sseEmitter.onTimeout(()->sseEmitters.remove(sseEmitter));
+        sseEmitter.onError((e)->sseEmitters.remove(sseEmitter));
+
+        sseEmitters.add(sseEmitter);
+
+        emitterMap.put(lockerSSE,sseEmitters);
+
         return sseEmitter;
     }
 
