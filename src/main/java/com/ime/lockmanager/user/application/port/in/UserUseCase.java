@@ -31,7 +31,7 @@ public interface UserUseCase {
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 
-    UserTierResponseDto applyMembership(Long userId);
+    void applyMembership(Long userId);
 
     AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page);
 

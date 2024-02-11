@@ -26,7 +26,7 @@ public class LockerCreateRequestDto {
     private String lockerName;
     private String totalRow;
     private String totalColumn;
-    private MultipartFile image;
+    /*private MultipartFile image;*/
     private List<UserState> userStates;
     private List<UserTier> userTiers;
 
@@ -37,21 +37,21 @@ public class LockerCreateRequestDto {
     private LocalDateTime endReservationTime;
     //    private List<LockerDetailCreateRequest> lockerDetailCreateRequests;
     private NumberIncreaseDirection numberIncreaseDirection;
-    public static LockerCreateRequestDto fromRequest(LockerCreateRequest lockerCreateRequest,MultipartFile image) {
+    public static LockerCreateRequestDto fromRequest(LockerCreateRequest lockerCreateRequest/*,MultipartFile image*/) {
         return LockerCreateRequestDto.builder()
                 .lockerName(lockerCreateRequest.getLockerName())
                 .totalRow(lockerCreateRequest.getTotalRow())
                 .totalColumn(lockerCreateRequest.getTotalColumn())
                 .startReservationTime(lockerCreateRequest.getStartReservationTime())
                 .endReservationTime(lockerCreateRequest.getEndReservationTime())
-                .image(image)
+//                .image(image)
                 .userTiers(lockerCreateRequest.getUserTiers())
                 .numberIncreaseDirection(lockerCreateRequest.getNumberIncreaseDirection())
                 .userStates(List.of(UserState.ATTEND))
                 .build();
     }
 
-    public LockerCreateDto toLockerCreateDto(Major major,String imageUrl) {
+    public LockerCreateDto toLockerCreateDto(Major major/*,String imageUrl*/) {
         return LockerCreateDto.builder()
                 .totalRow(this.getTotalRow())
                 .totalColumn(this.getTotalColumn())
@@ -61,7 +61,7 @@ public class LockerCreateRequestDto {
                 .startReservationTime(this.getStartReservationTime())
                 .endReservationTime(this.getEndReservationTime())
                 .major(major)
-                .imageUrl(imageUrl)
+//                .imageUrl(imageUrl)
                 .build();
     }
 }

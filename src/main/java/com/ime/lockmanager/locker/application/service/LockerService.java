@@ -151,15 +151,15 @@ class LockerService implements LockerUseCase {
 
     @Override
     public LockerCreateResponseDto createLocker(LockerCreateRequestDto requestDto, Long majorId) throws IOException {
-        String imageUrl = null;
+        /*String imageUrl = null;
         if (!requestDto.getImage().isEmpty()) { //이미지가 있을때
             imageUrl = imageFileAdminService.saveImageToS3(requestDto.getImage());
-        }
+        }*/
         Major userMajor = majorQueryPort.findById(majorId)
                 .orElseThrow(NotFoundMajorDetailException::new);//에러 새로 만들어야함
         Locker createdLocker = Locker.createLocker(
                 requestDto.toLockerCreateDto(
-                        userMajor, imageUrl
+                        userMajor/*, imageUrl*/
                 )
         );
         Locker saveLocker = lockerQueryPort.save(createdLocker);

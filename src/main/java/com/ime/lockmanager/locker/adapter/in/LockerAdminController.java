@@ -40,13 +40,13 @@ class LockerAdminController {
     )
     @PostMapping("/majors/{majorId}/lockers")
     public SuccessResponse<LockerCreateResponse> createLocker(@ApiIgnore Authentication authentication,
-                                                              @RequestPart(required = false) MultipartFile image,
+//                                                              @RequestPart(required = false) MultipartFile image,
                                                               @PathVariable Long majorId,
-                                                              @Valid @RequestPart LockerCreateRequest lockerCreateRequest) throws IOException {
+                                                              @Valid @RequestBody LockerCreateRequest lockerCreateRequest) throws IOException {
         log.info("{} : 새로운 사물함 생성", authentication.getName());
         String createdLockerName = lockerUseCase.createLocker(
                         LockerCreateRequestDto
-                                .fromRequest(lockerCreateRequest, image), majorId
+                                .fromRequest(lockerCreateRequest/*, image*/), majorId
                 )
                 .getCreatedLockerName();
         return new SuccessResponse(

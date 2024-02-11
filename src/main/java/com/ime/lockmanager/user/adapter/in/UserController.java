@@ -42,12 +42,14 @@ class UserController {
 
     @ApiOperation(value = "학생회비 납부 신청")
     @PostMapping("/{userId}/membership")
-    public SuccessResponse<UserInfoResponse> applyMembership(@ApiIgnore Authentication authentication,
+    public SuccessResponse applyMembership(@ApiIgnore Authentication authentication,
                                                              @PathVariable Long userId) {
-        return new SuccessResponse(userUseCase.applyMembership(userId).toResponse());
+        userUseCase.applyMembership(userId);
+        return SuccessResponse.ok();
     }
 
-    @ApiOperation(value = "학생회비 납부 조회")
+    @Deprecated
+    @ApiOperation(value = "학생회비 납부 조회",notes = "사용자정보조회할때 userState를 알려주니까 해당값으로 납부조회 대체하는게 더 좋아보임")
     @GetMapping("/{userId}/membership")
     public SuccessResponse<CheckMembershipResponse> checkMembership(@ApiIgnore Authentication authentication,
                                                                     @PathVariable Long userId) {

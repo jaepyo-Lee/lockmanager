@@ -80,15 +80,13 @@ class UserService implements UserUseCase {
     }
 
     @Override
-    public UserTierResponseDto applyMembership(Long userId) {
+    public void applyMembership(Long userId) {
         User student = userQueryPort.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
-        if (student.getUserTier().equals(UserTier.MEMBER)) {
-            throw new IllegalStateException("이미 승인된 사용자 입니다.");
+        if (!student.getUserTier().equals(UserTier.NON_MEMBER)) {
+            throw new IllegalStateException("이미 신청 또느 승인된 학우입니다.");
         }
-        return UserTierResponseDto.builder()
-                .userTier(student.applyMembership())
-                .build();
+        student.applyMembership();
     }
 
     @Override

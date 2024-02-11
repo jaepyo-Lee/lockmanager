@@ -9,5 +9,4 @@ public interface AccountUsecase {
 
     SaveOrModifyAccountResponseDto saveOrModifyAccountInfo(Long majorId,
                                                            SaveOrModifyAccountRequestDto saveOrModifyAccountRequestDto);
-
 }
