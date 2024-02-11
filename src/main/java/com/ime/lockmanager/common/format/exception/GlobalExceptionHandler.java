@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ApplicationRunException.class)
-    public ResponseEntity<ErrorResponse>applicationRunException(ApplicationRunException e){
+    public ResponseEntity<ErrorResponse> applicationRunException(ApplicationRunException e) {
         log.error(e.getMessage());
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
