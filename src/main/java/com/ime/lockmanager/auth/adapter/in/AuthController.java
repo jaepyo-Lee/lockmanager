@@ -39,10 +39,8 @@ class AuthController {
             notes = "access token 만료시 refresh token을 이용하여 access token을 재발급받는 API"
     )
     @PostMapping("/reissue")
-    public SuccessResponse<ReissueTokenResponseDto> reissue(Principal principal,
-                                                            @RequestHeader(value = "refreshToken") String refreshToken,
+    public SuccessResponse<ReissueTokenResponseDto> reissue(@RequestHeader(value = "refreshToken") String refreshToken,
                                                             HttpServletResponse httpServletResponse) {
-        log.info("{} : 토큰 재발급", principal.getName());
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         return new SuccessResponse(authUseCase.reissue(refreshToken), SUCCESTT_REISSUE_TOKEN);
     }
