@@ -17,6 +17,11 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
     @Override
+    public void saveAll(List<User> users) {
+        userJpaRepository.saveAll(users);
+    }
+
+    @Override
     public Optional<User> findByIdWithMajorDetailWithMajor(Long userId) {
         return userJpaRepository.findByIdWithMajorDetailWithMajor(userId);
     }

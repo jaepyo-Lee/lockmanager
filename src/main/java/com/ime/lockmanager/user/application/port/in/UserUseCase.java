@@ -13,6 +13,7 @@ import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDt
 import com.ime.lockmanager.user.domain.User;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserUseCase {
@@ -27,7 +28,7 @@ public interface UserUseCase {
 
     void modifiedUserInfo(ModifiedUserInfoRequestDto requestDto) throws Exception;
 
-    void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception;
+    void updateUserDueInfoOrSave(List<UpdateUserDueInfoDto> updateUserDueInfoDto) throws Exception;
 
     Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
 

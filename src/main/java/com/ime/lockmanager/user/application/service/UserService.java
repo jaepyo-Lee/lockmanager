@@ -142,7 +142,7 @@ class UserService implements UserUseCase {
             }
         }
     }
-
+/*
     @Override
     public void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception {
         User user = userQueryPort.findByStudentNum(updateUserDueInfoDto.getStudentNum())
@@ -159,6 +159,21 @@ class UserService implements UserUseCase {
         if (user.isAuth()) {
             user.updateTier(UserTier.judge(updateUserDueInfoDto.isDue()));
         }
+    }*/
+
+    @Override
+    public void updateUserDueInfoOrSave(List<UpdateUserDueInfoDto> updateUserDueInfoDto) throws Exception {
+        List<User> newUsers = updateUserDueInfoDto.parallelStream()
+                .filter(dto -> userQueryPort.findByStudentNum(dto.getStudentNum()).isEmpty())
+                .map(dto -> User.builder()
+                        .name(dto.getName())
+                        .studentNum(dto.getStudentNum())
+                        .userTier(UserTier.judge(dto.isDue()))
+                        .role(Role.ROLE_USER)
+                        .majorDetail(dto.getMajorDetail())
+                        .auth(false)
+                        .build()).collect(Collectors.toList());
+        userQueryPort.saveAll(newUsers);
     }
 
     @Override
