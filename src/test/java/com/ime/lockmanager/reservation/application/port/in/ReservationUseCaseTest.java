@@ -60,8 +60,6 @@ class ReservationUseCaseTest {
     @Autowired
     private ReservationUseCase reservationUseCase;
     @Autowired
-    private UserUseCase userUseCase;
-    @Autowired
     private LockerQueryPort lockerQueryPort;
     @BeforeEach
     void init(){
@@ -73,7 +71,7 @@ class ReservationUseCaseTest {
 
     @DisplayName("수정시 동시성 테스트")
     @Test
-    void test() throws Exception {
+    void changeLockerConcurrencyTest() throws Exception {
         //given
         log.info("동시성 테스트 준비");
         Major major = majorQueryPort.save(Major.builder().name("AI로봇학과").build());
