@@ -165,6 +165,7 @@ class LockerService implements LockerUseCase {
         Locker saveLocker = lockerQueryPort.save(createdLocker);
         createLockerDetail(requestDto, saveLocker);
         return LockerCreateResponseDto.builder()
+                .createdLockerId(saveLocker.getId())
                 .createdLockerName(saveLocker.getName())
                 .build();
 

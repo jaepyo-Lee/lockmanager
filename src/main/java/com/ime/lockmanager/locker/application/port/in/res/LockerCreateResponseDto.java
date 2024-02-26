@@ -8,4 +8,5 @@ import lombok.Getter;
 @Builder
 public class LockerCreateResponseDto {
     private String createdLockerName;
+    private Long createdLockerId;
 }

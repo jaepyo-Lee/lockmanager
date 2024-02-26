@@ -77,7 +77,7 @@ public class ReservationService implements ReservationUseCase {
         Locker locker = lockerDetail.getLocker();
         distinctConditionForReserveToUser(locker);
         Long registerLockerId = reservation(user, lockerDetail, locker);
-        sendSSEMsg(dto.getMajorId(), registerLockerId, "reservedLockerDetailId");
+//        sendSSEMsg(dto.getMajorId(), registerLockerId, "reservedLockerDetailId");
 
         log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         return LockerRegisterResponseDto
@@ -172,13 +172,13 @@ public class ReservationService implements ReservationUseCase {
                 .of(user.getId(), originLockerDetail.getId()));
 
         // 3. 취소했다는 sse 통신
-        sendSSEMsg(dto.getMajorId(), cancelLockerDetailId, "cancelLockerDetailId");
+//        sendSSEMsg(dto.getMajorId(), cancelLockerDetailId, "cancelLockerDetailId");
 
         // 4. 변경하고자하는 사물함 예약
         Long registerNewLockerId = register(user, newLockerDetail);
 
         // 5. 예약했다는 sse 통신
-        sendSSEMsg(dto.getMajorId(), registerNewLockerId, "reservedLockerDetailId");
+//        sendSSEMsg(dto.getMajorId(), registerNewLockerId, "reservedLockerDetailId");
 
         return registerNewLockerId;
     }
