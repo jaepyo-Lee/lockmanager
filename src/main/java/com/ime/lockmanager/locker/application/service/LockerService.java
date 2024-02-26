@@ -4,7 +4,6 @@ import com.ime.lockmanager.common.format.exception.locker.NotFoundLockerExceptio
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.file.application.service.ImageFileAdminService;
-import com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection;
 import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoInMajorDto;
@@ -19,7 +18,6 @@ import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDt
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
-import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailCreateDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
@@ -36,8 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.DOWN;
-import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.RIGHT;
-import static com.ime.lockmanager.locker.domain.lockerdetail.LockerDetailStatus.NON_RESERVED;
 
 
 @Slf4j
@@ -126,10 +122,10 @@ class LockerService implements LockerUseCase {
                 .map(
                         lockerDetail ->
                                 LockerDetailInfo.builder()
-                                        .locker_num(lockerDetail.getLockerNum())
+                                        .lockerNum(lockerDetail.getLockerNum())
                                         .status(lockerDetail.getLockerDetailStatus())
-                                        .column_num(lockerDetail.getColumn_num())
-                                        .row_num(lockerDetail.getRow_num())
+                                        .columnNum(lockerDetail.getColumn_num())
+                                        .rowNum(lockerDetail.getRow_num())
                                         .id(lockerDetail.getId())
                                         .build()
                 ).collect(Collectors.toList());

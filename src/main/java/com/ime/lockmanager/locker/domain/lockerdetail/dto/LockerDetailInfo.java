@@ -11,11 +11,11 @@ public class LockerDetailInfo {
     @Schema(description = "해당 칸의 pk값")
     private Long id;
     @Schema(description = "해당 칸의 행번호")
-    private String row_num;
+    private String rowNum;
     @Schema(description = "해당 칸의 열번호")
-    private String column_num;
+    private String columnNum;
     @Schema(description = "해당 칸의 번호")
-    private String locker_num;
+    private String lockerNum;
     @Schema(description = "해당 칸의 현재 상태",allowableValues = {"RESERVED","NON_RESERVED","BROKEN"})
     private LockerDetailStatus status;
 }
