@@ -15,4 +15,6 @@ public interface LockerDetailQueryPort {
     List<LockerDetail> findLockerDetailByLocker(Long lockerId);
 
     Optional<LockerDetail> findById(Long lockerDetailId);
+
+    void deleteAll();
 }

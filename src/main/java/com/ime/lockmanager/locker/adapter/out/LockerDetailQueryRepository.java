@@ -18,6 +18,10 @@ public class LockerDetailQueryRepository implements LockerDetailQueryPort {
     }
 
     @Override
+    public void deleteAll(){
+        lockerDetailJpaRepository.deleteAll();
+    }
+    @Override
     public Optional<LockerDetail> findByIdWithLocker(Long lockerDetailId) {
         return lockerDetailJpaRepository.findByIdWithLocker(lockerDetailId);
     }
