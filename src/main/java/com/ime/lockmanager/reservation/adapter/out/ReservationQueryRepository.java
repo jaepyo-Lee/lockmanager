@@ -17,11 +17,6 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
-    public void deleteById(Long id) {
-        reservationJpaRepository.deleteById(id);
-    }
-
-    @Override
     public Optional<Reservation> findByUserId(Long userId) {
         return reservationJpaRepository.findByUserId(userId);
     }
@@ -35,21 +30,7 @@ public class ReservationQueryRepository implements ReservationQueryPort {
     public List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker) {
         return reservationJpaRepository.findAllByLockerDetails(lockerDetailsByLocker);
     }
-    @Override
-    public Long registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
-        reservationJpaRepository.save(
-                Reservation.builder()
-                        .lockerDetail(lockerDetail)
-                        .user(userJpaEntity)
-                        .build()
-        );
-        return lockerDetail.reserve();
-    }
 
-    @Override
-    public void deleteAll() {
-        reservationJpaRepository.deleteAll();
-    }
 
     @Override
     public Optional<Reservation> findByLockerDetailId(Long lockerDetailId) {

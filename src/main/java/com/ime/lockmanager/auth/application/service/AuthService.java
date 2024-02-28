@@ -10,6 +10,7 @@ import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
 import com.ime.lockmanager.auth.application.service.dto.LoginInfoDto;
 import com.ime.lockmanager.auth.domain.AuthUser;
 import com.ime.lockmanager.common.format.exception.auth.jwt.InvalidRefreshTokenException;
+import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;
@@ -17,6 +18,7 @@ import com.ime.lockmanager.common.jwt.TokenSet;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import com.ime.lockmanager.common.webclient.sejong.service.SejongLoginService;
 import com.ime.lockmanager.major.application.port.in.MajorDetailUseCase;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.domain.User;
@@ -43,17 +45,26 @@ class AuthService implements AuthUseCase {
     private final JwtProvider jwtProvider;
     private final AuthToRedisQueryPort authToRedisQueryPort;
     private final SejongLoginService sejongLoginService;
-    private final MajorDetailUseCase majorDetailUseCase;
+    private final MajorDetailQueryPort majorDetailQueryPort;
 
     @Override
     public LoginTokenResponseDto login(LoginRequestDto loginRequestDto) {
-        SejongMemberResponseDto sejongMemberResponseDto = sejongLoginService.callSejongMemberDetailApi(loginRequestDto.toSejongMemberDto());
-        MajorDetail majorDetail = findByNameWithMajor(getMajorName(sejongMemberResponseDto));
+        // 1. 학교에 로그인하여 정보 받아옴
+        SejongMemberResponseDto userInfoInSejong = sejongLoginService.callSejongLoginApi(loginRequestDto.toSejongMemberDto());
+        // 2. 서비스에 가입된 학과인지 검색
+        MajorDetail majorDetail = majorDetailQueryPort.findByNameWithMajor(getMajorDetailName(userInfoInSejong))
+                .orElseThrow(() -> new NotFoundMajorDetailException());
         Major major = majorDetail.getMajor();
-        User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
-        updateUserInfo(sejongMemberResponseDto, majorDetail, user);
-        TokenSet tokenSet = makeToken(user);
-        authToRedisQueryPort.refreshSave(loginRequestDto.getId(), JwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
+
+        // 저장된 사용자의 정보를 또회 또는 저장
+        User user = saveOrFindUser(majorDetail, loginRequestDto, userInfoInSejong);
+
+        // 기존의 저장된 사용자의 경우 재학상태가 바꼈다면 업데이트
+        updateUserInfo(userInfoInSejong, majorDetail, user);
+
+        // 토큰 생성
+        TokenSet tokenSet = jwtProvider.makeToken(user);
+
         return LoginTokenResponseDto.of(tokenSet.getAccessToken(),
                 tokenSet.getRefreshToken(),
                 user.getRole(),
@@ -62,7 +73,9 @@ class AuthService implements AuthUseCase {
                 major.getName());
     }
 
-    private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
+    private User saveOrFindUser(MajorDetail majorDetail,
+                                LoginRequestDto loginRequestDto,
+                                SejongMemberResponseDto sejongMemberResponseDto) {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
                 authToUserCommandPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
@@ -86,15 +99,9 @@ class AuthService implements AuthUseCase {
                 .build());
     }
 
-    private String getMajorName(SejongMemberResponseDto sejongMemberResponseDto) {
+    private String getMajorDetailName(SejongMemberResponseDto sejongMemberResponseDto) {
         return sejongMemberResponseDto.getResult().getBody().getMajor();
     }
-
-    private MajorDetail findByNameWithMajor(String majorName) {
-        return majorDetailUseCase.findByNameWithMajor(majorName)
-                .orElseThrow(() -> new IllegalStateException("등록되지 않은 학과입니다. 학생회에 문의해주세요!"));
-    }
-
 
     private User createUserByLoginInfo(LoginInfoDto loginInfoDto) {
         UserState matchUserState = UserState.match(loginInfoDto.getStatus());
@@ -116,37 +123,34 @@ class AuthService implements AuthUseCase {
     public ReissueTokenResponseDto reissue(String refreshToken) {
         String bearerToken = JwtHeaderUtil.getBearerToken(refreshToken);
         String studentNum = (String) jwtProvider.convertAuthToken(bearerToken).getTokenClaims().get("studentNum");
-        String redisRT = authToRedisQueryPort.getRefreshToken(studentNum); //리프레시토큰은 학번 안들어가있음
+        String redisRT = authToRedisQueryPort.getRefreshToken(studentNum);
 
         if (Objects.isNull(redisRT) || !redisRT.equals(refreshToken)) {
             throw new InvalidRefreshTokenException();
         }
+
         User byStudentNum = authToUserQueryPort.findByStudentNum(studentNum)
                 .orElseThrow(NotFoundUserException::new);
-        TokenSet tokenSet = makeToken(byStudentNum);
+
+        TokenSet tokenSet = jwtProvider.makeToken(byStudentNum);
+
         authToRedisQueryPort.removeAndSaveRefreshToken(studentNum, JwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
+
         return ReissueTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
     }
 
     @Override
     public void logout(String accessToken) {
         String bearerToken = JwtHeaderUtil.getBearerToken(accessToken);
-        Long tokenExpiration = jwtProvider.getTokenExpiration(bearerToken);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println(authentication.getPrincipal());
-        SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        Long tokenExpiration = jwtProvider.getTokenExpiration(bearerToken);
+
         String studentNum = SecurityContextHolder.getContext().getAuthentication().getName();
+
         if (authToRedisQueryPort.getRefreshToken(studentNum) != null) {
             authToRedisQueryPort.removeRefreshToken(studentNum);
         }
-        authToRedisQueryPort.logoutTokenSave(JwtHeaderUtil.getBearerToken(accessToken), Duration.ofMillis(tokenExpiration));
-    }
 
-    private TokenSet makeToken(User user) {
-        AuthUser authUser = AuthUser.of(user);
-        String refreshToken = "Bearer " + jwtProvider.createRefreshToken(authUser);
-        String accessToken = "Bearer " + jwtProvider.createAccessToken(authUser);
-        return TokenSet.of(accessToken, refreshToken);
+        authToRedisQueryPort.logoutTokenSave(JwtHeaderUtil.getBearerToken(accessToken), Duration.ofMillis(tokenExpiration));
     }
 }

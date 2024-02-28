@@ -12,15 +12,9 @@ public interface ReservationQueryPort {
 
     Optional<Reservation> findByLockerDetailId(Long lockerDetailId);
 
-    Long registerLocker(User userJpaEntity, LockerDetail lockerDetail);
-
-    void deleteAll();
-
     Optional<Reservation> findAllByUserIdAndLockerDetailId(Long studentNum, Long lockerDetailId);
 
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 
     Optional<Reservation> findByUserId(Long userId);
-
-    void deleteById(Long id);
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface MajorDetailRepository extends JpaRepository<MajorDetail,Long> {
+public interface MajorDetailJpaRepository extends JpaRepository<MajorDetail,Long> {
     @Query("select MD from MAJOR_DETAIL_TABLE as MD join fetch MD.major where MD.name=:name")
     Optional<MajorDetail> findByNameWithMajor(@Param("name") String name);
 
