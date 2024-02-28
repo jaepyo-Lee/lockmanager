@@ -5,8 +5,8 @@ import com.ime.lockmanager.major.application.port.in.req.CreateMajorDetailReques
 import com.ime.lockmanager.major.application.port.in.req.CreateMajorRequestDto;
 import com.ime.lockmanager.major.application.port.in.res.CreateMajorResponseDto;
 import com.ime.lockmanager.major.application.port.in.res.MajorDetailInMajorResponseDto;
-import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import org.junit.jupiter.api.DisplayName;

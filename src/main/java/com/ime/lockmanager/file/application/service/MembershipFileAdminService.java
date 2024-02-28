@@ -5,7 +5,7 @@ import com.ime.lockmanager.common.format.exception.file.NotValidExcelFormatExcep
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.file.application.port.in.usecase.MembershipFileAdminUseCase;
-import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;

@@ -4,7 +4,7 @@ import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMaj
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;

@@ -1,4 +1,4 @@
-package com.ime.lockmanager.major.application.port.out;
+package com.ime.lockmanager.major.application.port.out.majordetail;
 
 import com.ime.lockmanager.major.domain.MajorDetail;
 
@@ -10,9 +10,8 @@ public interface MajorDetailQueryPort {
 
     List<MajorDetail> findAll();
 
-    MajorDetail save(MajorDetail majorDetail);
+
 
     List<MajorDetail> findAllByMajorId(Long majorId);
 
-    void deleteAll();
 }
