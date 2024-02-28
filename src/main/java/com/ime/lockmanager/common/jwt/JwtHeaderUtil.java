@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class JwtHeaderUtil {
     private static String TOKEN_PREFIX = "Bearer ";
-    public String getBearerToken(String token){
+    public static String getBearerToken(String token){
         if(token==null){
             return null;
         }

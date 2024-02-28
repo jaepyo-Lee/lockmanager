@@ -34,6 +34,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "STUDENT_NUM")
     private String studentNum;
 
+    //삭제하기
     @Column(name = "STATUS")
     private String status;
 

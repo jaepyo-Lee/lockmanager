@@ -103,7 +103,7 @@ class LockerService implements LockerUseCase {
 
     @Override
     public LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
-        User user = userQueryPort.findByIdWithMajorDetailWithMajor(requestDto.getUserId())
+        User user = userQueryPort.findByIdWithMajorDetailAndMajor(requestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
 //        userUseCase.findByStudentNum(requestDto.getStudentNum());
         Major major = user.getMajorDetail().getMajor();

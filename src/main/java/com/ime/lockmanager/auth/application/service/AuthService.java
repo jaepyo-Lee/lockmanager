@@ -5,6 +5,7 @@ import com.ime.lockmanager.auth.application.port.in.res.LoginTokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.res.ReissueTokenResponseDto;
 import com.ime.lockmanager.auth.application.port.in.usecase.AuthUseCase;
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
+import com.ime.lockmanager.auth.application.port.out.AuthToUserCommandPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
 import com.ime.lockmanager.auth.application.service.dto.LoginInfoDto;
 import com.ime.lockmanager.auth.domain.AuthUser;
@@ -38,9 +39,9 @@ import static com.ime.lockmanager.user.domain.Role.ROLE_USER;
 @Service
 class AuthService implements AuthUseCase {
     private final AuthToUserQueryPort authToUserQueryPort;
+    private final AuthToUserCommandPort authToUserCommandPort;
     private final JwtProvider jwtProvider;
     private final AuthToRedisQueryPort authToRedisQueryPort;
-    private final JwtHeaderUtil jwtHeaderUtil;
     private final SejongLoginService sejongLoginService;
     private final MajorDetailUseCase majorDetailUseCase;
 
@@ -52,7 +53,7 @@ class AuthService implements AuthUseCase {
         User user = saveOrFindUser(majorDetail, loginRequestDto, sejongMemberResponseDto);
         updateUserInfo(sejongMemberResponseDto, majorDetail, user);
         TokenSet tokenSet = makeToken(user);
-        authToRedisQueryPort.refreshSave(loginRequestDto.getId(), jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
+        authToRedisQueryPort.refreshSave(loginRequestDto.getId(), JwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return LoginTokenResponseDto.of(tokenSet.getAccessToken(),
                 tokenSet.getRefreshToken(),
                 user.getRole(),
@@ -63,7 +64,7 @@ class AuthService implements AuthUseCase {
 
     private User saveOrFindUser(MajorDetail majorDetail, LoginRequestDto loginRequestDto, SejongMemberResponseDto sejongMemberResponseDto) {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
-                authToUserQueryPort.save(createUserByLoginInfo(
+                authToUserCommandPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
                                 .userTier(UserTier.NON_MEMBER)
                                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
@@ -113,7 +114,7 @@ class AuthService implements AuthUseCase {
 
     @Override
     public ReissueTokenResponseDto reissue(String refreshToken) {
-        String bearerToken = jwtHeaderUtil.getBearerToken(refreshToken);
+        String bearerToken = JwtHeaderUtil.getBearerToken(refreshToken);
         String studentNum = (String) jwtProvider.convertAuthToken(bearerToken).getTokenClaims().get("studentNum");
         String redisRT = authToRedisQueryPort.getRefreshToken(studentNum); //리프레시토큰은 학번 안들어가있음
 
@@ -123,13 +124,13 @@ class AuthService implements AuthUseCase {
         User byStudentNum = authToUserQueryPort.findByStudentNum(studentNum)
                 .orElseThrow(NotFoundUserException::new);
         TokenSet tokenSet = makeToken(byStudentNum);
-        authToRedisQueryPort.removeAndSaveRefreshToken(studentNum, jwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
+        authToRedisQueryPort.removeAndSaveRefreshToken(studentNum, JwtHeaderUtil.getBearerToken(tokenSet.getRefreshToken()));
         return ReissueTokenResponseDto.of(tokenSet.getAccessToken(), tokenSet.getRefreshToken());
     }
 
     @Override
     public void logout(String accessToken) {
-        String bearerToken = jwtHeaderUtil.getBearerToken(accessToken);
+        String bearerToken = JwtHeaderUtil.getBearerToken(accessToken);
         Long tokenExpiration = jwtProvider.getTokenExpiration(bearerToken);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -139,7 +140,7 @@ class AuthService implements AuthUseCase {
         if (authToRedisQueryPort.getRefreshToken(studentNum) != null) {
             authToRedisQueryPort.removeRefreshToken(studentNum);
         }
-        authToRedisQueryPort.logoutTokenSave(jwtHeaderUtil.getBearerToken(accessToken), Duration.ofMillis(tokenExpiration));
+        authToRedisQueryPort.logoutTokenSave(JwtHeaderUtil.getBearerToken(accessToken), Duration.ofMillis(tokenExpiration));
     }
 
     private TokenSet makeToken(User user) {

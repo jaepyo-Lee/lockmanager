@@ -57,7 +57,7 @@ public class MembershipFileAdminService implements MembershipFileAdminUseCase {
     }
 
     private User getUserById(Long userId) {
-        return userQueryPort.findByIdWithMajorDetailWithMajor(userId)
+        return userQueryPort.findByIdWithMajorDetailAndMajor(userId)
                 .orElseThrow(NotFoundUserException::new);
     }
 

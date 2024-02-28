@@ -1,7 +1,6 @@
 package com.ime.lockmanager.user.application.service;
 
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
-import com.ime.lockmanager.common.format.exception.reservation.NotFoundReservationException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
@@ -9,7 +8,6 @@ import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
-import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.UserUseCase;
 import com.ime.lockmanager.user.application.port.in.dto.UpdateUserDueInfoDto;
@@ -18,9 +16,8 @@ import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentPageRe
 import com.ime.lockmanager.user.application.port.in.res.AllApplyingStudentDto;
 import com.ime.lockmanager.user.application.port.in.res.CheckMembershipResponseDto;
 import com.ime.lockmanager.user.application.port.in.res.UserTierResponseDto;
-import com.ime.lockmanager.user.application.port.out.UserMembershipQueryPort;
+import com.ime.lockmanager.user.application.port.out.UserCommandPort;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
-import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
 import com.ime.lockmanager.user.application.port.out.res.AllUserInfoForAdminResponseDto;
 import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
 import com.ime.lockmanager.user.domain.Role;
@@ -39,17 +36,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.ime.lockmanager.reservation.domain.ReservationStatus.RESERVED;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 class UserService implements UserUseCase {
     private final UserQueryPort userQueryPort;
-    private final UserToReservationQueryPort userToReservationQueryPort;
-    private final UserMembershipQueryPort userMembershipQueryPort;
-    private final RedissonLockReservationFacade redissonLockReservationFacade;
+    private final UserCommandPort userCommandPort;
     private final MajorQueryPort majorQueryPort;
     private final ReservationQueryPort reservationQueryPort;
     private final ReservationUseCase reservationUseCase;
@@ -91,11 +84,11 @@ class UserService implements UserUseCase {
 
     @Override
     public AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page) {
-        User user = userQueryPort.findByStudentNumWithMajorDetailWithMajor(studentNum)
+        User user = userQueryPort.findByStudentNumWithMajorDetailAndMajor(studentNum)
                 .orElseThrow(NotFoundUserException::new);
         Major major = user.getMajorDetail().getMajor();
-        Page<User> membershipApplicants = userMembershipQueryPort
-                .findAllMembershipApplicantOrderByStudentNumAsc(major, PageRequest.of(page, PAGE_SIZE));
+        Page<User> membershipApplicants = userQueryPort
+                .findApplicantsByMajorOrderByStudentNumAsc(major, PageRequest.of(page, PAGE_SIZE));
         List<AllApplyingStudentDto> applicantInfos = membershipApplicants.stream()
                 .map(applicant -> AllApplyingStudentDto.builder()
                         .studentName(applicant.getName())
@@ -111,7 +104,7 @@ class UserService implements UserUseCase {
 
     @Override
     public Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum) {
-        return userQueryPort.findByStudentNumWithMajorDetailWithMajor(studentNum);
+        return userQueryPort.findByStudentNumWithMajorDetailAndMajor(studentNum);
     }
 
     /*
@@ -173,7 +166,7 @@ class UserService implements UserUseCase {
                         .majorDetail(dto.getMajorDetail())
                         .auth(false)
                         .build()).collect(Collectors.toList());
-        userQueryPort.saveAll(newUsers);
+        userCommandPort.saveAll(newUsers);
     }
 
     @Override
@@ -181,7 +174,7 @@ class UserService implements UserUseCase {
     public Page<AllUserInfoForAdminResponseDto> findAllUserInfo(FindAllUserRequestDto requestDto) {
         Major major = majorQueryPort.findById(requestDto.getMajorId())
                 .orElseThrow(NotFoundMajorDetailException::new);//예외 따로 처리해야함
-        Page<User> allUser = userToReservationQueryPort
+        Page<User> allUser = userQueryPort
                 .findAllByMajorASC(major, requestDto.getSearch(), PageRequest.of(requestDto.getPage(), PAGE_SIZE));
         PageRequest pageRequest = PageRequest.of(allUser.getNumber(), allUser.getSize());
         List<AllUserInfoForAdminResponseDto> userPageList = new ArrayList<>();
@@ -197,7 +190,7 @@ class UserService implements UserUseCase {
     @Transactional(readOnly = true)
     @Override
     public UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto) {
-        User user = userQueryPort.findByIdWithMajorDetailWithMajor(userRequestDto.getUserId())
+        User user = userQueryPort.findByIdWithMajorDetailAndMajor(userRequestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
 //        findByStudentNumWithMajorDetailWithMajor(userRequestDto.getStudentNum())
         Optional<Reservation> reservation = reservationQueryPort.findByUserId(user.getId());
