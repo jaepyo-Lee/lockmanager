@@ -16,14 +16,7 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
             "where R.user.id=:userId and R.lockerDetail.id=:lockerDetailId")
     Optional<Reservation> findAllByUserIdAndLockerDetailId(@Param(value = "userId") Long userId,
                                                            @Param(value = "lockerDetailId") Long lockerDetailId);
-
-    Optional<Reservation> findByUserStudentNumAndLockerDetailId(String studentNum, Long LockerDetailId);
-
-    Optional<Reservation> findByUserStudentNum(String studentNum);
-
     Optional<Reservation> findByUserId(Long userId);
-
-    void deleteByUserStudentNum(String studentNum);
 
     Optional<Reservation> findByLockerDetailId(Long lockerDetailId);
 

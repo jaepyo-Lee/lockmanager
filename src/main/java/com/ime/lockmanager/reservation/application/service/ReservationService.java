@@ -15,6 +15,7 @@ import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.in.req.ChangeReservationRequestDto;
+import com.ime.lockmanager.reservation.application.port.out.ReservationCommandPort;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.domain.Reservation;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
@@ -39,6 +40,7 @@ public class ReservationService implements ReservationUseCase {
     private final UserQueryPort userQueryPort;
     private final ReservationQueryPort reservationQueryPort;
     private final LockerDetailQueryPort lockerDetailQueryPort;
+    private final ReservationCommandPort reservationCommandPort;
 
     private static final String LOCKER_KEY = "LOCKER_";
 
@@ -59,7 +61,7 @@ public class ReservationService implements ReservationUseCase {
         log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
         commonConditionForReserve(user, lockerDetail, locker);
-        reservationQueryPort.registerLocker(user, lockerDetail);
+        reservationCommandPort.registerLocker(user, lockerDetail);
         return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
                 user.getStudentNum(),
                 lockerDetail.getLocker().getName());
@@ -91,7 +93,7 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private Long register(User user, LockerDetail lockerDetail) {
-        Long registerLockerId = reservationQueryPort.registerLocker(user, lockerDetail);
+        Long registerLockerId = reservationCommandPort.registerLocker(user, lockerDetail);
         return registerLockerId;
     }
 
@@ -149,7 +151,7 @@ public class ReservationService implements ReservationUseCase {
                         cancelLockerDto.getLockerDetailId()).orElseThrow(NotFoundReservationException::new);
         Long cancelLockerDetailId = reservation.getLockerDetail().cancel();
 
-        reservationQueryPort.deleteById(reservation.getId());
+        reservationCommandPort.deleteById(reservation.getId());
         return cancelLockerDetailId;
     }
 
