@@ -9,6 +9,7 @@ import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoDto;
 import com.ime.lockmanager.locker.adapter.in.res.dto.LockersInfoInMajorDto;
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
+import com.ime.lockmanager.locker.application.port.in.dto.CreateLockerDetailDto;
 import com.ime.lockmanager.locker.application.port.in.dto.CreatedLockerInfo;
 import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
@@ -16,10 +17,10 @@ import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeus
 import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
 import com.ime.lockmanager.locker.application.port.out.LockerCommandPort;
+import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
-import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailCreateDto;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
@@ -34,8 +35,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.DOWN;
-
 
 @Slf4j
 @Transactional
@@ -48,6 +47,8 @@ class LockerService implements LockerUseCase {
     private final UserQueryPort userQueryPort;
     private final ImageFileAdminService imageFileAdminService;
     private final LockerCommandPort lockerCommandPort;
+    private final LockerDetailQueryPort lockerDetailQueryPort;
+
 
     //남은 사물함 목록
     @Override
@@ -107,20 +108,26 @@ class LockerService implements LockerUseCase {
     public LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
         User user = userQueryPort.findByIdWithMajorDetailAndMajor(requestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
-//        userUseCase.findByStudentNum(requestDto.getStudentNum());
+
+        //        userUseCase.findByStudentNum(requestDto.getStudentNum());
+
         Major major = user.getMajorDetail().getMajor();
+
         List<Locker> lockerByUserMajor = lockerQueryPort.findLockerByUserMajor(major);
-        return LockersInfoInMajorResponse.builder().lockersInfo(lockerByUserMajor.stream()
-                        .map(locker -> LockersInfoDto.builder()
-                                .lockerDetail(getLockerDetailInfos(locker))
-                                .locker(getLockersInfoInMajorDto(locker))
-                                .build()
-                        ).collect(Collectors.toList()))
+
+        return LockersInfoInMajorResponse.builder()
+                .lockersInfo(
+                        lockerByUserMajor.stream()
+                                .map(locker -> LockersInfoDto.builder()
+                                        .lockerDetail(getLockerDetailInfos(locker))
+                                        .locker(getLockersInfoInMajorDto(locker))
+                                        .build()
+                                ).collect(Collectors.toList()))
                 .build();
     }
 
     private List<LockerDetailInfo> getLockerDetailInfos(Locker locker) {
-        return lockerDetailUseCase.findLockerDetailByLocker(locker).stream()
+        return lockerDetailUseCase.findLockerDetailsByLocker(locker).stream()
                 .map(
                         lockerDetail ->
                                 LockerDetailInfo.builder()
@@ -149,60 +156,33 @@ class LockerService implements LockerUseCase {
 
     @Override
     public LockerCreateResponseDto createLocker(LockerCreateRequestDto requestDto, Long majorId) throws IOException {
+        // 이미지 삽입코드 주석처리
         /*String imageUrl = null;
         if (!requestDto.getImage().isEmpty()) { //이미지가 있을때
             imageUrl = imageFileAdminService.saveImageToS3(requestDto.getImage());
         }*/
+
         Major userMajor = majorQueryPort.findById(majorId)
                 .orElseThrow(NotFoundMajorDetailException::new);//에러 새로 만들어야함
+
         Locker createdLocker = Locker.createLocker(
                 requestDto.toLockerCreateDto(
                         userMajor/*, imageUrl*/
                 )
         );
+
         Locker saveLocker = lockerCommandPort.save(createdLocker);
-        createLockerDetail(requestDto, saveLocker);
+
+        lockerDetailUseCase.createLockerDetails(CreateLockerDetailDto.builder()
+                        .totalRow(Integer.valueOf(requestDto.getTotalRow()))
+                        .totalColumn(Integer.valueOf(requestDto.getTotalColumn()))
+                        .numberIncreaseDirection(requestDto.getNumberIncreaseDirection()).build(),
+                createdLocker);
+
         return LockerCreateResponseDto.builder()
                 .createdLockerId(saveLocker.getId())
                 .createdLockerName(saveLocker.getName())
                 .build();
 
-    }
-
-    private void createLockerDetail(LockerCreateRequestDto lockerCreateRequestDto, Locker saveLocker) {
-        int num = 0;
-        String column = lockerCreateRequestDto.getTotalColumn();
-        String row = lockerCreateRequestDto.getTotalRow();
-
-        int totalColumns = Integer.valueOf(column);
-        int totalRows = Integer.valueOf(row);
-
-        if (lockerCreateRequestDto.getNumberIncreaseDirection().equals(DOWN)) {
-            for (int i = 1; i <= totalColumns; i++) {
-                for (int j = 1; j <= totalRows; j++) {
-                    lockerDetailUseCase.saveLockerDetail(
-                            LockerDetailCreateDto.builder()
-                                    .lockerNum(Integer.toString(++num))
-                                    .rowNum(Integer.toString(j))
-                                    .columnNum(Integer.toString(i))
-                                    .locker(saveLocker)
-                                    .build()
-                    );
-                }
-            }
-        } else {
-            for (int i = 1; i <= totalRows; i++) {
-                for (int j = 1; j <= totalColumns; j++) {
-                    lockerDetailUseCase.saveLockerDetail(
-                            LockerDetailCreateDto.builder()
-                                    .lockerNum(Integer.toString(++num))
-                                    .rowNum(Integer.toString(i))
-                                    .columnNum(Integer.toString(j))
-                                    .locker(saveLocker)
-                                    .build()
-                    );
-                }
-            }
-        }
     }
 }
