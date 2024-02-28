@@ -8,9 +8,6 @@ import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailCreateDto;
 import java.util.List;
 
 public interface LockerDetailUseCase {
-    LockerDetail saveLockerDetail(LockerDetailCreateDto lockerDetailCreateDto);
-
-    List<LockerDetail> findLockerDetailsByLocker(Locker locker);
 
     void createLockerDetails(CreateLockerDetailDto createLockerDetailDto, Locker saveLocker);
 }

@@ -21,17 +21,22 @@ import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
+import com.ime.lockmanager.user.domain.UserState;
+import com.ime.lockmanager.user.domain.UserTier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,41 +80,71 @@ class LockerService implements LockerUseCase {
     @Override
     public void modifyLockerInfo(ModifyLockerInfoReqeustDto reqeustDto) throws IOException {
         Locker locker = lockerQueryPort.findByLockerId(reqeustDto.getLockerId()).orElseThrow(NotFoundLockerException::new);
-        if (reqeustDto.getImage() != null) {
-            String originalImageUrl = locker.getImageUrl();
-            if (!originalImageUrl.isBlank()) {
-                //기존 이미지 삭제
-                imageFileAdminService.deleteImageToS3(originalImageUrl);
-            }
-            String newImageUrl = imageFileAdminService.saveImageToS3(reqeustDto.getImage());
-            locker.modifiedImageInfo(newImageUrl);
-        }
 
-        if (reqeustDto.getStartTime() != null && reqeustDto.getEndTime() != null) {
-            locker.modifiedDateTime(Period.builder()
-                    .startDateTime(reqeustDto.getStartTime())
-                    .endDateTime(reqeustDto.getEndTime())
-                    .build());
-        }
-        if (!reqeustDto.getUserStates().isEmpty() || reqeustDto.getUserStates() != null) {
-            locker.getPermitUserState().clear();
-            reqeustDto.getUserStates().stream().forEach(userState -> locker.getPermitUserState().add(userState));
-        }
-        if (!reqeustDto.getUserTiers().isEmpty() || reqeustDto.getUserTiers() != null) {
-            locker.getPermitUserTier().clear();
-            reqeustDto.getUserTiers().stream().forEach(userTier -> locker.getPermitUserTier().add(userTier));
-        }
-        if (reqeustDto.getLockerName() != null) {
-            locker.rename(reqeustDto.getLockerName());
-        }
+        changeImage(reqeustDto.getImage(), locker);
+
+        changeReservationTime(reqeustDto.getStartTime(), reqeustDto.getEndTime(), locker);
+
+        changeUserStatesCondition(reqeustDto.getUserStates(), locker);
+
+        changeUserTierCondition(reqeustDto.getUserTiers(), locker);
+
+        changeLockerName(reqeustDto.getLockerName(), locker);
     }
+
+    private void changeUserTierCondition(List<UserTier> newUserTiers, Locker locker) {
+        if (newUserTiers == null || newUserTiers.isEmpty()) {
+            return;
+        }
+        locker.getPermitUserTier().clear();
+        newUserTiers.stream().forEach(userTier -> locker.getPermitUserTier().add(userTier));
+    }
+
+    private void changeUserStatesCondition(List<UserState> newUserStates, Locker locker) {
+        if (newUserStates == null || newUserStates.isEmpty()) {
+            return;
+        }
+        locker.getPermitUserState().clear();
+        newUserStates.stream().forEach(userState -> locker.getPermitUserState().add(userState));
+    }
+
+    private void changeReservationTime(LocalDateTime newStartTime, LocalDateTime newEndTime, Locker locker) {
+        if (newStartTime == null || newEndTime == null) {
+            return;
+        }
+        locker.modifiedDateTime(Period.builder()
+                .startDateTime(newStartTime)
+                .endDateTime(newEndTime)
+                .build());
+    }
+
+
+    private void changeImage(MultipartFile newImage, Locker locker) throws IOException {
+        if (newImage == null || newImage.isEmpty()) {
+            return;
+        }
+        String originalImageUrl = locker.getImageUrl();
+        if (!originalImageUrl.isBlank()) {
+            //기존 이미지 삭제
+            imageFileAdminService.deleteImageToS3(originalImageUrl);
+        }
+        String newImageUrl = imageFileAdminService.saveImageToS3(newImage);
+        locker.modifiedImageInfo(newImageUrl);
+    }
+
+
+    private void changeLockerName(String newLockerName, Locker locker) {
+        if (newLockerName == null) {
+            return;
+        }
+        locker.rename(newLockerName);
+    }
+
 
     @Override
     public LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
         User user = userQueryPort.findByIdWithMajorDetailAndMajor(requestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
-
-        //        userUseCase.findByStudentNum(requestDto.getStudentNum());
 
         Major major = user.getMajorDetail().getMajor();
 
@@ -127,17 +162,21 @@ class LockerService implements LockerUseCase {
     }
 
     private List<LockerDetailInfo> getLockerDetailInfos(Locker locker) {
-        return lockerDetailUseCase.findLockerDetailsByLocker(locker).stream()
+        return lockerDetailQueryPort.findLockerDetailByLocker(locker.getId()).stream()
                 .map(
                         lockerDetail ->
-                                LockerDetailInfo.builder()
-                                        .lockerNum(lockerDetail.getLockerNum())
-                                        .status(lockerDetail.getLockerDetailStatus())
-                                        .columnNum(lockerDetail.getColumn_num())
-                                        .rowNum(lockerDetail.getRow_num())
-                                        .id(lockerDetail.getId())
-                                        .build()
+                                getLockerDetailInfo(lockerDetail)
                 ).collect(Collectors.toList());
+    }
+
+    private LockerDetailInfo getLockerDetailInfo(LockerDetail lockerDetail) {
+        return LockerDetailInfo.builder()
+                .lockerNum(lockerDetail.getLockerNum())
+                .status(lockerDetail.getLockerDetailStatus())
+                .columnNum(lockerDetail.getColumnNum())
+                .rowNum(lockerDetail.getRowNum())
+                .id(lockerDetail.getId())
+                .build();
     }
 
     private static LockersInfoInMajorDto getLockersInfoInMajorDto(Locker locker) {

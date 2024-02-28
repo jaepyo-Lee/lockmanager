@@ -20,25 +20,7 @@ import static com.ime.lockmanager.locker.adapter.in.req.NumberIncreaseDirection.
 @Service
 @RequiredArgsConstructor
 public class LockerDetailService implements LockerDetailUseCase {
-    private final LockerDetailQueryPort lockerDetailQueryPort;
     private final LockerDetailCommandPort lockerDetailCommandPort;
-
-    @Override
-    public LockerDetail saveLockerDetail(LockerDetailCreateDto lockerDetailCreateDto) {
-        return lockerDetailCommandPort.save(LockerDetail.builder()
-                .locker(lockerDetailCreateDto.getLocker())
-                .lockerNum(lockerDetailCreateDto.getLockerNum())
-                .row_num(lockerDetailCreateDto.getRowNum())
-                .column_num(lockerDetailCreateDto.getColumnNum())
-                .lockerDetailStatus(LockerDetailStatus.NON_RESERVED)
-                .build());
-    }
-
-    @Override
-    public List<LockerDetail> findLockerDetailsByLocker(Locker locker) {
-        return lockerDetailQueryPort.findLockerDetailByLocker(locker.getId());
-    }
-
 
     @Override
     public void createLockerDetails(CreateLockerDetailDto createLockerDetailDto, Locker saveLocker) {
@@ -68,8 +50,8 @@ public class LockerDetailService implements LockerDetailUseCase {
         return LockerDetail.builder()
                 .locker(saveLocker)
                 .lockerNum(Integer.toString(num))
-                .row_num(Integer.toString(j))
-                .column_num(Integer.toString(i))
+                .rowNum(Integer.toString(j))
+                .columnNum(Integer.toString(i))
                 .lockerDetailStatus(LockerDetailStatus.NON_RESERVED)
                 .build();
     }
