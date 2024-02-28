@@ -31,13 +31,4 @@ public class MembershipFileAdminController {
         return SuccessResponse.ok();
     }
 
-/*    @GetMapping("/dues/init")
-    public SuccessResponse getDuesInitExel(){
-
-    }
-
-    @GetMapping("/dues")
-    public SuccessResponse getDuesExcel(){
-        fileAdminUseCase.make
-    }*/
 }

@@ -14,15 +14,12 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RequiredArgsConstructor
 @Service
 public class SejongLoginService {
     @Value("${sejong.login_server}")
     private String SEJONG_LOGIN_SERVER;
-    public SejongMemberResponseDto callSejongMemberDetailApi(SejongMemberRequestDto requestDto) {
+    public SejongMemberResponseDto callSejongLoginApi(SejongMemberRequestDto requestDto) {
         return WebClient.builder()
                 .baseUrl(SEJONG_LOGIN_SERVER)
                 .build()
