@@ -15,6 +15,7 @@ import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto
 import com.ime.lockmanager.locker.application.port.in.req.ModifyLockerInfoReqeustDto;
 import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
+import com.ime.lockmanager.locker.application.port.out.LockerCommandPort;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.Period;
 import com.ime.lockmanager.locker.domain.locker.Locker;
@@ -46,6 +47,7 @@ class LockerService implements LockerUseCase {
     private final MajorQueryPort majorQueryPort;
     private final UserQueryPort userQueryPort;
     private final ImageFileAdminService imageFileAdminService;
+    private final LockerCommandPort lockerCommandPort;
 
     //남은 사물함 목록
     @Override
@@ -158,7 +160,7 @@ class LockerService implements LockerUseCase {
                         userMajor/*, imageUrl*/
                 )
         );
-        Locker saveLocker = lockerQueryPort.save(createdLocker);
+        Locker saveLocker = lockerCommandPort.save(createdLocker);
         createLockerDetail(requestDto, saveLocker);
         return LockerCreateResponseDto.builder()
                 .createdLockerId(saveLocker.getId())

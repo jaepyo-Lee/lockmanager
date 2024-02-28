@@ -21,16 +21,6 @@ public class LockerQueryRepository implements LockerQueryPort {
     }
 
     @Override
-    public Locker save(Locker locker) {
-        return lockerJpaRepository.save(locker);
-    }
-
-    @Override
-    public void deleteAll() {
-        lockerJpaRepository.deleteAll();
-    }
-
-    @Override
     public Optional<Locker> findByLockerId(Long lockerId) {
         return lockerJpaRepository.findById(lockerId);
     }

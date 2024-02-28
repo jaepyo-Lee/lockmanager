@@ -2,6 +2,7 @@ package com.ime.lockmanager.locker.application.service;
 
 
 import com.ime.lockmanager.locker.application.port.in.LockerDetailUseCase;
+import com.ime.lockmanager.locker.application.port.out.LockerDetailCommandPort;
 import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
 import com.ime.lockmanager.locker.domain.locker.Locker;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
@@ -16,10 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LockerDetailService implements LockerDetailUseCase {
     private final LockerDetailQueryPort lockerDetailQueryPort;
+    private final LockerDetailCommandPort lockerDetailCommandPort;
 
     @Override
     public LockerDetail saveLockerDetail(LockerDetailCreateDto lockerDetailCreateDto) {
-        return lockerDetailQueryPort.save(LockerDetail.builder()
+        return lockerDetailCommandPort.save(LockerDetail.builder()
                 .locker(lockerDetailCreateDto.getLocker())
                 .lockerNum(lockerDetailCreateDto.getLockerNum())
                 .row_num(lockerDetailCreateDto.getRowNum())

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LockerDetailQueryPort {
-    LockerDetail save(LockerDetail lockerDetail);
 
     Optional<LockerDetail> findByIdWithLocker(Long lockerDetailId);
 
@@ -16,5 +15,5 @@ public interface LockerDetailQueryPort {
 
     Optional<LockerDetail> findById(Long lockerDetailId);
 
-    void deleteAll();
+
 }

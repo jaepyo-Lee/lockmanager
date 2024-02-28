@@ -11,11 +11,8 @@ public interface LockerQueryPort {
 
     List<Locker> findAll();
 
-    void deleteAll();
-
-    Locker save(Locker locker);
-
     List<Locker> findLockerByUserMajor(Major major);
+
     List<Locker> findByMajorId(Long majorId);
 
 }
