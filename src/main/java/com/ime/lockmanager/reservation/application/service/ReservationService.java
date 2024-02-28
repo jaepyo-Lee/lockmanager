@@ -46,7 +46,6 @@ public class ReservationService implements ReservationUseCase {
     public void resetReservation(Long lockerId) {
         List<LockerDetail> lockerDetailsByLocker = lockerDetailQueryPort.findLockerDetailByLocker(lockerId);
         List<Reservation> reservationsByLockerDetails = reservationQueryPort.findAllByLockerDetails(lockerDetailsByLocker);
-
     }
 
 
