@@ -28,7 +28,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity(name = "LOCKER_TABLE")
 public class Locker extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOCKER_ID")
     private Long id;
 

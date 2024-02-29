@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity(name = "MAJOR_TABLE")
 public class Major extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
