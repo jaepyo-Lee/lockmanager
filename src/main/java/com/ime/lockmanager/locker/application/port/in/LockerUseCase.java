@@ -1,14 +1,19 @@
 package com.ime.lockmanager.locker.application.port.in;
 
-import com.ime.lockmanager.locker.application.port.in.req.LockerSetTimeRequestDto;
-import com.ime.lockmanager.locker.application.port.in.res.LockerPeriodResponseDto;
-import com.ime.lockmanager.locker.application.port.in.res.ReservationOfLockerResponseDto;
+import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
+import com.ime.lockmanager.locker.application.port.in.req.*;
+import com.ime.lockmanager.locker.application.port.in.res.LeftLockerResponseDto;
+import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
+
+import java.io.IOException;
 
 public interface LockerUseCase {
 
+    LeftLockerResponseDto getCreatedLockers(Long majorId);
 
-    void setLockerPeriod(LockerSetTimeRequestDto requestDto);
+    LockerCreateResponseDto createLocker(LockerCreateRequestDto lockerCreateRequestDto, Long majorId) throws IOException;
 
-    LockerPeriodResponseDto getLockerPeriod();
+    LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto build);
 
+    void modifyLockerInfo(ModifyLockerInfoReqeustDto toReqeustDto) throws IOException;
 }

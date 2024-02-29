@@ -1,5 +1,6 @@
 package com.ime.lockmanager.common.jwt;
 
+import com.ime.lockmanager.common.format.exception.auth.jwt.ExpiredJwtTokenException;
 import io.jsonwebtoken.*;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class AuthToken {
             log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
+            throw new ExpiredJwtTokenException();
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {

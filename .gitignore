@@ -8,9 +8,11 @@ application.properties
 application-dev.properties
 application-prod.properties
 application.yml
-
+data.sql
 ### Querydsl
 /src/main/generated
+
+/src/main/resources/h2/data.sql
 
 ### STS ###
 .apt_generated
@@ -42,3 +44,4 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/templates/**

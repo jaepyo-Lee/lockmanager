@@ -1,39 +1,35 @@
 package com.ime.lockmanager.locker.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.locker.adapter.in.res.LockerPeriodResponse;
-import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
+import com.ime.lockmanager.locker.adapter.in.res.LockersInfoInMajorResponse;
 import com.ime.lockmanager.locker.application.port.in.LockerUseCase;
+import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRequestDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import springfox.documentation.annotations.ApiIgnore;
 
-import static java.time.LocalDateTime.now;
+import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/locker")
+@RequestMapping("${api.user.prefix}")
 class LockerController {
 
     private final LockerUseCase lockerUseCase;
 
-
     @ApiOperation(
-            value = "사물함 예약기간 조회",
-            notes = "사물함의 예약기간을 조회하는 API"
+            value = "사물함 정보조회",
+            notes = "사물함 이름, 기간, 각 사물함 칸의 예약여부정보"
     )
-    @GetMapping("/period")
-    public SuccessResponse getPeriod() {
-        return new SuccessResponse(LockerPeriodResponse.fromResponse(lockerUseCase.getLockerPeriod()));
-    }
+    @GetMapping("/users/{userId}/majors/lockers")
+    public SuccessResponse<LockersInfoInMajorResponse> findAllLockerInMajor(@ApiIgnore Authentication authentication,
+                                                                            @PathVariable Long userId) {
+        return new SuccessResponse(lockerUseCase.findAllLockerInMajor(FindAllLockerInMajorRequestDto.builder()
+                .userId(userId).build()));
 
-    @ApiOperation(
-            value = "현재시간 조회",
-            notes = "서버의 현재시간을 조회하는 API(위치 및 URL변경될지도모름)"
-    )
-    @GetMapping("/livetime")
-    public SuccessResponse getLiveTime(){
-        return new SuccessResponse(now());
     }
 }

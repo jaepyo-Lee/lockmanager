@@ -1,42 +1,54 @@
 package com.ime.lockmanager.common.webclient.sejong.service;
 
-import com.ime.lockmanager.common.format.exception.auth.NotImeStudentException;
-import com.ime.lockmanager.common.format.exception.webclient.SejongIncorrectInformException;
+import com.ime.lockmanager.common.format.exception.auth.InvalidLoginParamException;
+import com.ime.lockmanager.common.format.exception.auth.NotEnoughWebclientLoginParamException;
+import com.ime.lockmanager.common.format.exception.webclient.WebClientAuthServerException;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.req.SejongMemberRequestDto;
 import com.ime.lockmanager.common.webclient.sejong.service.dto.res.SejongMemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.ArrayList;
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Service
 public class SejongLoginService {
-    private static List<String> MAJOR_LIST = new ArrayList<>(List.of("스마트기기공학전공", "무인이동체공학전공", "지능기전공학과","지능기전공학부"));
-
-    public SejongMemberResponseDto callSejongMemberDetailApi(SejongMemberRequestDto requestDto) {
-        WebClient webClient = WebClient.builder()
-                .baseUrl("https://auth.imsejong.com/auth")
-                .build();
-        SejongMemberResponseDto memberResponseDto = webClient.post()
-                .uri(
-                        uriBuilder -> uriBuilder
-                                .queryParam("method", "ClassicSession")
-                                .build()
-                ).body(BodyInserters.fromValue(requestDto))
+    @Value("${sejong.login_server}")
+    private String SEJONG_LOGIN_SERVER;
+    public SejongMemberResponseDto callSejongLoginApi(SejongMemberRequestDto requestDto) {
+        return WebClient.builder()
+                .baseUrl(SEJONG_LOGIN_SERVER)
+                .build()
+                .post()
+                .uri(uriBuilder -> uriBuilder.queryParam("method", "ClassicSession").build())
+                .body(BodyInserters.fromValue(requestDto))
                 .retrieve()
+                .onStatus(HttpStatus::is5xxServerError,clientResponse -> handleLoginServerError(clientResponse))
+                .onStatus(HttpStatus::is4xxClientError,clientResponse -> handleWebclientLoginParamError(clientResponse))
                 .bodyToMono(SejongMemberResponseDto.class)
+                .flatMap(responseDto -> verifyLoginParamError(responseDto))
                 .block();
-        if (memberResponseDto.getResult().getIs_auth() == "false") {
-            throw new SejongIncorrectInformException();
-        } else if (!MAJOR_LIST.contains(memberResponseDto.getResult().getBody().getMajor())){
-            throw new NotImeStudentException();
+    }
+
+    private Mono<SejongMemberResponseDto> verifyLoginParamError(SejongMemberResponseDto responseDto) {
+        if ("false".equals(responseDto.getResult().getIs_auth())) {
+            return Mono.error(new InvalidLoginParamException());
         }
+        return Mono.just(responseDto);
+    }
 
-            return memberResponseDto;
-
+    private Mono<? extends Throwable> handleWebclientLoginParamError(ClientResponse clientResponse) {
+        return ClientResponse.create(HttpStatus.BAD_REQUEST)
+                .build().createException()
+                .flatMap(e -> Mono.error(new NotEnoughWebclientLoginParamException()));
+    }
+    private Mono<? extends Throwable> handleLoginServerError(ClientResponse clientResponse) {
+        return ClientResponse.create(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build().createException()
+                .flatMap(e -> Mono.error(new WebClientAuthServerException()));
     }
 }

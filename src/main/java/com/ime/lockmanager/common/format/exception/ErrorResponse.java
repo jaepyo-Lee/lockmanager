@@ -1,9 +1,12 @@
 package com.ime.lockmanager.common.format.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ime.lockmanager.common.format.exception.valid.errorcode.ValidErrorCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +28,21 @@ public class ErrorResponse {
         this.status = HttpStatus.BAD_REQUEST.value();
         this.code = e.getErrorEnumCode().getCode();
         this.message = e.getMessage();
+    }
+
+    private ErrorResponse(MethodArgumentNotValidException e){
+        this.time = now();
+        this.status = HttpStatus.BAD_REQUEST.value();
+        this.code = e.getBindingResult().getFieldError().getCode();
+        this.message = getValidationErrorMessage(e);
+    }
+
+    private static String getValidationErrorMessage(MethodArgumentNotValidException e) {
+        return e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+    }
+
+    public static ErrorResponse of(MethodArgumentNotValidException e){
+        return new ErrorResponse(e);
     }
 
     public static ErrorResponse of(ApplicationRunException e) {

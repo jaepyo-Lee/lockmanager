@@ -1,6 +1,7 @@
 package com.ime.lockmanager.locker.application.port.out;
 
-import com.ime.lockmanager.locker.domain.Locker;
+import com.ime.lockmanager.locker.domain.locker.Locker;
+import com.ime.lockmanager.major.domain.Major;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +11,8 @@ public interface LockerQueryPort {
 
     List<Locker> findAll();
 
-    List<Long> findNotReservedLockerId();
+    List<Locker> findLockerByUserMajor(Major major);
 
-    void deleteAll();
-
-    Locker save(Locker locker);
+    List<Locker> findByMajorId(Long majorId);
 
 }

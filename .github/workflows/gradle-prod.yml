@@ -73,7 +73,7 @@ jobs:
           script: |
             sudo docker rm -f ime-prod 
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            docker run -d -p 8082:8082 --network lockermanager-network --name ime-prod jaepyo99/lockermanager
+            docker run -d -p 8081:8081 --network lockermanager-network --name ime-prod jaepyo99/lockermanager
             docker image prune -f
       
 

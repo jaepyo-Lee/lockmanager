@@ -12,6 +12,6 @@ public class IsNotReserveTimeException extends ApplicationRunException {
     }
 
     private IsNotReserveTimeException(ErrorEnumCode errorEnumCode) {
-        super(CODE);
+        super(errorEnumCode);
     }
 }

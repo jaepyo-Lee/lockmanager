@@ -31,6 +31,7 @@ jobs:
 
       - name: make application.yml
         run: |
+          mkdir ./src/main/resources 
           cd ./src/main/resources # resources 폴더로 이동
           touch ./application.yml # application.yml 생성
           echo "${{ secrets.APPLICATION }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
@@ -53,6 +54,7 @@ jobs:
         run: |
           docker build -f Dockerfile.dev -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+          
 
       ## deploy to production
       - name: Deploy to dev
@@ -68,7 +70,7 @@ jobs:
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker run -d -p 6379:6379 --network lockermanager-network --name redis redis
-            docker run -d -p 8081:8081 --network lockermanager-network --name ime-dev jaepyo99/lockermanager
+            docker run -d -p 8083:8083 --network lockermanager-network --name ime-dev jaepyo99/lockermanager
             docker image prune -f
 
   current-time:

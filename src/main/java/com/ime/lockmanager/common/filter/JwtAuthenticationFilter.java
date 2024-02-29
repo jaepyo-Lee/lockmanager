@@ -2,6 +2,7 @@ package com.ime.lockmanager.common.filter;
 
 
 import com.ime.lockmanager.auth.application.port.out.AuthToRedisQueryPort;
+import com.ime.lockmanager.common.format.exception.auth.jwt.ExpiredJwtTokenException;
 import com.ime.lockmanager.common.jwt.AuthToken;
 import com.ime.lockmanager.common.jwt.JwtHeaderUtil;
 import com.ime.lockmanager.common.jwt.JwtProvider;

@@ -1,6 +1,6 @@
 package com.ime.lockmanager.auth.adapter.in.req;
 
-import com.ime.lockmanager.auth.application.port.in.response.LoginRequestDto;
+import com.ime.lockmanager.auth.application.port.in.req.LoginRequestDto;
 import com.sun.istack.NotNull;
 import lombok.*;
 
