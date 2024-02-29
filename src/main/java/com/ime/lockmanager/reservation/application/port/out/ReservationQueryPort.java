@@ -17,4 +17,5 @@ public interface ReservationQueryPort {
     List<Reservation> findAllByLockerDetails(List<LockerDetail> lockerDetailsByLocker);
 
     Optional<Reservation> findByUserId(Long userId);
+
 }

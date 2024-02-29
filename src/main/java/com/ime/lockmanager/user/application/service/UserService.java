@@ -116,7 +116,7 @@ class UserService implements UserUseCase {
             User user = userQueryPort.findByStudentNum(modifiedUserInfo.getStudentNum())
                     .orElseThrow(NotFoundUserException::new);
             if (modifiedUserInfo.getLockerDetailId() != null) {
-                reservationUseCase.registerForAdmin(
+                reservationUseCase.reserveForAdmin(
                         LockerRegisterRequestDto.builder() //일반예약은 lockerdetail의 PK값을 받아서 예약하는것이지만, 지금은 lockerdetail의 칸번호를 받고있으니 수정해야함
                                 .userId(user.getId())
                                 .lockerDetailId(modifiedUserInfo.getLockerDetailId())

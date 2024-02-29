@@ -162,7 +162,7 @@ class LockerService implements LockerUseCase {
     }
 
     private List<LockerDetailInfo> getLockerDetailInfos(Locker locker) {
-        return lockerDetailQueryPort.findLockerDetailByLocker(locker.getId()).stream()
+        return lockerDetailQueryPort.findByLockerId(locker.getId()).stream()
                 .map(
                         lockerDetail ->
                                 getLockerDetailInfo(lockerDetail)

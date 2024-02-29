@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.*;
 
 import static com.ime.lockmanager.common.sse.SseEmitterService.sendEvent;
+import static java.util.stream.Collectors.toList;
 
 
 @Slf4j
@@ -46,38 +47,48 @@ public class ReservationService implements ReservationUseCase {
 
     @Override
     public void resetReservation(Long lockerId) {
-        List<LockerDetail> lockerDetailsByLocker = lockerDetailQueryPort.findLockerDetailByLocker(lockerId);
-        List<Reservation> reservationsByLockerDetails = reservationQueryPort.findAllByLockerDetails(lockerDetailsByLocker);
+        log.info("---------사물함 초기화----------");
+        List<LockerDetail> lockerDetails = lockerDetailQueryPort.findByLockerId(lockerId);
+
+        List<Reservation> reservations = reservationQueryPort.findAllByLockerDetails(lockerDetails);
+
+        runReset(reservations);
+
+        lockerDetails.stream().forEach(lockerDetail -> lockerDetail.cancel());
+        log.info("---------사물함 초기화----------");
     }
 
+    private void runReset(List<Reservation> reservations) {
+        List<Long> reservationIds = reservations.stream().map(reservation -> reservation.getId()).collect(toList());
+        reservationCommandPort.deleteAllByIds(reservationIds);
+    }
 
     @Override
     @DistributeLock(identifier = LOCKER_KEY, key = "#dto.lockerDetailId")
-    public LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto dto) throws Exception {
+    public LockerRegisterResponseDto reserveForAdmin(LockerRegisterRequestDto dto) throws Exception {
         User user = userQueryPort.findById(dto.getUserId()).orElseThrow(NotFoundUserException::new);
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(InvalidLockerDetailException::new);
         log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
-        commonConditionForReserve(user, lockerDetail, locker);
+        verifyCommonConditionForReserve(user, lockerDetail, locker);
         reservationCommandPort.registerLocker(user, lockerDetail);
+        lockerDetail.reserve();
         return LockerRegisterResponseDto.of((lockerDetail.getLockerNum()),
                 user.getStudentNum(),
                 lockerDetail.getLocker().getName());
-
     }
-
 
     @Override
     @DistributeLock(identifier = LOCKER_KEY, key = "#dto.lockerDetailId")
-    public LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto dto) throws Exception {
+    public LockerRegisterResponseDto reserveForUser(LockerRegisterRequestDto dto) throws Exception {
         User user = userQueryPort.findById(dto.getUserId()).orElseThrow(NotFoundUserException::new);
         LockerDetail lockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getLockerDetailId())
                 .orElseThrow(InvalidLockerDetailException::new);
         log.info("(사용자)예약 시작 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
         Locker locker = lockerDetail.getLocker();
-        distinctConditionForReserveToUser(locker);
-        Long registerLockerId = reservation(user, lockerDetail, locker);
+        verifyDistinctConditionForReserve(locker);
+        runReserve(user, lockerDetail, locker);
 //        sendSSEMsg(dto.getMajorId(), registerLockerId, "reservedLockerDetailId");
 
         log.info("예약 완료 : [학번 {}, 사물함 번호 {}]", user.getStudentNum(), lockerDetail.getLockerNum());
@@ -85,35 +96,31 @@ public class ReservationService implements ReservationUseCase {
                 .of(lockerDetail.getLockerNum(), user.getStudentNum(), locker.getName());
     }
 
-    private Long reservation(User user, LockerDetail lockerDetail, Locker locker) {
-        commonConditionForReserve(user, lockerDetail, locker);
-        Long registerLockerId = register(user, lockerDetail);
+    private Long runReserve(User user, LockerDetail lockerDetail, Locker locker) {
+        verifyCommonConditionForReserve(user, lockerDetail, locker);
+        reservationCommandPort.registerLocker(user, lockerDetail);
+        Long registerLockerId = lockerDetail.reserve();
         return registerLockerId;
     }
 
-    private Long register(User user, LockerDetail lockerDetail) {
-        Long registerLockerId = reservationCommandPort.registerLocker(user, lockerDetail);
-        return registerLockerId;
-    }
-
-    private static void distinctConditionForReserveToUser(Locker locker) {
+    private void verifyDistinctConditionForReserve(Locker locker) {
         if (!locker.isDeadlineValid()) {
             throw new IsNotReserveTimeException();
         }
     }
 
-    private void commonConditionForReserve(User user, LockerDetail lockerDetail, Locker locker) {
-        lockerConditions(user, lockerDetail, locker);
-        userConditions(user);
+    private void verifyCommonConditionForReserve(User user, LockerDetail lockerDetail, Locker locker) {
+        verifyLockerConditions(user, lockerDetail, locker);
+        verifyUserConditions(user);
     }
 
-    private void userConditions(User user) {
+    private void verifyUserConditions(User user) {
         if (isReservationNegativeById(user.getId())) {
             throw new AlreadyReservedUserException();
         }
     }
 
-    private void lockerConditions(User user, LockerDetail lockerDetail, Locker locker) {
+    private void verifyLockerConditions(User user, LockerDetail lockerDetail, Locker locker) {
         if (!locker.getPermitUserState().contains(user.getUserState())) {
             throw new InvalidReservedStatusException();
         }
@@ -159,38 +166,29 @@ public class ReservationService implements ReservationUseCase {
     public Long changeReservation(ChangeReservationRequestDto dto) {
         User user = userQueryPort.findById(dto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
+
         LockerDetail newLockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getNewLockerDetailId())
                 .orElseThrow(InvalidLockerDetailException::new);
+
         LockerDetail originLockerDetail = lockerDetailQueryPort.findByIdWithLocker(dto.getOriginLockerDetailId())
                 .orElseThrow(InvalidLockerDetailException::new);
-        Locker locker = newLockerDetail.getLocker();
+
+        Locker newLocker = newLockerDetail.getLocker();
 
         // 1. 변경하고자하는 사물함이 예약이 안되었는지
-        lockerConditions(user, newLockerDetail, locker);
+        verifyLockerConditions(user, newLockerDetail, newLocker);
 
         // 2. 기존 사물함 취소
-        Long cancelLockerDetailId = cancelLockerByStudentNum(UserCancelLockerRequestDto
-                .of(user.getId(), originLockerDetail.getId()));
+        cancelLockerByStudentNum(UserCancelLockerRequestDto.of(user.getId(), originLockerDetail.getId()));
 
         // 3. 취소했다는 sse 통신
-//        sendSSEMsg(dto.getMajorId(), cancelLockerDetailId, "cancelLockerDetailId");
 
         // 4. 변경하고자하는 사물함 예약
-        Long registerNewLockerId = register(user, newLockerDetail);
+        Long registerNewLockerId = runReserve(user, newLockerDetail, newLocker);
 
         // 5. 예약했다는 sse 통신
-//        sendSSEMsg(dto.getMajorId(), registerNewLockerId, "reservedLockerDetailId");
 
         return registerNewLockerId;
     }
 
-    private static void sendSSEMsg(Long majorId, Long lockerDetailId, String sseEmitterName) {
-        Set<SseEmitter> sseEmitters = SseEmitterService.getEmitterMap()
-                .getOrDefault("LOCKER_" + majorId.toString(), new HashSet<>());
-        SseEmitter.SseEventBuilder lockerEventBuilder = SseEmitter.event()
-                .name(sseEmitterName)
-                .data(lockerDetailId)
-                .reconnectTime(3000L);
-        sseEmitters.stream().forEach(sseEmitter -> sendEvent(sseEmitter, lockerEventBuilder));
-    }
 }

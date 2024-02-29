@@ -8,8 +8,8 @@ import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestD
 public interface ReservationUseCase {
     Long changeReservation(ChangeReservationRequestDto requestDto);
 
-    LockerRegisterResponseDto registerForUser(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
-    LockerRegisterResponseDto registerForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
+    LockerRegisterResponseDto reserveForUser(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
+    LockerRegisterResponseDto reserveForAdmin(LockerRegisterRequestDto lockerRegisterRequestDto) throws Exception;
 
 
     void resetReservation(Long lockerId);

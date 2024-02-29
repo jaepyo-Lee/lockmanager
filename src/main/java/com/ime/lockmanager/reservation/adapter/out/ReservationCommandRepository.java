@@ -7,20 +7,24 @@ import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class ReservationCommandRepository implements ReservationCommandPort {
     private final ReservationJpaRepository reservationJpaRepository;
-
     @Override
-    public Long registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
+    public void deleteAllByIds(List<Long> reservationId) {
+        reservationJpaRepository.deleteAllByIds(reservationId);
+    }
+    @Override
+    public void registerLocker(User userJpaEntity, LockerDetail lockerDetail) {
         reservationJpaRepository.save(
                 Reservation.builder()
                         .lockerDetail(lockerDetail)
                         .user(userJpaEntity)
                         .build()
         );
-        return lockerDetail.reserve();
     }
 
     @Override
