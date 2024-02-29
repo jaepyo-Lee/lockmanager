@@ -29,7 +29,6 @@ import static javax.persistence.FetchType.LAZY;
 public class Locker extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LOCKER_ID")
     private Long id;
 
     @Schema(name = "사물함 예약 기간")
