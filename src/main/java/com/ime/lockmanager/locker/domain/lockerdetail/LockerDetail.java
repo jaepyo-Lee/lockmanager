@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Entity(name = "LOCKER_DETAIL_TABLE")
 public class LockerDetail extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String rowNum;

@@ -17,7 +17,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity(name = "MAJOR_DETAIL_TABLE")
 public class MajorDetail {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
