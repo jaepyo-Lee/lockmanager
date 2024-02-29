@@ -18,11 +18,11 @@ import java.util.Optional;
 
 public interface UserUseCase {
     /**
-     *
      * @param userRequestDto
      * @return
      */
     UserInfoQueryResponseDto findUserInfoByStudentNum(UserInfoRequestDto userRequestDto);
+
     Page<AllUserInfoForAdminResponseDto> findAllUserInfo(FindAllUserRequestDto requestDto);
 
 
@@ -30,13 +30,9 @@ public interface UserUseCase {
 
     void updateUserDueInfoOrSave(List<UpdateUserDueInfoDto> updateUserDueInfoDto) throws Exception;
 
-    Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum);
-
     void applyMembership(Long userId);
 
     AllApplyingStudentPageResponseDto findAllApplying(String studentNum, int page);
 
     UserTierResponseDto determineApplying(DetermineApplyingRequestDto toRequestDto, boolean isApprove);
-
-    CheckMembershipResponseDto checkMembership(Long userId);
 }

@@ -1,6 +1,5 @@
 package com.ime.lockmanager.user.adapter.in.res;
 
-import com.ime.lockmanager.user.domain.MembershipState;
 import com.ime.lockmanager.user.domain.UserTier;
 import lombok.Builder;
 import lombok.Getter;

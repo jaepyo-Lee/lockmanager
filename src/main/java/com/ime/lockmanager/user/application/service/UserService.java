@@ -49,15 +49,6 @@ class UserService implements UserUseCase {
     private final int PAGE_SIZE = 30;
 
     @Override
-    public CheckMembershipResponseDto checkMembership(Long userId) {
-        User student = userQueryPort.findById(userId)
-                .orElseThrow(NotFoundUserException::new);
-        return CheckMembershipResponseDto.builder()
-                .userTier(student.getUserTier())
-                .build();
-    }
-
-    @Override
     public UserTierResponseDto determineApplying(DetermineApplyingRequestDto requestDto, boolean isApprove) {
         User student = userQueryPort.findByStudentNum(requestDto.getStudentNum())
                 .orElseThrow(NotFoundUserException::new);
@@ -69,7 +60,6 @@ class UserService implements UserUseCase {
         return UserTierResponseDto.builder()
                 .userTier(student.deny())
                 .build();
-
     }
 
     @Override
@@ -101,12 +91,6 @@ class UserService implements UserUseCase {
                 .applicant(applicantInfos).build();
     }
 
-
-    @Override
-    public Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum) {
-        return userQueryPort.findByStudentNumWithMajorDetailAndMajor(studentNum);
-    }
-
     /*
     관리자용 취소후 예약 로직이기 때문에 로직 수정 필요
      */
@@ -135,24 +119,6 @@ class UserService implements UserUseCase {
             }
         }
     }
-/*
-    @Override
-    public void updateUserDueInfoOrSave(UpdateUserDueInfoDto updateUserDueInfoDto) throws Exception {
-        User user = userQueryPort.findByStudentNum(updateUserDueInfoDto.getStudentNum())
-                .orElseGet(() -> userQueryPort.save(
-                        User.builder()
-                                .name(updateUserDueInfoDto.getName())
-                                .studentNum(updateUserDueInfoDto.getStudentNum())
-                                .userTier(UserTier.judge(updateUserDueInfoDto.isDue()))
-                                .role(Role.ROLE_USER)
-                                .majorDetail(updateUserDueInfoDto.getMajorDetail())
-                                .auth(false)
-                                .build())
-                );
-        if (user.isAuth()) {
-            user.updateTier(UserTier.judge(updateUserDueInfoDto.isDue()));
-        }
-    }*/
 
     @Override
     public void updateUserDueInfoOrSave(List<UpdateUserDueInfoDto> updateUserDueInfoDto) throws Exception {

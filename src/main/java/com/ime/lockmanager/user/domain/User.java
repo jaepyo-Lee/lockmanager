@@ -8,10 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.ime.lockmanager.user.domain.MembershipState.*;
 import static com.ime.lockmanager.user.domain.Role.ROLE_ADMIN;
 import static com.ime.lockmanager.user.domain.Role.ROLE_USER;
 import static com.ime.lockmanager.user.domain.UserTier.NON_MEMBER;
@@ -34,10 +30,6 @@ public class User extends BaseTimeEntity {
     @Column(name = "STUDENT_NUM")
     private String studentNum;
 
-    //삭제하기
-    @Column(name = "STATUS")
-    private String status;
-
     @Enumerated(STRING)
     private UserState userState;
 
@@ -52,25 +44,15 @@ public class User extends BaseTimeEntity {
     private MajorDetail majorDetail;
     private boolean auth;
 
-    @Builder
-    public User(String name, String studentNum, String status, Role role) {
-        this.name = name;
-        this.studentNum = studentNum;
-        this.status = status;
-        this.role = role;
-    }
-
-    public void changeAdmin(boolean isAdmin){
-        if(isAdmin){
+    public void changeAdmin(boolean isAdmin) {
+        if (isAdmin) {
             this.role = ROLE_ADMIN;
-        }else{
+        } else {
             this.role = ROLE_USER;
         }
     }
-    public void updateTier(UserTier tier){
-        this.userTier = tier;
-    }
-    public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto){
+
+    public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto) {
         this.auth = updateUserInfoDto.isAuth();
         this.userState = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();

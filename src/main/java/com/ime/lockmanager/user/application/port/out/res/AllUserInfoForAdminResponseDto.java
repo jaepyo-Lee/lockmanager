@@ -71,7 +71,6 @@ public class AllUserInfoForAdminResponseDto {
         return AllUserInfoForAdminResponseDto.builder()
                 .userId(user.getId())
                 .studentNum(user.getStudentNum())
-                .status(user.getStatus())
                 .role(user.getRole())
                 .userTier(user.getUserTier())
                 .name(user.getName())

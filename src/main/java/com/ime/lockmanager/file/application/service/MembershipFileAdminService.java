@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,6 @@ import java.util.stream.IntStream;
 public class MembershipFileAdminService implements MembershipFileAdminUseCase {
     private final UserUseCase userUseCase;
     private final UserQueryPort userQueryPort;
-    private final MajorDetailQueryPort majorDetailQueryPort;
 
     @Override
     public void ParseMembershipExcelForUpdateUserDuesInfo(MultipartFile membershipFile, Long userId) throws Exception {
@@ -61,55 +61,6 @@ public class MembershipFileAdminService implements MembershipFileAdminUseCase {
                 .orElseThrow(NotFoundUserException::new);
     }
 
-    private MajorDetail getMajorDetailByMajorName(String majorName) {
-        return majorDetailQueryPort.findByNameWithMajor(majorName)
-                .orElseThrow(NotFoundMajorDetailException::new);
-    }
-/*
-    private void processExcelData(Workbook workbook, MajorDetail majorDetail, User user) throws Exception {
-        for (int sheet = 0; sheet < workbook.getNumberOfSheets(); sheet++) {
-            Sheet workSheet = workbook.getSheetAt(sheet);
-            for (int i = 1; i < workSheet.getPhysicalNumberOfRows(); i++) {
-                Row row = workSheet.getRow(i);
-
-                if (row != null && row.getCell(0) != null && row.getCell(1) != null && row.getCell(2) != null) {
-                    setRowType(row);
-
-                    String studentNum = row.getCell(0).getStringCellValue();
-                    String studentName = row.getCell(1).getStringCellValue();
-                    String checkDues = row.getCell(2).getStringCellValue();
-
-                    //빈칸이 있는것은 에러를 뱉고 싶어서 조건을 위에다 씀
-                    verifyBlank(studentNum, studentName, checkDues);
-
-                    if(studentName.length()==0&&studentNum.length()==0&&checkDues.length()==0){
-                        continue;
-                    }
-
-                    boolean isDues = determineDuesStatus(checkDues);
-                    userUseCase.updateUserDueInfoOrSave(UpdateUserDueInfoDto.builder()
-                            .isDue(isDues)
-                            .studentNum(studentNum)
-                            .name(studentName)
-                            .majorDetail(majorDetail)
-                            .build());
-                }
-            }
-        }
-    }
-
-    private static void verifyBlank(String studentNum, String studentName, String checkDues) {
-        if(studentName.length()==0|| studentNum.length()==0|| checkDues.length()==0){
-            throw new InValidCheckingException();
-        }
-    }
-
-    private static void setRowType(Row row) {
-        row.getCell(0).setCellType(CellType.STRING);
-        row.getCell(1).setCellType(CellType.STRING);
-        row.getCell(2).setCellType(CellType.STRING);
-    }
-*/
 
     private void processExcelData(Workbook workbook, MajorDetail majorDetail, User user) throws Exception {
         List<UpdateUserDueInfoDto> updateUserDueInfoList = IntStream.range(0, workbook.getNumberOfSheets())
@@ -121,18 +72,14 @@ public class MembershipFileAdminService implements MembershipFileAdminUseCase {
                 .filter(row -> row != null && row.getCell(0) != null && row.getCell(1) != null && row.getCell(2) != null)
                 .map(row -> {
                     synchronized (this) { // Ensure thread safety if you have any shared resources
-                        row.getCell(0).setCellType(CellType.STRING);
-                        row.getCell(1).setCellType(CellType.STRING);
-                        row.getCell(2).setCellType(CellType.STRING);
+                        changeRowTypeToString(row);
 
                         String studentNum = row.getCell(0).getStringCellValue();
                         String studentName = row.getCell(1).getStringCellValue();
                         String checkDues = row.getCell(2).getStringCellValue();
 
                         // 빈칸이 있는 것은 에러를 뱉고 싶어서 조건을 위에다 씀
-                        if (studentName.length() == 0 || studentNum.length() == 0 || checkDues.length() == 0) {
-                            throw new InValidCheckingException();
-                        }
+                        checkBlank(studentNum, studentName, checkDues);
 
                         if (studentName.length() == 0 && studentNum.length() == 0 && checkDues.length() == 0) {
                             return null; // Return null for empty case
@@ -151,6 +98,18 @@ public class MembershipFileAdminService implements MembershipFileAdminUseCase {
                 .filter(Objects::nonNull) // Filter out null values for empty cases
                 .collect(Collectors.toList());
         userUseCase.updateUserDueInfoOrSave(updateUserDueInfoList);
+    }
+
+    private void checkBlank(String studentNum, String studentName, String checkDues) {
+        if (studentName.length() == 0 || studentNum.length() == 0 || checkDues.length() == 0) {
+            throw new InValidCheckingException();
+        }
+    }
+
+    private void changeRowTypeToString(Row row) {
+        row.getCell(0).setCellType(CellType.STRING);
+        row.getCell(1).setCellType(CellType.STRING);
+        row.getCell(2).setCellType(CellType.STRING);
     }
 
 
