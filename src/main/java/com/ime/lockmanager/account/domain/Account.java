@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Entity(name = "ACCOUNT_TABLE")
 public class Account extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
     private String bank;

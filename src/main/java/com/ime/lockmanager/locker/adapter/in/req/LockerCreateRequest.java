@@ -1,13 +1,9 @@
 package com.ime.lockmanager.locker.adapter.in.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ime.lockmanager.user.domain.MembershipState;
-import com.ime.lockmanager.user.domain.UserState;
 import com.ime.lockmanager.user.domain.UserTier;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import reactor.util.annotation.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
