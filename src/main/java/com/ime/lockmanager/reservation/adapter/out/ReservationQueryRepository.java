@@ -16,6 +16,8 @@ import java.util.Optional;
 public class ReservationQueryRepository implements ReservationQueryPort {
     private final ReservationJpaRepository reservationJpaRepository;
 
+
+
     @Override
     public Optional<Reservation> findByUserId(Long userId) {
         return reservationJpaRepository.findByUserId(userId);

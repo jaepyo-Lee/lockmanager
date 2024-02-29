@@ -118,10 +118,10 @@ class ReservationUseCaseTest {
                 .build(), major.getId());
 
         List<LockerDetail> lockerDetails = lockerDetailQueryPort
-                .findLockerDetailByLocker(savedLocker.getCreatedLockerId());
+                .findByLockerId(savedLocker.getCreatedLockerId());
 
         for (int i = 0; i < userIds.size(); i++) {
-            reservationUseCase.registerForUser(LockerRegisterRequestDto.of(major.getId(), userIds.get(i), lockerDetails.get(i).getId()));
+            reservationUseCase.reserveForUser(LockerRegisterRequestDto.of(major.getId(), userIds.get(i), lockerDetails.get(i).getId()));
         }
 
 
@@ -216,7 +216,7 @@ class ReservationUseCaseTest {
                 .build(), major.getId());
 
         List<LockerDetail> lockerDetails = lockerDetailQueryPort
-                .findLockerDetailByLocker(savedLocker.getCreatedLockerId());
+                .findByLockerId(savedLocker.getCreatedLockerId());
 
         int numberOfThread = 100;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThread);
@@ -229,7 +229,7 @@ class ReservationUseCaseTest {
             service.execute(
                     () -> {
                         try {
-                            reservationUseCase.registerForUser(LockerRegisterRequestDto.builder()
+                            reservationUseCase.reserveForUser(LockerRegisterRequestDto.builder()
                                     .userId(userId)
                                     .lockerDetailId(lockerDetails.get(0).getId())
                                     .majorId(major.getId())
