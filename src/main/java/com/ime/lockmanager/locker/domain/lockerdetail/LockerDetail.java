@@ -19,8 +19,8 @@ public class LockerDetail extends BaseTimeEntity {
     @GeneratedValue
     private Long id;
 
-    private String row_num;
-    private String column_num;
+    private String rowNum;
+    private String columnNum;
     private String lockerNum;
     @Enumerated(EnumType.STRING)
     private LockerDetailStatus lockerDetailStatus;

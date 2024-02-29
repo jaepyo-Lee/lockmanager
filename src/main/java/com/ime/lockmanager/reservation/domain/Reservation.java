@@ -31,5 +31,4 @@ public class Reservation extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_detail_id")
     private LockerDetail lockerDetail;
-
 }

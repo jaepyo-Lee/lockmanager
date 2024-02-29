@@ -1,14 +1,9 @@
 package com.ime.lockmanager.user.adapter.out;
 
 import com.ime.lockmanager.major.domain.Major;
-import com.ime.lockmanager.user.application.port.out.UserMembershipQueryPort;
-import com.ime.lockmanager.user.application.port.out.UserToReservationQueryPort;
-import com.ime.lockmanager.user.application.port.out.res.UserInfoQueryResponseDto;
-import com.ime.lockmanager.user.domain.MembershipState;
 import com.ime.lockmanager.user.domain.User;
 import com.ime.lockmanager.user.domain.UserTier;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,21 +13,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.ime.lockmanager.locker.domain.locker.QLocker.locker;
-import static com.ime.lockmanager.locker.domain.lockerdetail.QLockerDetail.lockerDetail;
-import static com.ime.lockmanager.major.domain.QMajorDetail.majorDetail;
-import static com.ime.lockmanager.reservation.domain.QReservation.reservation;
-import static com.ime.lockmanager.user.domain.MembershipState.APPLYING;
 import static com.ime.lockmanager.user.domain.QUser.user;
-
 
 @Repository
 @RequiredArgsConstructor
-public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, UserMembershipQueryPort {
+public class UserQuerydslRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public Page<User> findAllMembershipApplicantOrderByStudentNumAsc(Major major, Pageable pageable) {
+    public Page<User> findApplicantsByMajorOrderByStudentNumAsc(Major major, Pageable pageable) {
         List<User> applicant = jpaQueryFactory.selectFrom(user)
                 .where(user.userTier.eq(UserTier.APPLICANT))
                 .orderBy(user.studentNum.asc())
@@ -48,7 +36,6 @@ public class UserQuerydslRepositoryImpl implements UserToReservationQueryPort, U
         return new PageImpl<>(applicant, pageable, total);
     }
 
-    @Override
     public Page<User> findAllByMajorASC(Major userMajor,String search, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
 

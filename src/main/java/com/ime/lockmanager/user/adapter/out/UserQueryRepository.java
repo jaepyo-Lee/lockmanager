@@ -1,6 +1,7 @@
 package com.ime.lockmanager.user.adapter.out;
 
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
+import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +16,21 @@ import java.util.Optional;
 @Repository
 public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     private final UserJpaRepository userJpaRepository;
+    private final UserQuerydslRepository userQuerydslRepository;
 
     @Override
-    public void saveAll(List<User> users) {
-        userJpaRepository.saveAll(users);
+    public Page<User> findApplicantsByMajorOrderByStudentNumAsc(Major major, Pageable pageable) {
+        return userQuerydslRepository.findApplicantsByMajorOrderByStudentNumAsc(major, pageable);
     }
 
     @Override
-    public Optional<User> findByIdWithMajorDetailWithMajor(Long userId) {
-        return userJpaRepository.findByIdWithMajorDetailWithMajor(userId);
+    public Page<User> findAllByMajorASC(Major major, String search, Pageable pageable) {
+        return userQuerydslRepository.findAllByMajorASC(major, search, pageable);
+    }
+
+    @Override
+    public Optional<User> findByIdWithMajorDetailAndMajor(Long userId) {
+        return userJpaRepository.findByIdWithMajorDetailAndMajor(userId);
     }
 
     @Override
@@ -32,13 +39,8 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
     }
 
     @Override
-    public Optional<User> findByStudentNumWithMajorDetailWithMajor(String studentNum) {
-        return userJpaRepository.findByStudentNumWithMajorDetailWithMajor(studentNum);
-    }
-
-    @Override
-    public void deleteAll() {
-        userJpaRepository.deleteAll();
+    public Optional<User> findByStudentNumWithMajorDetailAndMajor(String studentNum) {
+        return userJpaRepository.findByStudentNumWithMajorDetailAndMajor(studentNum);
     }
 
     @Override
@@ -57,8 +59,5 @@ public class UserQueryRepository implements UserQueryPort, AuthToUserQueryPort {
         return userJpaRepository.findByStudentNum(studentNum);
     }
 
-    @Override
-    public User save(User user) {
-        return userJpaRepository.save(user);
-    }
+
 }

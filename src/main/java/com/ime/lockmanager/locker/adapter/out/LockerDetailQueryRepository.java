@@ -13,21 +13,12 @@ import java.util.Optional;
 public class LockerDetailQueryRepository implements LockerDetailQueryPort {
     private final LockerDetailJpaRepository lockerDetailJpaRepository;
     @Override
-    public LockerDetail save(LockerDetail lockerDetail) {
-        return lockerDetailJpaRepository.save(lockerDetail);
-    }
-
-    @Override
-    public void deleteAll(){
-        lockerDetailJpaRepository.deleteAll();
-    }
-    @Override
     public Optional<LockerDetail> findByIdWithLocker(Long lockerDetailId) {
         return lockerDetailJpaRepository.findByIdWithLocker(lockerDetailId);
     }
 
     @Override
-    public List<LockerDetail> findLockerDetailByLocker(Long lockerId) {
+    public List<LockerDetail> findByLockerId(Long lockerId) {
         return lockerDetailJpaRepository.findByLockerId(lockerId);
     }
 

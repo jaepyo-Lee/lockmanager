@@ -6,11 +6,9 @@ import com.ime.lockmanager.account.application.port.in.res.SaveOrModifyAccountRe
 import com.ime.lockmanager.account.application.port.out.AccountQueryPort;
 import com.ime.lockmanager.account.domain.Account;
 import com.ime.lockmanager.common.format.exception.account.NotFoundAccountException;
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

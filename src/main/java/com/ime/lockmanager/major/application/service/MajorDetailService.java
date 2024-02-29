@@ -5,8 +5,10 @@ import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMaj
 import com.ime.lockmanager.major.application.port.in.res.MajorDetailInMajorResponseDto;
 import com.ime.lockmanager.major.application.port.in.MajorDetailUseCase;
 import com.ime.lockmanager.major.application.port.in.req.CreateMajorDetailRequestDto;
-import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailCommandPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class MajorDetailService implements MajorDetailUseCase {
     private final MajorDetailQueryPort majorDetailQueryPort;
     private final MajorQueryPort majorQueryPort;
+    private final MajorDetailCommandPort majorDetailCommandPort;
 
     @Override
     public Optional<MajorDetail> findByNameWithMajor(String majorDetailName) {
@@ -47,7 +50,7 @@ public class MajorDetailService implements MajorDetailUseCase {
         duplicatedMajorDetail(createMajorDetailRequestDto.getMajorDetailName());
         Major findMajor = majorQueryPort.findById(createMajorDetailRequestDto.getMajorId())
                 .orElseThrow(NotFoundMajorDetailException::new);//예외처리 새로 만들어 해야함
-        MajorDetail saveMajorDetail = majorDetailQueryPort.save(MajorDetail.builder()
+        MajorDetail saveMajorDetail = majorDetailCommandPort.save(MajorDetail.builder()
                 .name(createMajorDetailRequestDto.getMajorDetailName())
                 .major(findMajor)
                 .build());

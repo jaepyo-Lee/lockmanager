@@ -30,7 +30,7 @@ public class RedissonLockReservationFacade {
             return null;
         }
         log.info("redisson : lock 획득 후 로직 진행");
-        register = reservationUseCase.registerForAdmin(dto);
+        register = reservationUseCase.reserveForAdmin(dto);
 
         if(lock.isLocked() && lock.isHeldByCurrentThread()) {
             lock.unlock();
@@ -49,7 +49,7 @@ public class RedissonLockReservationFacade {
             return null;
         }
         log.info("redisson : lock 획득 후 로직 진행");
-        register = reservationUseCase.registerForUser(dto);
+        register = reservationUseCase.reserveForUser(dto);
 
         if(lock.isLocked() && lock.isHeldByCurrentThread()) {
             lock.unlock();

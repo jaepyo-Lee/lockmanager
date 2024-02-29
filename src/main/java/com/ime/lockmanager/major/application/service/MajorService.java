@@ -9,8 +9,8 @@ import com.ime.lockmanager.major.application.port.in.req.ModifyMajorNameReqeustD
 import com.ime.lockmanager.major.application.port.in.res.AllMajorInfoResponseDto;
 import com.ime.lockmanager.major.application.port.in.res.CreateMajorResponseDto;
 import com.ime.lockmanager.major.application.port.in.res.ModifyMajorNameResponseDto;
-import com.ime.lockmanager.major.application.port.out.MajorDetailQueryPort;
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MajorService implements MajorUseCase {
     private final MajorQueryPort majorQueryPort;
+    private final MajorCommandPort majorCommandPort;
     private final MajorDetailUseCase majorDetailUseCase;
 
     @Override
@@ -44,7 +45,7 @@ public class MajorService implements MajorUseCase {
 
     @Override
     public CreateMajorResponseDto createMajor(CreateMajorRequestDto createMajorRequestDto) {
-        Major savedMajor = majorQueryPort.save(Major.of(createMajorRequestDto.getMajorName()));
+        Major savedMajor = majorCommandPort.save(Major.of(createMajorRequestDto.getMajorName()));
         majorDetailUseCase.createMajorDetail(CreateMajorDetailRequestDto
                 .of(createMajorRequestDto.getMajorName(), savedMajor.getId()));
         return CreateMajorResponseDto.of(savedMajor.getName(), savedMajor.getId());

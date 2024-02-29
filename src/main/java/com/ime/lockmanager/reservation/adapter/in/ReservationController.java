@@ -1,7 +1,6 @@
 package com.ime.lockmanager.reservation.adapter.in;
 
 import com.ime.lockmanager.common.format.success.SuccessResponse;
-import com.ime.lockmanager.locker.adapter.in.res.LockerReserveResponse;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.adapter.in.res.LockerRegisterResponse;
 import com.ime.lockmanager.reservation.adapter.in.req.LockerDetailCancelRequest;
@@ -9,8 +8,6 @@ import com.ime.lockmanager.reservation.adapter.in.res.CancelLockerDetailResponse
 import com.ime.lockmanager.reservation.adapter.in.res.ChangeReservationResponse;
 import com.ime.lockmanager.reservation.application.port.in.ReservationUseCase;
 import com.ime.lockmanager.reservation.application.port.in.req.ChangeReservationRequestDto;
-import com.ime.lockmanager.reservation.application.port.in.res.ChangeReservationResponseDto;
-import com.ime.lockmanager.reservation.application.service.RedissonLockReservationFacade;
 import com.ime.lockmanager.user.application.port.in.req.UserCancelLockerRequestDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +54,7 @@ public class ReservationController {
             @PathVariable Long majorId) throws Exception {
 //        log.info("{} : 시믈함 예약진행", principal.getName());
         LockerRegisterResponse lockerRegisterResponse = LockerRegisterResponse.fromResponse(
-                reservationUseCase.registerForUser(LockerRegisterRequestDto.of(majorId, userId, lockerDetailId))
+                reservationUseCase.reserveForUser(LockerRegisterRequestDto.of(majorId, userId, lockerDetailId))
         );
         log.info("{} : {}의 {}번 예약완료",
                 lockerRegisterResponse.getStudentNum(),

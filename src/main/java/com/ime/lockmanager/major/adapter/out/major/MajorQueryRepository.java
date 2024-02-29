@@ -1,6 +1,6 @@
 package com.ime.lockmanager.major.adapter.out.major;
 
-import com.ime.lockmanager.major.application.port.out.MajorQueryPort;
+import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,30 +11,20 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class MajorQueryRepository implements MajorQueryPort {
-    private final MajorRepository majorRepository;
+    private final MajorJpaRepository majorJpaRepository;
 
     @Override
     public List<Major> findAll() {
-        return majorRepository.findAll();
-    }
-
-    @Override
-    public void deleteAll() {
-        majorRepository.deleteAll();
+        return majorJpaRepository.findAll();
     }
 
     @Override
     public Optional<Major> findById(Long majorId) {
-        return majorRepository.findById(majorId);
-    }
-
-    @Override
-    public Major save(Major major) {
-        return majorRepository.save(major);
+        return majorJpaRepository.findById(majorId);
     }
 
     @Override
     public Optional<Major> findByName(String name) {
-        return majorRepository.findByName(name);
+        return majorJpaRepository.findByName(name);
     }
 }

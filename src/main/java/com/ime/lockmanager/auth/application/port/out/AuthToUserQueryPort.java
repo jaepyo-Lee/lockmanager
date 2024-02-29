@@ -10,6 +10,4 @@ public interface AuthToUserQueryPort {
     Optional<User> findByStudentNameAndStudentNum(String studentName,String studentNum);
 
     Optional<User>findByStudentNum(String studentNum);
-
-    User save(User user);
 }
