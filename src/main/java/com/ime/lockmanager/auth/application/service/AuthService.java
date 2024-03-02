@@ -35,6 +35,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 import static com.ime.lockmanager.user.domain.Role.ROLE_USER;
+import static com.ime.lockmanager.user.domain.UserTier.MEMBER;
 
 @Transactional
 @RequiredArgsConstructor
@@ -79,7 +80,7 @@ class AuthService implements AuthUseCase {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
                 authToUserCommandPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
-                                .userTier(UserTier.NON_MEMBER)
+                                .userTier(MEMBER) //무조건 Member로 해둠
                                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
                                 .majorDetail(majorDetail)
                                 .name(sejongMemberResponseDto.getResult().getBody().getName())
@@ -92,6 +93,7 @@ class AuthService implements AuthUseCase {
     private void updateUserInfo(SejongMemberResponseDto sejongMemberResponseDto, MajorDetail majorDetail, User user) {
         UserState matchUserState = UserState.match(sejongMemberResponseDto.getResult().getBody().getStatus());
         user.updateUserInfo(UpdateUserInfoDto.builder()
+                .userTier(MEMBER)
                 .auth(true)
                 .status(matchUserState)
                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
