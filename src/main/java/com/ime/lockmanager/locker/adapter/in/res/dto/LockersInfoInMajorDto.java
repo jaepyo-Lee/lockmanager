@@ -1,5 +1,6 @@
 package com.ime.lockmanager.locker.adapter.in.res.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ime.lockmanager.user.domain.UserState;
 import com.ime.lockmanager.user.domain.UserTier;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,8 +23,14 @@ public class LockersInfoInMajorDto {
     @Schema(description = "사물함 이름")
     private String name;
     @Schema(description = "예약 시작시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "Asia/Seoul")
     private LocalDateTime startReservationTime;
     @Schema(description = "예약 마감시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "Asia/Seoul")
     private LocalDateTime endReservationTime;
     @Schema(description = "사물함 전체 행")
     private String totalRow;
