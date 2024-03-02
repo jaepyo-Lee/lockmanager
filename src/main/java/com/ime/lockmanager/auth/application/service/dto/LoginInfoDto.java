@@ -15,5 +15,4 @@ public class LoginInfoDto {
     private String studentNum;
     private String grade;
     private MajorDetail majorDetail;
-    private UserTier userTier;
 }
