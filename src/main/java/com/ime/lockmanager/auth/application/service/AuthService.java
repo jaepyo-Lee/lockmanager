@@ -80,7 +80,6 @@ class AuthService implements AuthUseCase {
         return authToUserQueryPort.findByStudentNum(loginRequestDto.getId()).orElseGet(() ->
                 authToUserCommandPort.save(createUserByLoginInfo(
                         LoginInfoDto.builder()
-                                .userTier(MEMBER) //무조건 Member로 해둠
                                 .grade(sejongMemberResponseDto.getResult().getBody().getGrade())
                                 .majorDetail(majorDetail)
                                 .name(sejongMemberResponseDto.getResult().getBody().getName())
@@ -109,7 +108,7 @@ class AuthService implements AuthUseCase {
         UserState matchUserState = UserState.match(loginInfoDto.getStatus());
 
         return User.builder()
-                .userTier(loginInfoDto.getUserTier())
+                .userTier(MEMBER)
                 .name(loginInfoDto.getName())
                 .userState(matchUserState)
                 .studentNum(loginInfoDto.getStudentNum())

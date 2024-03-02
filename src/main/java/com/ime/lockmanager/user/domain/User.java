@@ -53,6 +53,7 @@ public class User extends BaseTimeEntity {
     }
 
     public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto) {
+        this.userTier = updateUserInfoDto.getUserTier();
         this.auth = updateUserInfoDto.isAuth();
         this.userState = updateUserInfoDto.getStatus();
         this.grade = updateUserInfoDto.getGrade();
