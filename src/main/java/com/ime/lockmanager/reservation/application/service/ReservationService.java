@@ -150,7 +150,7 @@ public class ReservationService implements ReservationUseCase {
 
 
     public Long cancelLockerByStudentNum(UserCancelLockerRequestDto cancelLockerDto) {
-        log.info("{} : 사물함 취소", cancelLockerDto.getUserId());
+        log.info("{} : 사물함 취소시작", cancelLockerDto.getUserId());
         User user = userQueryPort.findById(cancelLockerDto.getUserId()).orElseThrow(NotFoundUserException::new);
         Reservation reservation = reservationQueryPort
                 .findAllByUserIdAndLockerDetailId(user.getId(),
@@ -158,6 +158,7 @@ public class ReservationService implements ReservationUseCase {
         Long cancelLockerDetailId = reservation.getLockerDetail().cancel();
 
         reservationCommandPort.deleteById(reservation.getId());
+        log.info("{} : 사물함 취소끝", cancelLockerDto.getUserId());
         return cancelLockerDetailId;
     }
 

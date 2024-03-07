@@ -3,9 +3,11 @@ package com.ime.lockmanager.account.application.port.in;
 import com.ime.lockmanager.account.application.port.in.req.SaveOrModifyAccountRequestDto;
 import com.ime.lockmanager.account.application.port.in.res.AccountInfoResponseDto;
 import com.ime.lockmanager.account.application.port.in.res.SaveOrModifyAccountResponseDto;
+import com.ime.lockmanager.account.application.port.out.AccountCommandPort;
 import com.ime.lockmanager.account.application.port.out.AccountQueryPort;
 import com.ime.lockmanager.account.domain.Account;
 import com.ime.lockmanager.common.format.exception.account.NotFoundAccountException;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
@@ -29,7 +31,11 @@ class AccountUsecaseTest {
     @Autowired
     MajorQueryPort majorQueryPort;
     @Autowired
+    MajorCommandPort majorCommandPort;
+    @Autowired
     AccountUsecase accountUsecase;
+    @Autowired
+    AccountCommandPort accountCommandPort;
 
 
 
@@ -37,7 +43,7 @@ class AccountUsecaseTest {
     @Test
     void saveAccountInfo() {
         //given
-        Major major = majorQueryPort.save(createMajor("AI로봇학과"));
+        Major major = majorCommandPort.save(createMajor("AI로봇학과"));
         //when
         SaveOrModifyAccountRequestDto dto = SaveOrModifyAccountRequestDto.builder()
                 .accountNum("123123123")
@@ -57,8 +63,8 @@ class AccountUsecaseTest {
     @Test
     void ModifyAccountInfo() {
         //given
-        Major major = majorQueryPort.save(createMajor("AI로봇학과"));
-        Account saveAccount = accountQueryPort.save(createAccount("123123123", "우리", "이재표", major));
+        Major major = majorCommandPort.save(createMajor("AI로봇학과"));
+        Account saveAccount = accountCommandPort.save(createAccount("123123123", "우리", "이재표", major));
         //when
         SaveOrModifyAccountRequestDto changeDto = SaveOrModifyAccountRequestDto.builder()
                 .accountNum("12313213")
@@ -78,8 +84,8 @@ class AccountUsecaseTest {
     @Test
     void findAccountInfo() {
         //given
-        Major major = majorQueryPort.save(createMajor("AI로봇학과"));
-        Account saveAccount = accountQueryPort.save(createAccount("123123123", "우리", "이재표", major));
+        Major major = majorCommandPort.save(createMajor("AI로봇학과"));
+        Account saveAccount = accountCommandPort.save(createAccount("123123123", "우리", "이재표", major));
         //when
         AccountInfoResponseDto accountInfo = accountUsecase.findAccountInfo(major.getId());
         //then
@@ -95,7 +101,7 @@ class AccountUsecaseTest {
     void findAccountInfoNoData() {
         //given
         //when
-        Major major = majorQueryPort.save(createMajor("AI로봇학과"));
+        Major major = majorCommandPort.save(createMajor("AI로봇학과"));
         //then
         assertThrows(NotFoundAccountException.class, () -> accountUsecase.findAccountInfo(major.getId()));
     }

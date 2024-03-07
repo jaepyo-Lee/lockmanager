@@ -1,68 +1,74 @@
 package com.ime.lockmanager.account.application.port.out;
 
 import com.ime.lockmanager.account.domain.Account;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
 @ActiveProfiles("test")
-@DataJpaTest
+@SpringBootTest
 class AccountQueryPortTest {
     @Autowired
     AccountQueryPort accountQueryPort;
-
     @Autowired
-    MajorQueryPort majorQueryPort;
+    MajorCommandPort majorCommandPort;
+    @Autowired
+    AccountCommandPort accountCommandPort;
 
+    @DisplayName("학과 아이디로 계좌 조회")
     @Test
-    void saveAccountTest() {
+    void findByMajorIdTest() {
         //given
-        Major major = majorQueryPort.save(createMajor("AI로봇학과"));
+        Major major = Major.builder().name("AI로봇학과").build();
+        Major saveMajor = majorCommandPort.save(major);
+
+        Account account = Account.builder()
+                .major(saveMajor)
+                .number("123123")
+                .bank("bank")
+                .ownerName("name")
+                .build();
+        Account saveAccount = accountCommandPort.save(account);
         //when
-        Account account = createAccount("123123123", "우리", "이재표", major);
-        Account saveAccount = accountQueryPort.save(account);
+        Account findAccount = accountQueryPort.findByMajorId(saveMajor.getId()).get();
         //then
-        assertAll(
-                () -> assertEquals(saveAccount.getNumber(), account.getNumber()),
-                () -> assertEquals(saveAccount.getBank(), account.getBank()),
-                () -> assertEquals(saveAccount.getOwnerName(), account.getNumber())
+        Assertions.assertAll(
+                ()->Assertions.assertEquals(findAccount.getNumber(),saveAccount.getNumber()),
+                ()->Assertions.assertEquals(findAccount.getBank(),saveAccount.getBank()),
+                ()->Assertions.assertEquals(findAccount.getOwnerName(),saveAccount.getOwnerName()),
+                ()->Assertions.assertEquals(findAccount.getMajor().getId(),saveAccount.getMajor().getId())
         );
     }
 
-    /*@Test
-    void test() {
-        //given
-        accountQueryPort.findByMajor()
-        //when
-
-        //then
-    }
-
+    @DisplayName("계좌를 등록하지 않은 학과일때 계좌 조회")
     @Test
-    void test() {
+    void NotSavefindByMajorIdTest() {
         //given
-        accountQueryPort.findByMajorId()
+        Major major = Major.builder().name("AI로봇학과").build();
+        Major saveMajor = majorCommandPort.save(major);
         //when
-
         //then
-    }*/
-
-    private static Account createAccount(String number, String bank, String ownerName, Major major) {
-        return Account.builder()
-                .number(number)
-                .bank(bank)
-                .ownerName(ownerName)
-                .major(major)
-                .build();
+        Assertions.assertTrue(accountQueryPort.findByMajorId(saveMajor.getId()).isEmpty());
     }
-    private static Major createMajor(String majorName) {
-        return Major.of(majorName);
+
+    @DisplayName("다른 학과의 아이디로 계좌 조회")
+    @Test
+    void findByDifferentMajorIdTest() {
+        //given
+        Major major = Major.builder().name("AI로봇학과").build();
+        Major saveMajor = majorCommandPort.save(major);
+        //when
+        //then
+        Assertions.assertTrue(accountQueryPort.findByMajorId(saveMajor.getId()+1).isEmpty());
     }
 }

@@ -21,9 +21,4 @@ public class AccountQueryRepository implements AccountQueryPort {
     public Optional<Account> findByMajor(Major major) {
         return accountRepository.findByMajor(major);
     }
-
-    @Override
-    public Account save(Account account) {
-        return accountRepository.save(account);
-    }
 }

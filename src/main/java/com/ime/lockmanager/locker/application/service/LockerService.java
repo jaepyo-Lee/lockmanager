@@ -143,13 +143,14 @@ class LockerService implements LockerUseCase {
 
     @Override
     public LockersInfoInMajorResponse findAllLockerInMajor(FindAllLockerInMajorRequestDto requestDto) {
+        log.info("사물함 전체 조회 --> 시작");
         User user = userQueryPort.findByIdWithMajorDetailAndMajor(requestDto.getUserId())
                 .orElseThrow(NotFoundUserException::new);
 
         Major major = user.getMajorDetail().getMajor();
 
         List<Locker> lockerByUserMajor = lockerQueryPort.findLockerByUserMajor(major);
-
+        log.info("사물함 전체 조회 --> 끝");
         return LockersInfoInMajorResponse.builder()
                 .lockersInfo(
                         lockerByUserMajor.stream()
