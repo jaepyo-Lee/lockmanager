@@ -9,5 +9,4 @@ public interface AccountQueryPort {
     Optional<Account> findByMajorId(Long majorId);
     Optional<Account> findByMajor(Major major);
 
-    Account save(Account account);
 }

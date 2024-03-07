@@ -6,6 +6,8 @@ import com.ime.lockmanager.major.application.port.in.req.ModifyMajorNameReqeustD
 import com.ime.lockmanager.major.application.port.in.res.AllMajorInfoResponseDto;
 import com.ime.lockmanager.major.application.port.in.res.CreateMajorResponseDto;
 import com.ime.lockmanager.major.application.port.in.res.ModifyMajorNameResponseDto;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailCommandPort;
 import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
@@ -33,10 +35,16 @@ class MajorUseCaseTest {
     MajorDetailQueryPort majorDetailQueryPort;
     @Autowired
     MajorQueryPort majorQueryPort;
+    @Autowired
+    MajorDetailCommandPort majorDetailCommandPort;
+    @Autowired
+    MajorCommandPort majorCommandPort;
+
+
     @BeforeEach
     void init(){
-      majorDetailQueryPort.deleteAll();
-      majorQueryPort.deleteAll();
+      majorDetailCommandPort.deleteAll();
+      majorCommandPort.deleteAll();
     }
 
     @Test

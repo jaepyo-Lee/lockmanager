@@ -7,17 +7,23 @@ import com.ime.lockmanager.locker.application.port.in.req.FindAllLockerInMajorRe
 import com.ime.lockmanager.locker.application.port.in.req.LockerCreateRequestDto;
 import com.ime.lockmanager.locker.application.port.in.req.LockerRegisterRequestDto;
 import com.ime.lockmanager.locker.application.port.in.res.LockerCreateResponseDto;
+import com.ime.lockmanager.locker.application.port.out.LockerCommandPort;
+import com.ime.lockmanager.locker.application.port.out.LockerDetailCommandPort;
 import com.ime.lockmanager.locker.application.port.out.LockerDetailQueryPort;
 import com.ime.lockmanager.locker.application.port.out.LockerQueryPort;
 import com.ime.lockmanager.locker.domain.lockerdetail.LockerDetail;
 import com.ime.lockmanager.locker.domain.lockerdetail.dto.LockerDetailInfo;
+import com.ime.lockmanager.major.application.port.out.major.MajorCommandPort;
+import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailCommandPort;
 import com.ime.lockmanager.major.application.port.out.majordetail.MajorDetailQueryPort;
 import com.ime.lockmanager.major.application.port.out.major.MajorQueryPort;
 import com.ime.lockmanager.major.domain.Major;
 import com.ime.lockmanager.major.domain.MajorDetail;
 import com.ime.lockmanager.reservation.application.port.in.req.ChangeReservationRequestDto;
+import com.ime.lockmanager.reservation.application.port.out.ReservationCommandPort;
 import com.ime.lockmanager.reservation.application.port.out.ReservationQueryPort;
 import com.ime.lockmanager.reservation.domain.Reservation;
+import com.ime.lockmanager.user.application.port.out.UserCommandPort;
 import com.ime.lockmanager.user.application.port.out.UserQueryPort;
 import com.ime.lockmanager.user.domain.Role;
 import com.ime.lockmanager.user.domain.User;
@@ -63,13 +69,26 @@ class ReservationUseCaseTest {
     private ReservationUseCase reservationUseCase;
     @Autowired
     private LockerQueryPort lockerQueryPort;
+    @Autowired
+    ReservationCommandPort reservationCommandPort;
+    @Autowired
+    LockerDetailCommandPort lockerDetailCommandPort;
+    @Autowired
+    LockerCommandPort lockerCommandPort;
+    @Autowired
+    UserCommandPort userCommandPort;
+    @Autowired
+    MajorCommandPort majorCommandPort;
+
+    @Autowired
+    MajorDetailCommandPort majorDetailCommandPort;
     @AfterEach
     void init(){
         log.info("------------------1");
-        reservationQueryPort.deleteAll();
-        lockerDetailQueryPort.deleteAll();
-        lockerQueryPort.deleteAll();
-        userQueryPort.deleteAll();
+        reservationCommandPort.deleteAll();
+        lockerDetailCommandPort.deleteAll();
+        lockerCommandPort.deleteAll();
+        userCommandPort.deleteAll();
         log.info("------------------1");
     }
 
@@ -78,8 +97,8 @@ class ReservationUseCaseTest {
     void changeLockerConcurrencyTest() throws Exception {
         //given
         log.info("동시성 테스트 준비");
-        Major major = majorQueryPort.save(Major.builder().name("AI로봇학과").build());
-        MajorDetail majorDetail = majorDetailQueryPort.save(
+        Major major = majorCommandPort.save(Major.builder().name("AI로봇학과").build());
+        MajorDetail majorDetail = majorDetailCommandPort.save(
                 MajorDetail.builder().major(major).name("무인이동체공학전공").build());
         List<Long> userIds = new ArrayList<>();
 
@@ -90,13 +109,12 @@ class ReservationUseCaseTest {
             String status = "재학";
             String studentNum = Integer.toString(19011721 + i);
             boolean membership = true;
-            User save = userQueryPort.save(
+            User save = userCommandPort.save(
                     User.builder()
                             .majorDetail(majorDetail)
                             .userTier(MEMBER)
                             .userState(ATTEND)
                             .studentNum(studentNum)
-                            .status(status)
                             .role(role)
                             .name(name)
                             .build()
@@ -176,8 +194,8 @@ class ReservationUseCaseTest {
     void reserveConcurrencyTest() throws InterruptedException, IOException {
         //given
         log.info("동시성 테스트 준비");
-        Major major = majorQueryPort.save(Major.builder().name("AI로봇학과").build());
-        MajorDetail majorDetail = majorDetailQueryPort.save(
+        Major major = majorCommandPort.save(Major.builder().name("AI로봇학과").build());
+        MajorDetail majorDetail = majorDetailCommandPort.save(
                 MajorDetail.builder().major(major).name("무인이동체공학전공").build());
         List<Long> userIds = new ArrayList<>();
 
@@ -188,13 +206,12 @@ class ReservationUseCaseTest {
             String status = "재학";
             String studentNum = Integer.toString(19011721 + i);
             boolean membership = true;
-            User save = userQueryPort.save(
+            User save = userCommandPort.save(
                     User.builder()
                             .majorDetail(majorDetail)
                             .userTier(MEMBER)
                             .userState(ATTEND)
                             .studentNum(studentNum)
-                            .status(status)
                             .role(role)
                             .name(name)
                             .build()
@@ -271,8 +288,8 @@ class ReservationUseCaseTest {
     void verifyQueryReservation() throws IOException {
         //given
         log.info("동시성 테스트 준비");
-        Major major = majorQueryPort.save(Major.builder().name("AI로봇학과").build());
-        MajorDetail majorDetail = majorDetailQueryPort.save(
+        Major major = majorCommandPort.save(Major.builder().name("AI로봇학과").build());
+        MajorDetail majorDetail = majorDetailCommandPort.save(
                 MajorDetail.builder().major(major).name("무인이동체공학전공").build());
 
         log.info("사물함 생성");
@@ -299,7 +316,7 @@ class ReservationUseCaseTest {
                 .build(), major.getId());
 
         log.info("사용자 생성");
-        User save = userQueryPort.save(
+        User save = userCommandPort.save(
                 User.builder()
                         .majorDetail(majorDetail)
                         .userTier(MEMBER)

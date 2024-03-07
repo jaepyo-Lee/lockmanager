@@ -4,6 +4,7 @@ import com.ime.lockmanager.account.application.port.in.AccountUsecase;
 import com.ime.lockmanager.account.application.port.in.req.SaveOrModifyAccountRequestDto;
 import com.ime.lockmanager.account.application.port.in.res.AccountInfoResponseDto;
 import com.ime.lockmanager.account.application.port.in.res.SaveOrModifyAccountResponseDto;
+import com.ime.lockmanager.account.application.port.out.AccountCommandPort;
 import com.ime.lockmanager.account.application.port.out.AccountQueryPort;
 import com.ime.lockmanager.account.domain.Account;
 import com.ime.lockmanager.account.domain.dto.ModifyAccountDto;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class AccountService implements AccountUsecase {
     private final MajorQueryPort majorQueryPort;
     private final AccountQueryPort accountQueryPort;
+    private final AccountCommandPort accountCommandPort;
 
     @Transactional(readOnly = true)
     @Override
@@ -68,7 +70,7 @@ public class AccountService implements AccountUsecase {
     }
 
     private Account saveNewAccount(Major major, SaveOrModifyAccountRequestDto requestDto) {
-        return accountQueryPort.save(Account.builder()
+        return accountCommandPort.save(Account.builder()
                 .number(requestDto.getAccountNum())
                 .bank(requestDto.getBank())
                 .ownerName(requestDto.getOwnerName())
