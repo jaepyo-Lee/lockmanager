@@ -14,6 +14,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,13 +52,13 @@ public class Locker extends BaseTimeEntity {
     @JoinTable(name = "PERMIT_USER_STATE_TABLE", joinColumns = @JoinColumn(name = "locker_id"))
     @Column(name = "permitUserState")
     @Enumerated(EnumType.STRING)
-    private Set<UserState> permitUserState = new HashSet<>();
+    private List<UserState> permitUserState = new ArrayList<>();
 
     @ElementCollection(targetClass = UserTier.class)
     @JoinTable(name = "PERMIT_USER_Tier_TABLE", joinColumns = @JoinColumn(name = "locker_id"))
     @Column(name = "permitUserTier")
     @Enumerated(EnumType.STRING)
-    private Set<UserTier> permitUserTier = new HashSet<>();
+    private List<UserTier> permitUserTier = new ArrayList<>();
 
     public void modifiedDateTime(Period period) {
         this.period = period;
@@ -76,8 +77,8 @@ public class Locker extends BaseTimeEntity {
                 .totalColumn(lockercreateDto.getTotalColumn())
                 .totalRow(lockercreateDto.getTotalRow())
                 .imageUrl(lockercreateDto.getImageUrl())
-                .permitUserTier(Set.copyOf(lockercreateDto.getUserTiers()))
-                .permitUserState(Set.copyOf(lockercreateDto.getUserStates()))
+                .permitUserTier(lockercreateDto.getUserTiers())
+                .permitUserState(lockercreateDto.getUserStates())
                 .build();
     }
 

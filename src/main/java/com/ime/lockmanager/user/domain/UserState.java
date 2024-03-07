@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public enum UserState {
-    ATTEND("재학"), REST("휴학"), GRADUATE("졸업");
+    ATTEND("ATTEND","재학"), REST("REST","휴학"), GRADUATE("GRADUATE","졸업");
+    private String name;
     private String krName;
 
     public static UserState match(String state) {

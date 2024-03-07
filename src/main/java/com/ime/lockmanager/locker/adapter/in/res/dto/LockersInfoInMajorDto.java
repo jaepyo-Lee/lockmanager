@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -17,9 +18,9 @@ public class LockersInfoInMajorDto {
     @Schema(description = "사물함Id")
     private Long id;
     @Schema(description = "사물함을 예약할수 있는 학생회비 납부조건")
-    private Set<UserTier> permitTiers;
+    private List<String> permitTiers;
     @Schema(description = "사물함을 예약할수 있는 학생의 재학조건")
-    private Set<UserState> permitStates;
+    private List<String> permitStates;
     @Schema(description = "사물함 이름")
     private String name;
     @Schema(description = "예약 시작시간")

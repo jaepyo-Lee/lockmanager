@@ -29,8 +29,12 @@ class LockerController {
     @GetMapping("/users/{userId}/majors/lockers")
     public SuccessResponse<LockersInfoInMajorResponse> findAllLockerInMajor(@ApiIgnore Authentication authentication,
                                                                             @PathVariable Long userId) {
-        return new SuccessResponse(lockerUseCase.findAllLockerInMajor(FindAllLockerInMajorRequestDto.builder()
+        long startTime = System.currentTimeMillis();
+        SuccessResponse successResponse = new SuccessResponse(lockerUseCase.findAllLockerInMajor(FindAllLockerInMajorRequestDto.builder()
                 .userId(userId).build()));
+        long stopTime = System.currentTimeMillis();
+        System.out.println("코드 실행 시간: " + (stopTime - startTime));
+        return successResponse;
 
     }
 }

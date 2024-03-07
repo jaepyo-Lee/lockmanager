@@ -189,8 +189,8 @@ class LockerService implements LockerUseCase {
                 .name(locker.getName())
                 .totalColumn(locker.getTotalColumn())
                 .totalRow(locker.getTotalRow())
-                .permitTiers(locker.getPermitUserTier())
-                .permitStates(locker.getPermitUserState())
+                .permitTiers(locker.getPermitUserTier().stream().map(tier -> tier.getName()).collect(Collectors.toList()))
+                .permitStates(locker.getPermitUserState().stream().map(userState -> userState.getName()).collect(Collectors.toList()))
                 .image(locker.getImageUrl())
                 .build();
     }
