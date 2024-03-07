@@ -151,7 +151,7 @@ class LockerService implements LockerUseCase {
 
         List<Locker> lockerByUserMajor = lockerQueryPort.findLockerByUserMajor(major);
         log.info("사물함 전체 조회 --> 끝");
-        return LockersInfoInMajorResponse.builder()
+        LockersInfoInMajorResponse response = LockersInfoInMajorResponse.builder()
                 .lockersInfo(
                         lockerByUserMajor.stream()
                                 .map(locker -> LockersInfoDto.builder()
@@ -160,6 +160,7 @@ class LockerService implements LockerUseCase {
                                         .build()
                                 ).collect(Collectors.toList()))
                 .build();
+        return response;
     }
 
     private List<LockerDetailInfo> getLockerDetailInfos(Locker locker) {
@@ -188,8 +189,8 @@ class LockerService implements LockerUseCase {
                 .name(locker.getName())
                 .totalColumn(locker.getTotalColumn())
                 .totalRow(locker.getTotalRow())
-                .permitTiers(locker.getPermitUserTier())
-                .permitStates(locker.getPermitUserState())
+                .permitTiers(locker.getPermitUserTier().stream().map(tier -> tier.getName()).collect(Collectors.toList()))
+                .permitStates(locker.getPermitUserState().stream().map(userState -> userState.getName()).collect(Collectors.toList()))
                 .image(locker.getImageUrl())
                 .build();
     }

@@ -9,6 +9,7 @@ import com.ime.lockmanager.auth.application.port.out.AuthToUserCommandPort;
 import com.ime.lockmanager.auth.application.port.out.AuthToUserQueryPort;
 import com.ime.lockmanager.auth.application.service.dto.LoginInfoDto;
 import com.ime.lockmanager.auth.domain.AuthUser;
+import com.ime.lockmanager.common.aop.meta.DistributeLock;
 import com.ime.lockmanager.common.format.exception.auth.jwt.InvalidRefreshTokenException;
 import com.ime.lockmanager.common.format.exception.major.majordetail.NotFoundMajorDetailException;
 import com.ime.lockmanager.common.format.exception.user.NotFoundUserException;
@@ -41,6 +42,7 @@ import static com.ime.lockmanager.user.domain.UserTier.MEMBER;
 @RequiredArgsConstructor
 @Service
 class AuthService implements AuthUseCase {
+    private static final String USER_KEY = "USER_";
     private final AuthToUserQueryPort authToUserQueryPort;
     private final AuthToUserCommandPort authToUserCommandPort;
     private final JwtProvider jwtProvider;
@@ -48,17 +50,18 @@ class AuthService implements AuthUseCase {
     private final SejongLoginService sejongLoginService;
     private final MajorDetailQueryPort majorDetailQueryPort;
 
+    @DistributeLock(identifier = USER_KEY, key = "#dto.id")
     @Override
-    public LoginTokenResponseDto login(LoginRequestDto loginRequestDto) {
+    public LoginTokenResponseDto login(LoginRequestDto dto) {
         // 1. 학교에 로그인하여 정보 받아옴
-        SejongMemberResponseDto userInfoInSejong = sejongLoginService.callSejongLoginApi(loginRequestDto.toSejongMemberDto());
+        SejongMemberResponseDto userInfoInSejong = sejongLoginService.callSejongLoginApi(dto.toSejongMemberDto());
         // 2. 서비스에 가입된 학과인지 검색
         MajorDetail majorDetail = majorDetailQueryPort.findByNameWithMajor(getMajorDetailName(userInfoInSejong))
                 .orElseThrow(() -> new NotFoundMajorDetailException());
         Major major = majorDetail.getMajor();
 
         // 저장된 사용자의 정보를 또회 또는 저장
-        User user = saveOrFindUser(majorDetail, loginRequestDto, userInfoInSejong);
+        User user = saveOrFindUser(majorDetail, dto, userInfoInSejong);
 
         // 기존의 저장된 사용자의 경우 재학상태가 바꼈다면 업데이트
         updateUserInfo(userInfoInSejong, majorDetail, user);
